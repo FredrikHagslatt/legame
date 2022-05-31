@@ -1,6 +1,4 @@
 #include "Game.h"
-#include <SDL2/SDL.h>
-#include <iostream>
 
 Game::Game()
 {
@@ -21,10 +19,10 @@ void Game::Initialize()
         return;
     }
 
-//    SDL_DisplayMode displayMode;
-//    SDL_GetCurrentDisplayMode(0, &displayMode);
-    windowWidth = 1920;//displayMode.w;
-    windowHeight = 1080;//displayMode.h;
+    //    SDL_DisplayMode displayMode;
+    //    SDL_GetCurrentDisplayMode(0, &displayMode);
+    windowWidth = 1920;  // displayMode.w;
+    windowHeight = 1080; // displayMode.h;
 
     window = SDL_CreateWindow(
         NULL,
@@ -44,7 +42,7 @@ void Game::Initialize()
         std::cerr << "Error creating SDL renderer." << std::endl;
     }
 
-//    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+    //    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
     isRunning = true;
 }
@@ -60,7 +58,7 @@ void Game::ProcessInput()
             isRunning = false;
             break;
         case SDL_KEYDOWN:
-            if(sdlEvent.key.keysym.sym == SDLK_ESCAPE)
+            if (sdlEvent.key.keysym.sym == SDLK_ESCAPE)
             {
                 isRunning = false;
             }
@@ -69,20 +67,56 @@ void Game::ProcessInput()
     }
 }
 
+glm::vec2 playerPosition;
+glm::vec2 playerVelocity;
+
+void Game::Setup()
+{
+    playerPosition = glm::vec2(10.0, 20.0);
+    playerVelocity = glm::vec2(100.0, 0.0);
+
+}
+
 void Game::Update()
 {
+
+    int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
+    if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME)
+    {
+        SDL_Delay(timeToWait);
+    }
+
+    double deltaTime = (SDL_GetTicks() - millisecsPreviousFrame) / 1000.0;
+
+    millisecsPreviousFrame = SDL_GetTicks();
+    playerPosition += playerVelocity * float(deltaTime);
 }
 
 void Game::Render()
 {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
     SDL_RenderClear(renderer);
+
+    SDL_Surface *surface = IMG_Load("./assets/images/tank-tiger-right.png");
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+    SDL_Rect dstRect = {
+        static_cast<int>(playerPosition.x), 
+        static_cast<int>(playerPosition.y),
+        32, 
+        32};
+
+    SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+
+    SDL_DestroyTexture(texture);
 
     SDL_RenderPresent(renderer);
 }
 
 void Game::Run()
 {
+    Setup();
     while (isRunning)
     {
         ProcessInput();
