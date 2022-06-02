@@ -4,6 +4,8 @@
 #include <bitset>
 #include <vector>
 #include <algorithm>
+#include <typeindex>
+#include <unordered_map>
 
 const unsigned int MAX_COMPONENTS = 32;
 
@@ -123,13 +125,23 @@ private:
     int numEntities = 0;
 
     std::vector<IPool*> componentPools;
+    std::vector<Signature> entityComponentSignatures;
+    std::unordered_map<std::type_index, System*> systems;
 
 public:
-    Entity CreateEntity();
-    void KillEntity(Entity entity);
-    void AddSystem();
-    void AddComponent();
-    void RemoveComponent();
+    Registry() = default;
+
+    //Entity CreateEntity();
+    //void KillEntity(Entity entity);
+    //void AddSystem();
+    //void AddComponent();
+    //void RemoveComponent();
+
+    //AddSystem();
+    //RemoveSystem();
+    //HasSystem();
+    //GetSystem();
+
 };
 
 template <typename TComponent>
