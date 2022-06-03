@@ -1,6 +1,7 @@
 #include "ECS.h"
 
 /* Component */
+int IComponent::nextId = 0;
 
 /* Entity */
 Entity::Entity(int id) : id(id) {}
@@ -28,3 +29,33 @@ const Signature &System::GetComponentSignature() const
 }
 
 /* Registry */
+
+Entity Registry::CreateEntity()
+{
+    int entityId = numEntities++;
+    Entity entity(entityId);
+    entitiesToBeAdded.insert(entity);
+    Logger::Log("Entity created with id = " + std::to_string(entityId));
+    return entity;
+}
+
+void Registry::AddEntityToSystems(Entity entity)
+{
+    const int entityId = entity.GetId();
+    const auto &entityComponentSignature = entityComponentSignatures[entityId];
+
+    for (auto &system : systems)
+    {
+        const auto &systemComponentSignature = system.second->GetComponentSignature();
+        if ((entityComponentSignature & systemComponentSignature) == systemComponentSignature)
+        {
+            system.second->AddEntityToSystem(entity);
+        }
+    }
+}
+
+void Registry::Update()
+{
+    // TODO: Add waiting entities
+    // TODO: Kill waiting entities
+}
