@@ -3,12 +3,14 @@
 Game::Game()
 {
     isRunning = false;
-    Logger::Log("Game constructor called!");
+    registry = std::make_unique<Registry>();
+    Logger::Log("Game Created!");
+
 }
 
 Game::~Game()
 {
-    Logger::Log("Game deconstructor called!");
+    Logger::Log("Game Destroyed!");
 }
 
 void Game::Initialize()
@@ -73,10 +75,12 @@ glm::vec2 playerVelocity;
 void Game::Setup()
 {
     //TODO:
-    //Entity tank = registry.CreateEntity();
-    //tank.AddComponent<TransformComponent>();
-    //tank.AddComponent<BoxColliderComponent>();
-    //tank.AddComponent<SpriteComponent>("./path.png");
+    Entity tank = registry->CreateEntity();
+    Entity truck = registry->CreateEntity();
+
+    registry->AddComponent<TransformComponent>(tank, glm::vec2(10.0, 30.0), glm::vec2(1, 1), 0.0);
+    registry->AddComponent<RigidBodyComponent>(tank, glm::vec2(1, 1));
+
 }
 
 void Game::Update()

@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <typeindex>
+#include <memory>
 #include <unordered_map>
 #include <set>
 
@@ -24,6 +25,7 @@ protected:
 template <typename TComponent>
 class Component : public IComponent
 {
+public:
     static int GetId()
     {
         static auto id = nextId++;
@@ -38,8 +40,14 @@ private:
 
 public:
     Entity(int id);
+    Entity(const Entity &entity) = default;
     int GetId() const;
-    bool operator==(const Entity &other) { return id == other.id; };
+
+    Entity &operator=(const Entity &rhs) = default;
+    bool operator==(const Entity &rhs) const { return id == rhs.id; };
+    bool operator!=(const Entity &rhs) const { return id != rhs.id; };
+    bool operator<(const Entity &rhs) const { return id < rhs.id; };
+    bool operator>(const Entity &rhs) const { return id > rhs.id; };
 };
 
 class System
@@ -128,13 +136,15 @@ private:
     std::set<Entity> entitiesToBeAdded;
     std::set<Entity> entitiesToBeKilled;
 
-    std::vector<IPool *> componentPools;
+    std::vector<std::shared_ptr<IPool>> componentPools;
     std::vector<Signature> entityComponentSignatures;
-    std::unordered_map<std::type_index, System *> systems;
+    std::unordered_map<std::type_index, std::shared_ptr<System>> systems;
 
 public:
     /* Registry core */
-    Registry() = default;
+    Registry() { Logger::Log("Registry Created"); };
+    ~Registry() { Logger::Log("Registry Destroyed"); };
+
     void Update();
 
     /* Entity management */
@@ -176,7 +186,7 @@ void System::RequireComponent()
 template <typename TSystem, typename... TArgs>
 void Registry::AddSystem(TArgs &&...args)
 {
-    TSystem *newSystem(new TSystem(std::forward<TArgs>(args)...));
+    std::shared_ptr<TSystem> newSystem = std::make_shared<TSystem>(std::forward<TArgs>(args)...);
     systems.insert(std::make_pair(std::type_index(typeid(TSystem)), newSystem));
 }
 
@@ -190,14 +200,14 @@ void Registry::RemoveSystem()
 template <typename TSystem>
 bool Registry::HasSystem() const
 {
-    return systems.contains(std::type_index(typeid(TSystem)));
+    return (systems.find(std::type_index(typeid(TSystem))) != systems.end());
 }
 
 template <typename TSystem>
 TSystem &Registry::GetSystem() const
 {
     auto system = systems.find(std::type_index(typeid(TSystem)));
-    return *(std::static_pointer_cast<TSystem>(system->second))
+    return *(std::static_pointer_cast<TSystem>(system->second));
 }
 
 template <typename TComponent, typename... TArgs>
@@ -206,18 +216,19 @@ void Registry::AddComponent(Entity entity, TArgs &&...args)
     const int componentId = Component<TComponent>::GetId();
     const int entityId = entity.GetId();
 
-    if (componentId >= componentPools.size())
+    if (componentId >= static_cast<int>(componentPools.size()))
     {
         componentPools.resize(componentId + 1, nullptr);
     }
 
     if (!componentPools[componentId])
     {
-        Pool<TComponent> *newComponentPool = new Pool<TComponent>();
+        std::shared_ptr<Pool<TComponent>> newComponentPool = std::make_shared<Pool<TComponent>>();
         componentPools[componentId] = newComponentPool;
     }
 
-    Pool<TComponent> *componentPool = Pool<TComponent>(componentPools[componentId]);
+    std::shared_ptr<Pool<TComponent>> componentPool =
+        std::static_pointer_cast<Pool<TComponent>>(componentPools[componentId]);
 
     if (entityId >= componentPool->GetSize())
     {
@@ -229,6 +240,8 @@ void Registry::AddComponent(Entity entity, TArgs &&...args)
 
     componentPool->Set(entityId, newComponent);
     entityComponentSignatures[entityId].set(componentId);
+    Logger::Log(
+        "Component id = " + std::to_string(componentId) + " was added to entity id = " + std::to_string(entityId) + ".");
 }
 
 template <typename TComponent>
@@ -236,7 +249,7 @@ void Registry::RemoveComponent(Entity entity)
 {
     const int componentId = Component<TComponent>::GetId();
     const int entityId = entity.GetId();
-    entityComponentSignatures[entityId].reset(componentId)
+    entityComponentSignatures[entityId].reset(componentId);
 }
 
 template <typename TComponent>
