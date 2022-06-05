@@ -39,7 +39,7 @@ private:
     int id;
 
 public:
-    Entity(int id);
+    Entity(int id) : id(id){};
     Entity(const Entity &entity) = default;
     int GetId() const;
 
@@ -48,6 +48,17 @@ public:
     bool operator!=(const Entity &rhs) const { return id != rhs.id; };
     bool operator<(const Entity &rhs) const { return id < rhs.id; };
     bool operator>(const Entity &rhs) const { return id > rhs.id; };
+
+    template <typename TComponent, typename... TArgs>
+    void AddComponent(TArgs &&...args);
+    template <typename TComponent>
+    void RemoveComponent();
+    template <typename TComponent>
+    bool HasComponent() const;
+    template <typename TComponent>
+    TComponent &GetComponent() const;
+
+    class Registry *registry;
 };
 
 class System
@@ -64,26 +75,26 @@ public:
     std::vector<Entity> GetSystemEntities() const;
     const Signature &GetComponentSignature() const;
 
-    template <typename T>
+    template <typename TComponent>
     void RequireComponent();
 };
 
 class IPool
-{
+{ // Interface class to enable pointer to template class Pool
 public:
     virtual ~IPool() {}
 };
 
-template <typename TComponent>
-class Pool : IPool
+template <typename T>
+class Pool : public IPool
 {
 private:
-    std::vector<TComponent> data;
+    std::vector<T> data;
 
 public:
     Pool(int size = 100)
     {
-        data.Resize(size);
+        Resize(size);
     }
     virtual ~Pool() = default;
 
@@ -92,7 +103,7 @@ public:
         return data.empty();
     }
 
-    int getSize() const
+    int GetSize() const
     {
         return data.size();
     }
@@ -107,22 +118,22 @@ public:
         data.clear();
     }
 
-    void Add(TComponent object)
+    void Add(T object)
     {
         data.push_back(object);
     }
 
-    void Set(int index, TComponent object)
+    void Set(int index, T object)
     {
         data[index] = object;
     }
 
-    TComponent &Get(int index)
+    T &Get(int index)
     {
-        return static_cast<TComponent &>(data[index]);
+        return static_cast<T &>(data[index]);
     }
 
-    TComponent &operator[](unsigned int index)
+    T &operator[](unsigned int index)
     {
         return data[index];
     }
@@ -160,8 +171,8 @@ public:
     template <typename TComponent>
     bool HasComponent(Entity entity) const;
 
-    //    template <typename TComponent>
-    //    TComponent &GetComponent(Entity entity);
+    template <typename TComponent>
+    TComponent &GetComponent(Entity entity) const;
 
     /* System Management */
     template <typename TSystem, typename... TArgs>
@@ -250,6 +261,8 @@ void Registry::RemoveComponent(Entity entity)
     const int componentId = Component<TComponent>::GetId();
     const int entityId = entity.GetId();
     entityComponentSignatures[entityId].reset(componentId);
+    Logger::Log(
+        "Component id = " + std::to_string(componentId) + " was removed from entity id = " + std::to_string(entityId) + ".");
 }
 
 template <typename TComponent>
@@ -260,15 +273,34 @@ bool Registry::HasComponent(Entity entity) const
     return entityComponentSignatures[entityId].test(componentId);
 }
 
-/*
 template <typename TComponent>
-TComponent &Registry::GetComponent(Entity entity)
+TComponent &Registry::GetComponent(Entity entity) const
 {
     const int componentId = Component<TComponent>::GetId();
     const int entityId = entity.GetId();
-    Pool<TComponent> *componentPool = Pool<TComponent>(componentPools[componentId]);
-    return componentPool[entityId];
+    Pool<TComponent> *componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentId]);
+    return componentPool->Get(entityId);
 }
-*/
+
+template <typename TComponent, typename... TArgs>
+void Entity::AddComponent(TArgs &&...args)
+{
+    registry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
+}
+template <typename TComponent>
+void Entity::RemoveComponent()
+{
+    registry->RemoveComponent<TComponent>(*this);
+}
+template <typename TComponent>
+bool Entity::HasComponent() const
+{
+    return registry->HasComponent<TComponent>(*this);
+}
+template <typename TComponent>
+TComponent &Entity::GetComponent() const
+{
+    return registry->GetComponent<TComponent>(*this);
+}
 
 #endif

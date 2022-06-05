@@ -4,7 +4,6 @@
 int IComponent::nextId = 0;
 
 /* Entity */
-Entity::Entity(int id) : id(id) {}
 int Entity::GetId() const { return id; }
 
 /* System */
@@ -15,8 +14,8 @@ void System::AddEntityToSystem(Entity entity)
 void System::RemoveEntityFromSystem(Entity entity)
 {
     entities.erase(std::remove_if(entities.begin(), entities.end(),
-                                  [&entity](Entity other)
-                                  { return entity == other; }),
+                                  [&entity](Entity rhs)
+                                  { return entity == rhs; }),
                    entities.end());
 }
 std::vector<Entity> System::GetSystemEntities() const
@@ -34,9 +33,10 @@ Entity Registry::CreateEntity()
 {
     int entityId = numEntities++;
     Entity entity(entityId);
+    entity.registry = this;
     entitiesToBeAdded.insert(entity);
 
-    if (entityId >= entityComponentSignatures.size())
+    if (entityId >= static_cast<int>(entityComponentSignatures.size()))
     {
         entityComponentSignatures.resize(entityId + 1);
     }
