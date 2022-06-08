@@ -1,3 +1,0 @@
-C:/stuff/c++/gameengine/build/CMakeFiles/highnoon.dir
-C:/stuff/c++/gameengine/build/CMakeFiles/edit_cache.dir
-C:/stuff/c++/gameengine/build/CMakeFiles/rebuild_cache.dir

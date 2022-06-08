@@ -153,8 +153,8 @@ private:
 
 public:
     /* Registry core */
-    Registry() { Logger::Log("Registry Created"); };
-    ~Registry() { Logger::Log("Registry Destroyed"); };
+    Registry() { Logger::Info("Registry Created"); };
+    ~Registry() { Logger::Info("Registry Destroyed"); };
 
     void Update();
 
@@ -251,7 +251,7 @@ void Registry::AddComponent(Entity entity, TArgs &&...args)
 
     componentPool->Set(entityId, newComponent);
     entityComponentSignatures[entityId].set(componentId);
-    Logger::Log(
+    Logger::Info(
         "Component id = " + std::to_string(componentId) + " was added to entity id = " + std::to_string(entityId) + ".");
 }
 
@@ -261,7 +261,7 @@ void Registry::RemoveComponent(Entity entity)
     const int componentId = Component<TComponent>::GetId();
     const int entityId = entity.GetId();
     entityComponentSignatures[entityId].reset(componentId);
-    Logger::Log(
+    Logger::Info(
         "Component id = " + std::to_string(componentId) + " was removed from entity id = " + std::to_string(entityId) + ".");
 }
 

@@ -4,13 +4,13 @@
 
 AssetStore::AssetStore()
 {
-    Logger::Log("Asset Store Created!");
+    Logger::Info("Asset Store Created!");
 }
 
 AssetStore::~AssetStore()
 {
     ClearAssets();
-    Logger::Log("Asset Store Destroyed!");
+    Logger::Info("Asset Store Destroyed!");
 
 }
 
@@ -30,11 +30,15 @@ void AssetStore::AddTexture(SDL_Renderer *renderer, const std::string &assetId, 
     SDL_FreeSurface(surface);
 
     textures.emplace(assetId, texture);
-    Logger::Log("AssetId: '" + assetId + "' added to AssetStore");
+    Logger::Info("AssetId: '" + assetId + "' added to AssetStore");
 
 }
 
 SDL_Texture *AssetStore::GetTexture(const std::string &assetId) const
 {
+    if (!textures.count(assetId))
+    {
+        Logger::Fatal("Asset with ID: '" + assetId + "' not in asset store");
+    }
     return textures.at(assetId);
 }

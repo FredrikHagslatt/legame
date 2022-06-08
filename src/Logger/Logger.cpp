@@ -10,7 +10,7 @@ std::string Logger::Timestamp()
     return timestamp;
 }
 
-void Logger::Log(const std::string &message)
+void Logger::Info(const std::string &message)
 {
     LogEntry logEntry = {
         LOG_INFO, 
@@ -19,11 +19,21 @@ void Logger::Log(const std::string &message)
     messages.push_back(logEntry);
 }
 
-void Logger::Err(const std::string &message)
+void Logger::Error(const std::string &message)
 {
     LogEntry logEntry = {
         LOG_ERROR,
-        Red() + "Err [" + Timestamp() + "] : " + message + Reset()};
+        Red() + "Error [" + Timestamp() + "] : " + message + Reset()};
     std::cout << logEntry.message << std::endl;
     messages.push_back(logEntry);
+}
+
+void Logger::Fatal(const std::string &message)
+{
+    LogEntry logEntry = {
+        LOG_FATAL,
+        Red() + "FATAL [" + Timestamp() + "] : " + message + Reset()};
+    std::cout << logEntry.message << std::endl;
+    messages.push_back(logEntry);
+    exit(EXIT_FAILURE);
 }

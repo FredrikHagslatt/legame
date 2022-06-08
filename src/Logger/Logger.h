@@ -11,7 +11,8 @@ enum LogType
 {
     LOG_INFO,
     LOG_WARNING,
-    LOG_ERROR
+    LOG_ERROR,
+    LOG_FATAL
 };
 
 struct LogEntry
@@ -31,8 +32,9 @@ private:
 
 public:
     static std::vector<LogEntry> messages;
-    static void Log(const std::string &message);
-    static void Err(const std::string &message);
+    static void Info(const std::string &message);
+    static void Error(const std::string &message);
+    static void Fatal(const std::string &message);
 };
 
 #endif
