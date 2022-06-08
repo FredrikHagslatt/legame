@@ -32,14 +32,14 @@ public:
                 static_cast<int>(sprite.height * transform.scale.y)
             };
 
-            SDL_RenderCopy(
+            SDL_RenderCopyEx(
                 renderer, 
                 assetStore->GetTexture(sprite.assetId),
                 &srcRect,
-                &dstRect);
-//                transform.rotation,
-//                NULL,
-//                SDL_FLIP_NONE);
+                &dstRect,
+                transform.rotation,
+                NULL,
+                SDL_FLIP_NONE);
         }
     }
 };
