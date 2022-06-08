@@ -1,16 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Logger/Logger.h"
 #include "ECS/ECS.h"
-#include <glm/glm.hpp>
-#include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include "ECS/ECS.h"
-
-#include "Components/TransformComponent.h"
-#include "Components/RigidBodyComponent.h"
+#include <AssetStore/AssetStore.h>
 
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
@@ -24,6 +16,7 @@ private:
     SDL_Renderer* renderer;
 
     std::unique_ptr<Registry> registry;
+    std::unique_ptr<AssetStore> assetStore;
  
 public:
     Game();

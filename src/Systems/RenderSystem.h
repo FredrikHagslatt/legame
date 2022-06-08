@@ -1,20 +1,45 @@
 #ifndef RENDERSYSTEM_H
 #define RENDERSYSTEM_H
 
+#include "ECS/ECS.h"
+#include "Components/TransformComponent.h"
+#include "Components/SpriteComponent.h"
+#include "AssetStore/AssetStore.h"
+#include <SDL2/SDL.h>
+
 class RenderSystem : public System
 {
 public:
     RenderSystem()
     {
-        // TODO: Require SpriteComponent
+        RequireComponent<TransformComponent>();
+        RequireComponent<SpriteComponent>();
     }
 
-    void Update()
+    void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore> &assetStore)
     {
-        //Loop all entities that the system is interrested in
-        for (auto entity: GetEntities())
+        for (auto entity: GetSystemEntities())
         {
-            //RenderSprite
+            const auto transform = entity.GetComponent<TransformComponent>();
+            const auto sprite = entity.GetComponent<SpriteComponent>();
+
+            SDL_Rect srcRect = sprite.srcRect;
+            SDL_Rect dstRect = 
+            {
+                static_cast<int>(transform.position.x),
+                static_cast<int>(transform.position.y),
+                static_cast<int>(sprite.width * transform.scale.x),
+                static_cast<int>(sprite.height * transform.scale.y)
+            };
+
+            SDL_RenderCopy(
+                renderer, 
+                assetStore->GetTexture(sprite.assetId),
+                &srcRect,
+                &dstRect);
+//                transform.rotation,
+//                NULL,
+//                SDL_FLIP_NONE);
         }
     }
 };

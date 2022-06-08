@@ -278,7 +278,7 @@ TComponent &Registry::GetComponent(Entity entity) const
 {
     const int componentId = Component<TComponent>::GetId();
     const int entityId = entity.GetId();
-    Pool<TComponent> *componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentId]);
+    auto componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentId]);
     return componentPool->Get(entityId);
 }
 
