@@ -1,7 +1,6 @@
 #ifndef ECS_H
 #define ECS_H
 
-#include "Logger/Logger.h"
 #include <bitset>
 #include <vector>
 #include <algorithm>
@@ -9,6 +8,10 @@
 #include <memory>
 #include <unordered_map>
 #include <set>
+#include <deque>
+
+#include "Logger/Logger.h"
+
 
 const unsigned int MAX_COMPONENTS = 32;
 
@@ -42,6 +45,7 @@ public:
     Entity(int id) : id(id){};
     Entity(const Entity &entity) = default;
     int GetId() const;
+    void Kill();
 
     Entity &operator=(const Entity &rhs) = default;
     bool operator==(const Entity &rhs) const { return id == rhs.id; };
@@ -144,6 +148,7 @@ class Registry
 {
 private:
     int numEntities = 0;
+    std::deque<int> freeIds;
     std::set<Entity> entitiesToBeAdded;
     std::set<Entity> entitiesToBeKilled;
 
@@ -160,6 +165,7 @@ public:
 
     /* Entity management */
     Entity CreateEntity();
+    void KillEntity(Entity entity);
 
     /* Component management */
     template <typename TComponent, typename... TArgs>
@@ -185,6 +191,7 @@ public:
     TSystem &GetSystem() const;
 
     void AddEntityToSystems(Entity entity);
+    void RemoveEntityFromSystems(Entity entity);
 };
 
 template <typename TComponent>
