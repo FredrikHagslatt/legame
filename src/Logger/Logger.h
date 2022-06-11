@@ -33,6 +33,7 @@ private:
 public:
     static std::vector<LogEntry> messages;
     static void Info(const std::string &message);
+    static void Warning(const std::string &message);
     static void Error(const std::string &message);
     static void Fatal(const std::string &message);
 };

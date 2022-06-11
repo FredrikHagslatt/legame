@@ -8,13 +8,17 @@
 #include "Logger/Logger.h"
 #include <glm/glm.hpp>
 
-#include "Systems/MovementSystem.h"
-#include "Systems/RenderSystem.h"
-
 #include "Components/TransformComponent.h"
 #include "Components/RigidBodyComponent.h"
 #include "Components/SpriteComponent.h"
+#include "Components/AnimationComponent.h"
+#include "Components/BoxColliderComponent.h"
 
+#include "Systems/MovementSystem.h"
+#include "Systems/RenderSystem.h"
+#include "Systems/AnimationSystem.h"
+#include "Systems/CollisionSystem.h"
+#include "Systems/RenderColliderSystem.h"
 
 
 Game::Game()
@@ -39,10 +43,9 @@ void Game::Initialize()
         return;
     }
 
-    //    SDL_DisplayMode displayMode;
-    //    SDL_GetCurrentDisplayMode(0, &displayMode);
-    windowWidth = 1920;  // displayMode.w;
-    windowHeight = 1080; // displayMode.h;
+    windowWidth = 800;  // displayMode.w;
+    windowHeight = 600; // displayMode.h;
+
 
     window = SDL_CreateWindow(
         NULL,
@@ -62,8 +65,7 @@ void Game::Initialize()
         Logger::Fatal("Error creating SDL renderer.");
     }
 
-    //    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-
+//    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     isRunning = true;
 }
 
@@ -82,6 +84,18 @@ void Game::ProcessInput()
             {
                 isRunning = false;
             }
+            if (sdlEvent.key.keysym.sym == SDLK_d)
+            {
+                debugMode = !debugMode;
+
+                if (debugMode)
+                {
+                    Logger::Info("Debug mode activated");
+                }
+                else{
+                    Logger::Info("Debug mode dectivated");
+                }
+            }
             break;
         }
     }
@@ -91,10 +105,15 @@ void Game::LoadLevel(int level)
 {
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
+    registry->AddSystem<AnimationSystem>();
+    registry->AddSystem<CollisionSystem>();
+    registry->AddSystem<RenderColliderSystem>();
 
     assetStore->AddTexture(renderer, "tilemap-image", "assets/tilemaps/jungle.png");
     assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
     assetStore->AddTexture(renderer, "truck-image", "assets/images/truck-ford-right.png");
+    assetStore->AddTexture(renderer, "chopper-image", "assets/images/chopper.png");
+    assetStore->AddTexture(renderer, "radar-image", "assets/images/radar.png");
 
     int tileSize = 32;
     double tileScale = 2.0;
@@ -122,15 +141,30 @@ void Game::LoadLevel(int level)
     }
     mapFile.close();
 
+    Entity chopper = registry->CreateEntity();
+    chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
+    chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
+    chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
+    chopper.AddComponent<AnimationComponent>(2, 12, true);
+
+    Entity radar = registry->CreateEntity();
+    radar.AddComponent<TransformComponent>(glm::vec2(windowWidth - 74, 10), glm::vec2(1.0, 1.0), 0.0);
+    radar.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
+    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 100);
+    radar.AddComponent<AnimationComponent>(8, 5, true);
+
     Entity tank = registry->CreateEntity();
-    tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-    tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 0.0));
+    tank.AddComponent<TransformComponent>(glm::vec2(100.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
+    tank.AddComponent<RigidBodyComponent>(glm::vec2(-30.0, 0.0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
+    tank.AddComponent<BoxColliderComponent>(32, 32);
 
     Entity truck = registry->CreateEntity();
-    truck.AddComponent<TransformComponent>(glm::vec2(12.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-    truck.AddComponent<RigidBodyComponent>(glm::vec2(30.0, 0.0));
+    truck.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
+    truck.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 0.0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
+    truck.AddComponent<BoxColliderComponent>(32, 32);
+
 }
 
 void Game::Setup()
@@ -154,6 +188,9 @@ void Game::Update()
     //TODO:
     
     registry->GetSystem<MovementSystem>().Update(deltaTime);
+    registry->GetSystem<AnimationSystem>().Update();
+    registry->GetSystem<CollisionSystem>().Update();
+
     //registry->GetSystem<CollisionSystem>().Update();
     //registry->GetSystem<DamageSystem>().Update();
    
@@ -168,6 +205,10 @@ void Game::Render()
 
     registry->GetSystem<RenderSystem>().Update(renderer, assetStore);
 
+    if(debugMode)
+    {
+        registry->GetSystem<RenderColliderSystem>().Update(renderer);
+    }
     SDL_RenderPresent(renderer);
 }
 

@@ -9,6 +9,7 @@ const int MILLISECS_PER_FRAME = 1000 / FPS;
 class Game
 {
 private:
+    bool debugMode = false;
     bool isRunning;
     double deltaTime = 0;
     int millisecsPreviousFrame = 0;

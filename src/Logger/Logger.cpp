@@ -19,6 +19,15 @@ void Logger::Info(const std::string &message)
     messages.push_back(logEntry);
 }
 
+void Logger::Warning(const std::string &message)
+{
+    LogEntry logEntry = {
+        LOG_WARNING, 
+        Yellow() + "Log [" + Timestamp() + "] : " + message + Reset()};
+    std::cout << logEntry.message << std::endl;
+    messages.push_back(logEntry);
+}
+
 void Logger::Error(const std::string &message)
 {
     LogEntry logEntry = {
