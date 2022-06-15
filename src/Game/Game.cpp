@@ -20,6 +20,7 @@
 #include "Systems/CollisionSystem.h"
 #include "Systems/RenderColliderSystem.h"
 #include "Systems/DamageSystem.h"
+#include "Systems/KeyboardControlSystem.h"
 
 Game::Game()
 {
@@ -97,6 +98,7 @@ void Game::ProcessInput()
                     Logger::Info("Debug mode dectivated");
                 }
             }
+            eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
             break;
         }
     }
@@ -110,6 +112,7 @@ void Game::LoadLevel(int level)
     registry->AddSystem<CollisionSystem>();
     registry->AddSystem<RenderColliderSystem>();
     registry->AddSystem<DamageSystem>();
+    registry->AddSystem<KeyboardControlSystem>();
 
     assetStore->AddTexture(renderer, "tilemap-image", "assets/tilemaps/jungle.png");
     assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
@@ -191,6 +194,7 @@ void Game::Update()
 
     // Subscribe to events
     registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
+    registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
 
     // Update systems
     registry->GetSystem<MovementSystem>().Update(deltaTime);
