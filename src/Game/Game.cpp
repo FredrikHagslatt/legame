@@ -19,12 +19,14 @@
 #include "Systems/AnimationSystem.h"
 #include "Systems/CollisionSystem.h"
 #include "Systems/RenderColliderSystem.h"
+#include "Systems/DamageSystem.h"
 
 Game::Game()
 {
     isRunning = false;
     registry = std::make_unique<Registry>();
     assetStore = std::make_unique<AssetStore>();
+    eventBus = std::make_unique<EventBus>();
     Logger::Info("Game Created!");
 
 }
@@ -107,6 +109,7 @@ void Game::LoadLevel(int level)
     registry->AddSystem<AnimationSystem>();
     registry->AddSystem<CollisionSystem>();
     registry->AddSystem<RenderColliderSystem>();
+    registry->AddSystem<DamageSystem>();
 
     assetStore->AddTexture(renderer, "tilemap-image", "assets/tilemaps/jungle.png");
     assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
@@ -183,13 +186,17 @@ void Game::Update()
 
     millisecsPreviousFrame = SDL_GetTicks();
 
-    //TODO:
-    
+    // Reset all event handlers for the current frame
+    eventBus->Reset();
+
+    // Subscribe to events
+    registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
+
+    // Update systems
     registry->GetSystem<MovementSystem>().Update(deltaTime);
     registry->GetSystem<AnimationSystem>().Update();
-    registry->GetSystem<CollisionSystem>().Update();
+    registry->GetSystem<CollisionSystem>().Update(eventBus);
 
-    //registry->GetSystem<CollisionSystem>().Update();
     //registry->GetSystem<DamageSystem>().Update();
    
     //Update registry at end of frame

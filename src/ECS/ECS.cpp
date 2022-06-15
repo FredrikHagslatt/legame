@@ -7,6 +7,7 @@ int IComponent::nextId = 0;
 int Entity::GetId() const { return id; }
 void Entity::Kill()
 {
+    Logger::Info("Killed entity: " + std::to_string(this->GetId()));
     registry->KillEntity(*this);
 }
 

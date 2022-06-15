@@ -17,7 +17,7 @@ public:
     {
         Call(event);
     }
-}
+};
 
 template<typename TOwner, typename TEvent>
 class EventCallback : public IEventCallback
@@ -41,9 +41,9 @@ public:
 
     virtual ~EventCallback() override = default;
 
-}
+};
 
-typedef std::list<std::unique_ptr<IEventCallback>> HanderList;
+typedef std::list<std::unique_ptr<IEventCallback>> HandlerList;
 
 class EventBus
 {
@@ -53,11 +53,16 @@ private:
 public:
     EventBus()
     {
-        Logger::Log("EventBus created!");
+        Logger::Info("EventBus created!");
     }
     ~EventBus()
     {
-        Logger::Log("EventBus destroyed!");
+        Logger::Info("EventBus destroyed!");
+    }
+
+    void Reset()
+    {
+        subscribers.clear();
     }
 
     template<typename TEvent, typename TOwner>
@@ -71,13 +76,13 @@ public:
         subscribers[typeid(TEvent)]->push_back(std::move(subscriber));
     }
 
-    template<typename TEvent, typename TOwner>
+    template<typename TEvent, typename ...TArgs>
     void EmitEvent(TArgs&& ...args)
     {
         auto handlers = subscribers[typeid(TEvent)].get();
         if (handlers)
         {
-            for (auto it = handlers->begin(), it != handler->end(), it++)
+            for (auto it = handlers->begin(); it != handlers->end(); it++)
             {
                 auto handler = it->get();
                 TEvent event(std::forward<TArgs>(args)...);
@@ -85,7 +90,6 @@ public:
             }
         }
     }
-
-}
+};
 
 #endif
