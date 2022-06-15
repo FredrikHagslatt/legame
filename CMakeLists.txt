@@ -1,16 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
-project(highnoon)
+project(gameengine)
 
-if(EMSCRIPTEN)
-    message(STATUS "|   BUILDING EMSCRIPTEN   | --")
-elseif(UNIX)
+if(UNIX)
     message(STATUS "|   BUILDING UNIX   | --")
 elseif(WIN32)
     message(STATUS "|   BUILDING WIN32   | --")
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-# set(CMAKE_BUILD_TYPE Debug)
 
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 file(GLOB_RECURSE SOURCES ${SOURCE_DIR}/*.cpp)
@@ -21,23 +18,7 @@ if (EXISTS ${ASSETS_FOLDER} AND IS_DIRECTORY ${ASSETS_FOLDER})
     file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 endif()
 
-
-if(EMSCRIPTEN)
-    set(png '["png"]')
-    set(SDL2_LIBRARIES 
-    "-s USE_SDL=2"
-    "-s USE_SDL_IMAGE=2"
-    "-s USE_SDL_MIXER=2"
-    "-s SDL2_IMAGE_FORMATS=${png}"
-    )
-
-    set(MISC_FLAGS
-    "--preload-file assets"
-    "-o index.html"
-    "-s ALLOW_MEMORY_GROWTH=1"
-    )
-
-elseif(MINGW)
+if(MINGW)
     set(THIRD_PARTY "${CMAKE_SOURCE_DIR}/third-party")
     set(SDL2_DIR "${CMAKE_SOURCE_DIR}/third-party/SDL_Bundle_Mingw")
     set(SDL2_INCLUDE_DIRS ${SDL2_DIR}/include) # Same as SDL2_IMAGE_INCLUDE_DIR and SDL2_MIXER_INCLUDE_DIR
