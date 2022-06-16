@@ -13,6 +13,7 @@
 #include "Components/SpriteComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/BoxColliderComponent.h"
+#include "Components/KeyboardControlledComponent.h"
 
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
@@ -47,7 +48,6 @@ void Game::Initialize()
 
     windowWidth = 800;  // displayMode.w;
     windowHeight = 600; // displayMode.h;
-
 
     window = SDL_CreateWindow(
         NULL,
@@ -117,7 +117,7 @@ void Game::LoadLevel(int level)
     assetStore->AddTexture(renderer, "tilemap-image", "assets/tilemaps/jungle.png");
     assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
     assetStore->AddTexture(renderer, "truck-image", "assets/images/truck-ford-right.png");
-    assetStore->AddTexture(renderer, "chopper-image", "assets/images/chopper.png");
+    assetStore->AddTexture(renderer, "chopper-image", "assets/images/chopper-spritesheet.png");
     assetStore->AddTexture(renderer, "radar-image", "assets/images/radar.png");
 
     int tileSize = 32;
@@ -151,6 +151,7 @@ void Game::LoadLevel(int level)
     chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 12, true);
+    chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0, -100), glm::vec2(100, 0), glm::vec2(0, 100), glm::vec2(-100, 0));
 
     Entity radar = registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(windowWidth - 74, 10), glm::vec2(1.0, 1.0), 0.0);
