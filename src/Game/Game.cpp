@@ -14,6 +14,7 @@
 #include "Components/AnimationComponent.h"
 #include "Components/BoxColliderComponent.h"
 #include "Components/KeyboardControlledComponent.h"
+#include "Components/CameraFollowComponent.h"
 
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
@@ -22,6 +23,12 @@
 #include "Systems/RenderColliderSystem.h"
 #include "Systems/DamageSystem.h"
 #include "Systems/KeyboardControlSystem.h"
+#include "Systems/CameraMovementSystem.h"
+
+int Game::windowWidth;
+int Game::windowHeight;
+int Game::mapWidth;
+int Game::mapHeight;
 
 Game::Game()
 {
@@ -30,7 +37,6 @@ Game::Game()
     assetStore = std::make_unique<AssetStore>();
     eventBus = std::make_unique<EventBus>();
     Logger::Info("Game Created!");
-
 }
 
 Game::~Game()
@@ -67,7 +73,13 @@ void Game::Initialize()
         Logger::Fatal("Error creating SDL renderer.");
     }
 
-//    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+
+    camera.x = 0;
+    camera.y = 0;
+    camera.w = windowWidth;
+    camera.h = windowHeight;
+
+    //SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     isRunning = true;
 }
 
@@ -113,6 +125,7 @@ void Game::LoadLevel(int level)
     registry->AddSystem<RenderColliderSystem>();
     registry->AddSystem<DamageSystem>();
     registry->AddSystem<KeyboardControlSystem>();
+    registry->AddSystem<CameraMovementSystem>();
 
     assetStore->AddTexture(renderer, "tilemap-image", "assets/tilemaps/jungle.png");
     assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
@@ -145,6 +158,8 @@ void Game::LoadLevel(int level)
         }
     }
     mapFile.close();
+    mapWidth = mapNumCols * tileSize * tileScale;
+    mapHeight = mapNumRows * tileSize * tileScale;
 
     Entity chopper = registry->CreateEntity();
     chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
@@ -152,6 +167,7 @@ void Game::LoadLevel(int level)
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 12, true);
     chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0, -100), glm::vec2(100, 0), glm::vec2(0, 100), glm::vec2(-100, 0));
+    chopper.AddComponent<CameraFollowComponent>();
 
     Entity radar = registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(windowWidth - 74, 10), glm::vec2(1.0, 1.0), 0.0);
@@ -201,6 +217,7 @@ void Game::Update()
     registry->GetSystem<MovementSystem>().Update(deltaTime);
     registry->GetSystem<AnimationSystem>().Update();
     registry->GetSystem<CollisionSystem>().Update(eventBus);
+    registry->GetSystem<CameraMovementSystem>().Update(camera);
 
     //registry->GetSystem<DamageSystem>().Update();
    
@@ -213,7 +230,7 @@ void Game::Render()
     SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
     SDL_RenderClear(renderer);
 
-    registry->GetSystem<RenderSystem>().Update(renderer, assetStore);
+    registry->GetSystem<RenderSystem>().Update(renderer, assetStore, camera);
 
     if(debugMode)
     {
