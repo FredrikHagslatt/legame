@@ -34,7 +34,6 @@ public:
             {
                 player.Kill();
             }
-
             projectile.Kill();
         }
     }
@@ -51,7 +50,6 @@ public:
             {
                 enemy.Kill();
             }
-
             projectile.Kill();
         }
     }
@@ -80,8 +78,6 @@ public:
         {
             onProjectileHitsEnemy(b, a);
         }
-
-
     }
 
     void Update()
