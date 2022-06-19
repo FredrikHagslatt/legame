@@ -22,6 +22,8 @@ public:
         eventBus->SubscribeToEvent<KeyPressedEvent>(this, &KeyboardControlSystem::onKeyPressed);
     }
 
+
+
     void onKeyPressed(KeyPressedEvent &event)
     {
         for(auto entity : GetSystemEntities())

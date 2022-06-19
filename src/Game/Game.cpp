@@ -14,7 +14,7 @@
 #include "Components/AnimationComponent.h"
 #include "Components/BoxColliderComponent.h"
 #include "Components/KeyboardControlledComponent.h"
-#include "Components/CameraFollowComponent.h"
+#include "Components/MainPlayerComponent.h"
 #include "Components/ProjectileEmitterComponent.h"
 #include "Components/HealthComponent.h"
 
@@ -169,12 +169,13 @@ void Game::LoadLevel(int level)
     mapHeight = mapNumRows * tileSize * tileScale;
 
     Entity chopper = registry->CreateEntity();
+    chopper.AddComponent<MainPlayerComponent>();
     chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
     chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 12, true);
+    chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(300.0, 300.0), 0, 10000, 0, true);
     chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0, -100), glm::vec2(100, 0), glm::vec2(0, 100), glm::vec2(-100, 0));
-    chopper.AddComponent<CameraFollowComponent>();
     chopper.AddComponent<HealthComponent>(100);
 
     Entity radar = registry->CreateEntity();
@@ -226,6 +227,7 @@ void Game::Update()
     // Subscribe to events
     registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
     registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
+    registry->GetSystem<ProjectileEmitSystem>().SubscribeToEvents(eventBus);
 
     // Update systems
     registry->GetSystem<MovementSystem>().Update(deltaTime);

@@ -3,11 +3,10 @@
 
 #include "Logger/Logger.h"
 #include "ECS/ECS.h"
-#include "Components/CameraFollowComponent.h"
+#include "Components/MainPlayerComponent.h"
 #include "Components/TransformComponent.h"
 
 #include <SDL2/SDL.h>
-
 
 
 class CameraMovementSystem : public System
@@ -15,7 +14,7 @@ class CameraMovementSystem : public System
 public:
     CameraMovementSystem()
     {
-        RequireComponent<CameraFollowComponent>();
+        RequireComponent<MainPlayerComponent>();
         RequireComponent<TransformComponent>();
     }
 
