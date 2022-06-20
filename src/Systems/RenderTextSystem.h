@@ -42,7 +42,6 @@ public:
             };
             SDL_RenderCopy(renderer, texture, NULL, &dstRect);
             SDL_DestroyTexture(texture);
-            Logger::Warning("Rendering text");
         }
     }
 };

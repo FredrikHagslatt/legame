@@ -23,6 +23,7 @@
 #include "Systems/RenderSystem.h"
 #include "Systems/RenderColliderSystem.h"
 #include "Systems/RenderTextSystem.h"
+#include "Systems/RenderHealthSystem.h"
 #include "Systems/AnimationSystem.h"
 #include "Systems/CollisionSystem.h"
 #include "Systems/DamageSystem.h"
@@ -141,6 +142,7 @@ void Game::LoadLevel(int level)
     registry->AddSystem<ProjectileEmitSystem>();
     registry->AddSystem<ProjectileLifecycleSystem>();
     registry->AddSystem<RenderTextSystem>();
+    registry->AddSystem<RenderHealthSystem>();
 
     assetStore->AddTexture(renderer, "tilemap-image", "assets/tilemaps/jungle.png");
     assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
@@ -150,6 +152,8 @@ void Game::LoadLevel(int level)
     assetStore->AddTexture(renderer, "bullet-image", "assets/images/bullet.png");
 
     assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20);
+    assetStore->AddFont("pico8-font-5", "assets/fonts/pico8.ttf", 5);
+    assetStore->AddFont("pico8-font-10", "assets/fonts/pico8.ttf", 10);
 
     int tileSize = 32;
     double tileScale = 2.0;
@@ -201,7 +205,7 @@ void Game::LoadLevel(int level)
 
     Entity tank = registry->CreateEntity();
     tank.Group("enemies");
-    tank.AddComponent<TransformComponent>(glm::vec2(100.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
+    tank.AddComponent<TransformComponent>(glm::vec2(500.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
     tank.AddComponent<BoxColliderComponent>(32, 32);
@@ -210,7 +214,7 @@ void Game::LoadLevel(int level)
 
     Entity truck = registry->CreateEntity();
     truck.Group("enemies");
-    truck.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
+    truck.AddComponent<TransformComponent>(glm::vec2(120.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
     truck.AddComponent<BoxColliderComponent>(32, 32);
@@ -269,6 +273,7 @@ void Game::Render()
 
     registry->GetSystem<RenderSystem>().Update(renderer, assetStore, camera);
     registry->GetSystem<RenderTextSystem>().Update(renderer, assetStore, camera);
+    registry->GetSystem<RenderHealthSystem>().Update(renderer, assetStore, camera);
 
     if(debugMode)
     {
