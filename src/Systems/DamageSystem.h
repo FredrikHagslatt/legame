@@ -19,10 +19,10 @@ public:
 
     void SubscribeToEvents(std::unique_ptr<EventBus> &eventBus)
     {
-        eventBus->SubscribeToEvent<CollisionEvent>(this, &DamageSystem::onCollision);
+        eventBus->SubscribeToEvent<CollisionEvent>(this, &DamageSystem::OnCollision);
     }
 
-    void onProjectileHitsPlayer(Entity projectile, Entity player)
+    void OnProjectileHitsPlayer(Entity projectile, Entity player)
     {
         auto projectileComponent = projectile.GetComponent<ProjectileComponent>();
         if(!projectileComponent.isFriendly)
@@ -38,7 +38,7 @@ public:
         }
     }
 
-    void onProjectileHitsEnemy(Entity projectile, Entity enemy)
+    void OnProjectileHitsEnemy(Entity projectile, Entity enemy)
     {
         auto projectileComponent = projectile.GetComponent<ProjectileComponent>();
         if(projectileComponent.isFriendly)
@@ -54,7 +54,7 @@ public:
         }
     }
 
-    void onCollision(CollisionEvent &event)
+    void OnCollision(CollisionEvent &event)
     {
         Entity a = event.a;
         Entity b = event.b;
@@ -62,21 +62,21 @@ public:
 
         if (a.BelongsToGroup("projectiles") && b.HasTag("player"))
         {        
-            onProjectileHitsPlayer(a, b);
+            OnProjectileHitsPlayer(a, b);
         }
 
         if (b.BelongsToGroup("projectiles") && a.HasTag("player"))
         {
-            onProjectileHitsPlayer(b, a);
+            OnProjectileHitsPlayer(b, a);
         }
 
         if (a.BelongsToGroup("projectiles") && b.BelongsToGroup("enemies"))
         {
-            onProjectileHitsEnemy(a, b);
+            OnProjectileHitsEnemy(a, b);
         }
         if (b.BelongsToGroup("projectiles") && a.BelongsToGroup("enemies"))
         {
-            onProjectileHitsEnemy(b, a);
+            OnProjectileHitsEnemy(b, a);
         }
     }
 
