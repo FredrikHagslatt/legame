@@ -195,7 +195,7 @@ void Game::LoadLevel(int level)
     chopper.AddComponent<AnimationComponent>(2, 12, true);
     chopper.AddComponent<BoxColliderComponent>(32, 32);
     chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(300.0, 300.0), 0, 10000, 10, true);
-    chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0, -100), glm::vec2(100, 0), glm::vec2(0, 100), glm::vec2(-100, 0));
+    chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0, -300), glm::vec2(300, 0), glm::vec2(0, 300), glm::vec2(-300, 0));
     chopper.AddComponent<HealthComponent>(100);
 
     Entity radar = registry->CreateEntity();
