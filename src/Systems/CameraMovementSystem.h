@@ -2,46 +2,35 @@
 #define CAMERAMOVEMENTSYSTEM_H
 
 #include "Logger/Logger.h"
-#include "ECS/ECS.h"
-#include "Components/MainPlayerComponent.h"
-#include "Components/TransformComponent.h"
-
+#include "entt/entt.hpp"
+#include "Components/MainPlayer.h"
+#include "Components/Transform.h"
 #include <SDL2/SDL.h>
 
-
-class CameraMovementSystem : public System
+namespace CameraMovementSystem
 {
-public:
-    CameraMovementSystem()
-    {
-        RequireComponent<MainPlayerComponent>();
-        RequireComponent<TransformComponent>();
-    }
-
-    void Update(SDL_Rect &camera)
-    {
-        for (auto entity : GetSystemEntities())
+        void Update(entt::registry &registry, SDL_Rect &camera)
         {
-            auto transform = entity.GetComponent<TransformComponent>();
-
-
-            if(transform.position.x + (camera.w / 2) < Game::mapWidth)
+            auto view = registry.view<MainPlayer, Transform>();
+            for (auto entity : view)
             {
-                camera.x = transform.position.x - (Game::windowWidth / 2);
-            }
-            if(transform.position.y + (camera.h / 2) < Game::mapHeight)
-            {
-                camera.y = transform.position.y - (Game::windowHeight / 2);
-            }
+                auto const transform = view.get<Transform>(entity);
 
-            camera.x = camera.x < 0 ? 0 : camera.x;
-            camera.y = camera.y < 0 ? 0 : camera.y;
-            camera.x = camera.x > camera.w ? camera.w : camera.x;
-            camera.y = camera.y > camera.h ? camera.h : camera.y;
+                if (transform.position.x + (camera.w / 2) < Game::mapWidth)
+                {
+                    camera.x = transform.position.x - (Game::windowWidth / 2);
+                }
+                if (transform.position.y + (camera.h / 2) < Game::mapHeight)
+                {
+                    camera.y = transform.position.y - (Game::windowHeight / 2);
+                }
+
+                camera.x = camera.x < 0 ? 0 : camera.x;
+                camera.y = camera.y < 0 ? 0 : camera.y;
+                camera.x = camera.x > camera.w ? camera.w : camera.x;
+                camera.y = camera.y > camera.h ? camera.h : camera.y;
+            }
         }
-
-    }
-
 };
 
 #endif

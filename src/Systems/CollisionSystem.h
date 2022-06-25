@@ -1,11 +1,13 @@
 #ifndef COLLISIONSYSTEM_H
 #define COLLISIONSYSTEM_H
 
-#include "ECS/ECS.h"
+#include "entt/entt.hpp"
 #include "EventBus/EventBus.h"
 #include "Events/CollisionEvent.h"
-#include "Components/TransformComponent.h"
-#include "Components/BoxColliderComponent.h"
+#include "Components/Transform.h"
+#include "Components/BoxCollider.h"
+
+/*
 
 class CollisionSystem : public System
 {
@@ -79,4 +81,5 @@ public:
     }
 };
 
+*/
 #endif

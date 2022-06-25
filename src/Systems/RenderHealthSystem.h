@@ -1,14 +1,14 @@
 #ifndef RENDERHEALTHSYSTEM_H
 #define RENDERHEALTHSYSTEM_H
 
-#include "ECS/ECS.h"
+#include "entt/entt.hpp"
 #include "AssetStore/AssetStore.h"
-#include "Components/TransformComponent.h"
-#include "Components/SpriteComponent.h"
-#include "Components/HealthComponent.h"
+#include "Components/Transform.h"
+#include "Components/Sprite.h"
+#include "Components/Health.h"
 #include <SDL2/SDL.h>
 
-
+/*
 class RenderHealthSystem : public System
 {
 public:
@@ -90,5 +90,6 @@ public:
     }
 
 };
+*/
 
 #endif

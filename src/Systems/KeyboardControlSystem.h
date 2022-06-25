@@ -1,53 +1,46 @@
 #ifndef KEYBOARDCONTROLSYSTEM_H
 #define KEYBOARDCONTROLSYSTEM_H
 
-#include "ECS/ECS.h"
+#include "entt/entt.hpp"
 #include "EventBus/EventBus.h"
 #include "Events/KeyPressedEvent.h"
-#include "Components/SpriteComponent.h"
-#include "Components/RigidBodyComponent.h"
+#include "Components/Sprite.h"
+#include "Components/Velocity.h"
+#include "Components/KeyboardControlled.h"
 
-class KeyboardControlSystem : public System
-{
-public:
-    KeyboardControlSystem()
-    {
-        RequireComponent<KeyboardControlledComponent>();
-        RequireComponent<SpriteComponent>();
-        RequireComponent<RigidBodyComponent>();
-    }
+namespace KeyBoardControlSystem{
 
     void SubscribeToEvents(std::unique_ptr<EventBus> &eventBus)
     {
-        eventBus->SubscribeToEvent<KeyPressedEvent>(this, &KeyboardControlSystem::onKeyPressed);
+        eventBus->SubscribeToEvent<KeyPressedEvent>(this, &KeyboardControlSystem::OnKeyPressed);
     }
 
-
-
-    void onKeyPressed(KeyPressedEvent &event)
+    void OnKeyPressed(KeyPressedEvent &event)
     {
-        for(auto entity : GetSystemEntities())
+
+        auto view = registry.view<KeyboardControlled, Sprite, Velocity>();
+        for (auto entity : view)
         {
-            const auto keyboardControl = entity.GetComponent<KeyboardControlledComponent>();
-            auto& sprite = entity.GetComponent<SpriteComponent>();
-            auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
+            const auto keyboardControl = view.get<KeyboardControlled>(entity);
+            auto &sprite = view.get<Sprite>(entity);
+            auto &velocity  = view.get<Velocity>(entity);
 
             switch(event.symbol)
             {
                 case SDLK_UP:
-                    rigidBody.velocity = keyboardControl.upVelocity;
+                    velocity.velocity = keyboardControl.upVelocity;
                     sprite.srcRect.y = sprite.height * 0;
                     break;
                 case SDLK_RIGHT:
-                    rigidBody.velocity = keyboardControl.rightVelocity;
+                    velocity.velocity = keyboardControl.rightVelocity;
                     sprite.srcRect.y = sprite.height * 1;
                     break;
                 case SDLK_DOWN:
-                    rigidBody.velocity = keyboardControl.downVelocity;
+                    velocity.velocity = keyboardControl.downVelocity;
                     sprite.srcRect.y = sprite.height * 2;
                     break;
                 case SDLK_LEFT:
-                    rigidBody.velocity = keyboardControl.leftVelocity;
+                    velocity.velocity = keyboardControl.leftVelocity;
                     sprite.srcRect.y = sprite.height * 3;
                     break;
 

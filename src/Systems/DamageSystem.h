@@ -1,13 +1,14 @@
 #ifndef DAMAGESYSTEM_H
 #define DAMAGESYSTEM_H
 
-#include "ECS/ECS.h"
-#include "Components/BoxColliderComponent.h"
-#include "Components/HealthComponent.h"
-#include "Components/ProjectileComponent.h"
-#include "Components/HealthComponent.h"
+#include "entt/entt.hpp"
+#include "Components/BoxCollider.h"
+#include "Components/Health.h"
+#include "Components/Projectile.h"
+#include "Components/Health.h"
 #include "EventBus/EventBus.h"
 #include "Events/CollisionEvent.h"
+/*
 
 class DamageSystem : public System
 {
@@ -28,7 +29,7 @@ public:
         if(!projectileComponent.isFriendly)
         {
             auto &health = player.GetComponent<HealthComponent>();
-            health.healthPercentage -= projectileComponent.hitPercentDamage;
+            health.healthPercentage -= projectile.hitPercentDamage;
 
             if(health.healthPercentage <= 0)
             {
@@ -44,7 +45,7 @@ public:
         if(projectileComponent.isFriendly)
         {
             auto &health = enemy.GetComponent<HealthComponent>();
-            health.healthPercentage -= projectileComponent.hitPercentDamage;
+            health.healthPercentage -= projectile.hitPercentDamage;
 
             if(health.healthPercentage <= 0)
             {
@@ -85,5 +86,7 @@ public:
 
     }
 };
+
+*/
 
 #endif

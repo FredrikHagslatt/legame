@@ -1,31 +1,26 @@
 #ifndef ANIMATIONSYSTEM_H
 #define ANIMATIONSYSTEM_H
 
-#include "ECS/ECS.h"
-#include "Components/SpriteComponent.h"
-#include "Components/AnimationComponent.h"
+#include "entt/entt.hpp"
+#include "Components/Sprite.h"
+#include "Components/Animation.h"
 #include <SDL2/SDL.h>
 
-class AnimationSystem : public System
+namespace AnimationSystem
 {
-public:
-    AnimationSystem()
-    {
-        RequireComponent<SpriteComponent>();
-        RequireComponent<AnimationComponent>();
-    }
-
-    void Update()
-    {
-        for (auto entity : GetSystemEntities())
+        void Update(entt::registry &registry)
         {
-            auto &animation = entity.GetComponent<AnimationComponent>();
-            auto &sprite = entity.GetComponent<SpriteComponent>();
+            auto view = registry.view<Sprite, Animation>();
+            for (auto entity : view)
+            {
+                // Update entity position based on its velocity
+                auto &sprite = view.get<Sprite>(entity);
+                auto &animation = view.get<Animation>(entity);
 
-            animation.currentFrame = static_cast<int>((SDL_GetTicks() - animation.startTime) * animation.frameRateSpeed / 1000.0) % animation.numFrames;
-            sprite.srcRect.x = animation.currentFrame * sprite.width;
+                animation.currentFrame = static_cast<int>((SDL_GetTicks() - animation.startTime) * animation.frameRateSpeed / 1000.0) % animation.numFrames;
+                sprite.srcRect.x = animation.currentFrame * sprite.width;
+            }
         }
-    }
 };
 
 #endif

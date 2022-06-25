@@ -2,8 +2,10 @@
 #define PROJECTILELIFECYCLESYSTEM_H
 
 #include <SDL2/SDL.h>
-#include "ECS/ECS.h"
-#include "Components/ProjectileComponent.h"
+#include "entt/entt.hpp"
+#include "Components/Projectile.h"
+
+/*
 
 class ProjectileLifecycleSystem : public System{
 public:
@@ -28,5 +30,5 @@ public:
 
 };
 
-
+*/
 #endif

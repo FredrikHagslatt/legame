@@ -1,11 +1,13 @@
 #ifndef RENDERTEXTSYSTEM_H
 #define RENDERTEXTSYSTEM_H
 
-#include "ECS/ECS.h"
-#include "Components/TextLabelComponent.h"
+#include "entt/entt.hpp"
+#include "Components/TextLabel.h"
 #include "AssetStore/AssetStore.h"
 #include <SDL2/SDL.h>
 #include "Logger/Logger.h"
+
+/*
 
 class RenderTextSystem : public System
 {
@@ -45,5 +47,7 @@ public:
         }
     }
 };
+
+*/
 
 #endif

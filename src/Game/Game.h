@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "ECS/ECS.h"
+#include "entt/entt.hpp"
 #include "AssetStore/AssetStore.h"
 #include "EventBus/EventBus.h"
 #include <SDL2/SDL.h>
@@ -19,7 +19,7 @@ private:
     SDL_Renderer* renderer;
     SDL_Rect camera;
 
-    std::unique_ptr<Registry> registry;
+    entt::registry registry;
     std::unique_ptr<AssetStore> assetStore;
     std::unique_ptr<EventBus> eventBus;
 

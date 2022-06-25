@@ -13,14 +13,15 @@ set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 file(GLOB_RECURSE SOURCES ${SOURCE_DIR}/*.cpp)
 set(ASSETS_FOLDER "${CMAKE_SOURCE_DIR}/assets")
 include_directories("${CMAKE_SOURCE_DIR}/src")
+set(THIRD_PARTY "${CMAKE_SOURCE_DIR}/3rdparty")
+include_directories(${THIRD_PARTY})
 
 if (EXISTS ${ASSETS_FOLDER} AND IS_DIRECTORY ${ASSETS_FOLDER})
     file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 endif()
 
 if(MINGW)
-    set(THIRD_PARTY "${CMAKE_SOURCE_DIR}/third-party")
-    set(SDL2_DIR "${CMAKE_SOURCE_DIR}/third-party/SDL_Bundle_Mingw")
+    set(SDL2_DIR "${THIRD_PARTY}/SDL_Bundle_Mingw")
     set(SDL2_INCLUDE_DIRS ${SDL2_DIR}/include) # Same as SDL2_IMAGE_INCLUDE_DIR and SDL2_MIXER_INCLUDE_DIR
     set(SDL2_LIBRARIES
         -lmingw32 

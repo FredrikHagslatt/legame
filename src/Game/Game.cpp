@@ -4,33 +4,38 @@
 #include <SDL2/SDL_image.h>
 #include <fstream>
 
-#include "ECS/ECS.h"
+#include "entt/entt.hpp"
 #include "Logger/Logger.h"
 #include <glm/glm.hpp>
 
-#include "Components/TransformComponent.h"
-#include "Components/RigidBodyComponent.h"
-#include "Components/SpriteComponent.h"
-#include "Components/AnimationComponent.h"
-#include "Components/BoxColliderComponent.h"
-#include "Components/KeyboardControlledComponent.h"
-#include "Components/MainPlayerComponent.h"
-#include "Components/ProjectileEmitterComponent.h"
-#include "Components/HealthComponent.h"
-#include "Components/TextLabelComponent.h"
+#include "Components/Transform.h"
+#include "Components/Velocity.h"
+#include "Components/Sprite.h"
+#include "Components/Animation.h"
+#include "Components/BoxCollider.h"
+#include "Components/KeyboardControlled.h"
+#include "Components/MainPlayer.h"
+#include "Components/ProjectileEmitter.h"
+#include "Components/Health.h"
+#include "Components/TextLabel.h"
 
-#include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
+#include "Systems/AnimationSystem.h"
+#include "Systems/MovementSystem.h"
+#include "Systems/KeyboardControlSystem.h"
+
+/*
 #include "Systems/RenderColliderSystem.h"
 #include "Systems/RenderTextSystem.h"
 #include "Systems/RenderHealthSystem.h"
-#include "Systems/AnimationSystem.h"
 #include "Systems/CollisionSystem.h"
 #include "Systems/DamageSystem.h"
-#include "Systems/KeyboardControlSystem.h"
 #include "Systems/CameraMovementSystem.h"
 #include "Systems/ProjectileEmitSystem.h"
 #include "Systems/ProjectileLifecycleSystem.h"
+*/
+
+#include "Events/KeyPressedEvent.h"
 
 int Game::windowWidth;
 int Game::windowHeight;
@@ -40,7 +45,6 @@ int Game::mapHeight;
 Game::Game()
 {
     isRunning = false;
-    registry = std::make_unique<Registry>();
     assetStore = std::make_unique<AssetStore>();
     eventBus = std::make_unique<EventBus>();
     Logger::Info("Game Created!");
@@ -131,6 +135,7 @@ void Game::ProcessInput()
 
 void Game::LoadLevel(int level)
 {
+    /*
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
     registry->AddSystem<AnimationSystem>();
@@ -143,6 +148,7 @@ void Game::LoadLevel(int level)
     registry->AddSystem<ProjectileLifecycleSystem>();
     registry->AddSystem<RenderTextSystem>();
     registry->AddSystem<RenderHealthSystem>();
+    */
 
     assetStore->AddTexture(renderer, "tilemap-image", "assets/tilemaps/jungle.png");
     assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
@@ -175,10 +181,16 @@ void Game::LoadLevel(int level)
             int srcRectX = std::atoi(&ch) * tileSize;
             mapFile.ignore();
 
+            const auto tile = registry.create();
+            registry.emplace<Transform>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
+            registry.emplace<Sprite>(tile, "tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
+
+/*
             Entity tile = registry->CreateEntity();
             tile.Group("tiles");
             tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
             tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
+*/
         }
     }
 
@@ -186,6 +198,7 @@ void Game::LoadLevel(int level)
     mapWidth = mapNumCols * tileSize * tileScale;
     mapHeight = mapNumRows * tileSize * tileScale;
 
+/*
     Entity chopper = registry->CreateEntity();
     chopper.Tag("player");
     chopper.AddComponent<MainPlayerComponent>();
@@ -197,13 +210,26 @@ void Game::LoadLevel(int level)
     chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(300.0, 300.0), 0, 10000, 10, true);
     chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0, -300), glm::vec2(300, 0), glm::vec2(0, 300), glm::vec2(-300, 0));
     chopper.AddComponent<HealthComponent>(100);
+*/
 
+    const auto chopper = registry.create();
+    registry.emplace<Transform>(chopper, glm::vec2(100.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Velocity>(chopper, 100.0, 0.0);
+    registry.emplace<Sprite>(chopper, "chopper-image", 32, 32, 10);
+    registry.emplace<Animation>(chopper, 2, 12, true);
+
+/*
     Entity radar = registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(windowWidth - 74, 10), glm::vec2(1.0, 1.0), 0.0);
-    radar.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 100, true);
     radar.AddComponent<AnimationComponent>(8, 5, true);
+*/
+    const auto radar = registry.create();
+    registry.emplace<Transform>(radar, glm::vec2(windowWidth - 74, 10.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Sprite>(radar, "radar-image", 64, 64, 100, true);
+    registry.emplace<Animation>(radar, 8, 5, true);
 
+/*
     Entity tank = registry->CreateEntity();
     tank.Group("enemies");
     tank.AddComponent<TransformComponent>(glm::vec2(500.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
@@ -212,7 +238,14 @@ void Game::LoadLevel(int level)
     tank.AddComponent<BoxColliderComponent>(32, 32);
 //    tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100.0, 0.0), 1000, 1000, 10, false);
     tank.AddComponent<HealthComponent>(100);
+*/
 
+    const auto tank = registry.create();
+    registry.emplace<Transform>(tank, glm::vec2(120.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Velocity>(tank, 30.0, 0.0);
+    registry.emplace<Sprite>(tank, "tank-image", 32, 32, 2);
+
+/*
     Entity truck = registry->CreateEntity();
     truck.Group("enemies");
     truck.AddComponent<TransformComponent>(glm::vec2(120.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
@@ -221,7 +254,13 @@ void Game::LoadLevel(int level)
     truck.AddComponent<BoxColliderComponent>(32, 32);
     truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 2000, 5000, 10, false);
     truck.AddComponent<HealthComponent>(100);
+*/
+    const auto truck = registry.create();
+    registry.emplace<Transform>(truck, glm::vec2(300.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Velocity>(truck, 20.0, 0.0);
+    registry.emplace<Sprite>(truck, "truck-image", 32, 32, 2);
 
+/*
     Entity treeA = registry->CreateEntity();
     treeA.Group("obstacles");
     treeA.AddComponent<TransformComponent>(glm::vec2(400.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
@@ -237,6 +276,9 @@ void Game::LoadLevel(int level)
     Entity label = registry->CreateEntity();
     SDL_Color green = {0, 200, 0};
     label.AddComponent<TextLabelComponent>(glm::vec2(windowWidth / 2 - 40, 10), "Chopper 1.0", "charriot-font", green, true);
+*/
+
+
 }
 
 void Game::Setup()
@@ -260,24 +302,30 @@ void Game::Update()
     // Reset all event handlers for the current frame
     eventBus->Reset();
 
+    KeyboardControlSystem::SubscribeToEvents(eventBus);
+/*
     // Subscribe to events
     registry->GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
     registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
-    registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
     registry->GetSystem<ProjectileEmitSystem>().SubscribeToEvents(eventBus);
+*/
 
     // Update systems
+
+    MovementSystem::Update(registry, deltaTime);
+    AnimationSystem::Update(registry);
+/*
     registry->GetSystem<MovementSystem>().Update(deltaTime);
     registry->GetSystem<AnimationSystem>().Update();
     registry->GetSystem<CollisionSystem>().Update(eventBus);
     registry->GetSystem<CameraMovementSystem>().Update(camera);
     registry->GetSystem<ProjectileEmitSystem>().Update(registry);
     registry->GetSystem<ProjectileLifecycleSystem>().Update();
-
+*/
     //registry->GetSystem<DamageSystem>().Update();
    
     //Update registry at end of frame
-    registry->Update();
+    //registry->Update();
 }
 
 void Game::Render()
@@ -285,13 +333,17 @@ void Game::Render()
     SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
     SDL_RenderClear(renderer);
 
+    RenderSystem::Update(registry, renderer, assetStore, camera);
+
+/*
     registry->GetSystem<RenderSystem>().Update(renderer, assetStore, camera);
     registry->GetSystem<RenderTextSystem>().Update(renderer, assetStore, camera);
     registry->GetSystem<RenderHealthSystem>().Update(renderer, assetStore, camera);
+*/
 
     if(debugMode)
     {
-        registry->GetSystem<RenderColliderSystem>().Update(renderer, camera);
+//        registry->GetSystem<RenderColliderSystem>().Update(renderer, camera);
     }
     SDL_RenderPresent(renderer);
 }
