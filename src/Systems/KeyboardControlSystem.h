@@ -2,22 +2,15 @@
 #define KEYBOARDCONTROLSYSTEM_H
 
 #include "entt/entt.hpp"
-#include "EventBus/EventBus.h"
-#include "Events/KeyPressedEvent.h"
 #include "Components/Sprite.h"
 #include "Components/Velocity.h"
 #include "Components/KeyboardControlled.h"
 
 namespace KeyBoardControlSystem{
 
-    void SubscribeToEvents(std::unique_ptr<EventBus> &eventBus)
+    void OnKeyPressed(entt::registry &registry, SDL_Event &event)
     {
-        eventBus->SubscribeToEvent<KeyPressedEvent>(this, &KeyboardControlSystem::OnKeyPressed);
-    }
-
-    void OnKeyPressed(KeyPressedEvent &event)
-    {
-
+        Logger::Warning(" - EVENT TRIGGERED - ");
         auto view = registry.view<KeyboardControlled, Sprite, Velocity>();
         for (auto entity : view)
         {
@@ -25,22 +18,26 @@ namespace KeyBoardControlSystem{
             auto &sprite = view.get<Sprite>(entity);
             auto &velocity  = view.get<Velocity>(entity);
 
-            switch(event.symbol)
+            switch(event.key.keysym.sym)
             {
                 case SDLK_UP:
-                    velocity.velocity = keyboardControl.upVelocity;
+                    velocity.x = keyboardControl.upVelocity.x;
+                    velocity.y = keyboardControl.upVelocity.y;
                     sprite.srcRect.y = sprite.height * 0;
                     break;
                 case SDLK_RIGHT:
-                    velocity.velocity = keyboardControl.rightVelocity;
+                    velocity.x = keyboardControl.rightVelocity.x;
+                    velocity.y = keyboardControl.rightVelocity.y;
                     sprite.srcRect.y = sprite.height * 1;
                     break;
                 case SDLK_DOWN:
-                    velocity.velocity = keyboardControl.downVelocity;
+                    velocity.x = keyboardControl.downVelocity.x;
+                    velocity.y = keyboardControl.downVelocity.y;
                     sprite.srcRect.y = sprite.height * 2;
                     break;
                 case SDLK_LEFT:
-                    velocity.velocity = keyboardControl.leftVelocity;
+                    velocity.x = keyboardControl.leftVelocity.x;
+                    velocity.y = keyboardControl.leftVelocity.y;
                     sprite.srcRect.y = sprite.height * 3;
                     break;
 

@@ -35,8 +35,6 @@
 #include "Systems/ProjectileLifecycleSystem.h"
 */
 
-#include "Events/KeyPressedEvent.h"
-
 int Game::windowWidth;
 int Game::windowHeight;
 int Game::mapWidth;
@@ -46,7 +44,7 @@ Game::Game()
 {
     isRunning = false;
     assetStore = std::make_unique<AssetStore>();
-    eventBus = std::make_unique<EventBus>();
+//    eventBus = std::make_unique<EventBus>();
     Logger::Info("Game Created!");
 }
 
@@ -127,7 +125,8 @@ void Game::ProcessInput()
                     Logger::Info("Debug mode dectivated");
                 }
             }
-            eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
+            keyPressedEvent.publish(registry, sdlEvent);
+//            eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
             break;
         }
     }
@@ -284,6 +283,7 @@ void Game::LoadLevel(int level)
 void Game::Setup()
 {
     LoadLevel(1);
+    keyPressedEventListener.connect<&KeyBoardControlSystem::OnKeyPressed>();
 }
 
 void Game::Update()
@@ -300,9 +300,10 @@ void Game::Update()
     millisecsPreviousFrame = SDL_GetTicks();
 
     // Reset all event handlers for the current frame
-    eventBus->Reset();
+//    eventBus->Reset();
 
-    KeyboardControlSystem::SubscribeToEvents(eventBus);
+//    KeyboardControlSystem::SubscribeToEvents(eventBus);
+
 /*
     // Subscribe to events
     registry->GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
