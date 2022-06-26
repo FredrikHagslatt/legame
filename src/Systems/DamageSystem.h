@@ -6,7 +6,6 @@
 #include "Components/Health.h"
 #include "Components/Projectile.h"
 #include "Components/Health.h"
-#include "EventBus/EventBus.h"
 #include "Events/CollisionEvent.h"
 /*
 

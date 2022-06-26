@@ -23,6 +23,8 @@
 #include "Systems/AnimationSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/KeyboardControlSystem.h"
+#include "Systems/ProjectileEmitSystem.h"
+#include "Systems/ProjectileLifecycleSystem.h"
 
 /*
 #include "Systems/RenderColliderSystem.h"
@@ -31,8 +33,6 @@
 #include "Systems/CollisionSystem.h"
 #include "Systems/DamageSystem.h"
 #include "Systems/CameraMovementSystem.h"
-#include "Systems/ProjectileEmitSystem.h"
-#include "Systems/ProjectileLifecycleSystem.h"
 */
 
 #include "Events/KeyPressedEvent.h"
@@ -138,20 +138,6 @@ void Game::ProcessInput()
 
 void Game::LoadLevel(int level)
 {
-    /*
-    registry->AddSystem<MovementSystem>();
-    registry->AddSystem<RenderSystem>();
-    registry->AddSystem<AnimationSystem>();
-    registry->AddSystem<CollisionSystem>();
-    registry->AddSystem<RenderColliderSystem>();
-    registry->AddSystem<DamageSystem>();
-    registry->AddSystem<KeyboardControlSystem>();
-    registry->AddSystem<CameraMovementSystem>();
-    registry->AddSystem<ProjectileEmitSystem>();
-    registry->AddSystem<ProjectileLifecycleSystem>();
-    registry->AddSystem<RenderTextSystem>();
-    registry->AddSystem<RenderHealthSystem>();
-    */
 
     assetStore->AddTexture(renderer, "tilemap-image", "assets/tilemaps/jungle.png");
     assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
@@ -187,13 +173,7 @@ void Game::LoadLevel(int level)
             const auto tile = registry.create();
             registry.emplace<Transform>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
             registry.emplace<Sprite>(tile, "tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
-
-/*
-            Entity tile = registry->CreateEntity();
-            tile.Group("tiles");
-            tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
-            tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
-*/
+//            tile.Group("tiles");
         }
     }
 
@@ -201,87 +181,58 @@ void Game::LoadLevel(int level)
     mapWidth = mapNumCols * tileSize * tileScale;
     mapHeight = mapNumRows * tileSize * tileScale;
 
-/*
-    Entity chopper = registry->CreateEntity();
-    chopper.Tag("player");
-    chopper.AddComponent<MainPlayerComponent>();
-    chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 50.0), glm::vec2(1.0, 1.0), 0.0);
-    chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
-    chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 10);
-    chopper.AddComponent<AnimationComponent>(2, 12, true);
-    chopper.AddComponent<BoxColliderComponent>(32, 32);
-    chopper.AddComponent<ProjectileEmitterComponent>(glm::vec2(300.0, 300.0), 0, 10000, 10, true);
-    chopper.AddComponent<KeyboardControlledComponent>(glm::vec2(0, -300), glm::vec2(300, 0), glm::vec2(0, 300), glm::vec2(-300, 0));
-    chopper.AddComponent<HealthComponent>(100);
-*/
-
     const auto chopper = registry.create();
+//    chopper.Tag("player");
+    registry.emplace<MainPlayer>(chopper);
     registry.emplace<Transform>(chopper, glm::vec2(100.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(chopper, 0.0, 0.0);
     registry.emplace<Sprite>(chopper, "chopper-image", 32, 32, 10);
     registry.emplace<Animation>(chopper, 2, 12, true);
-    registry.emplace<KeyboardControlled>(chopper, glm::vec2(0, -300), glm::vec2(300, 0), glm::vec2(0, 300), glm::vec2(-300, 0));
+    registry.emplace<KeyboardControlled>(chopper, glm::vec2(0, -100), glm::vec2(100, 0), glm::vec2(0, 100), glm::vec2(-100, 0));
+    registry.emplace<ProjectileEmitter>(chopper, glm::vec2(300.0, 300.0), 0, 10000, 10, true);
+    registry.emplace<Health>(chopper, 100);
+    registry.emplace<BoxCollider>(chopper, 32, 32);
 
-/*
-    Entity radar = registry->CreateEntity();
-    radar.AddComponent<TransformComponent>(glm::vec2(windowWidth - 74, 10), glm::vec2(1.0, 1.0), 0.0);
-    radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 100, true);
-    radar.AddComponent<AnimationComponent>(8, 5, true);
-*/
     const auto radar = registry.create();
+    //radar.Group("UI");
     registry.emplace<Transform>(radar, glm::vec2(windowWidth - 74, 10.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Sprite>(radar, "radar-image", 64, 64, 100, true);
     registry.emplace<Animation>(radar, 8, 5, true);
 
-/*
-    Entity tank = registry->CreateEntity();
-    tank.Group("enemies");
-    tank.AddComponent<TransformComponent>(glm::vec2(500.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
-    tank.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 0.0));
-    tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
-    tank.AddComponent<BoxColliderComponent>(32, 32);
-//    tank.AddComponent<ProjectileEmitterComponent>(glm::vec2(100.0, 0.0), 1000, 1000, 10, false);
-    tank.AddComponent<HealthComponent>(100);
-*/
-
     const auto tank = registry.create();
+    //tank.Group("enemies");
     registry.emplace<Transform>(tank, glm::vec2(120.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(tank, 30.0, 0.0);
     registry.emplace<Sprite>(tank, "tank-image", 32, 32, 2);
+    registry.emplace<ProjectileEmitter>(tank, glm::vec2(100.0, 0.0), 1000, 1000, 10, false);
+    registry.emplace<Health>(tank, 100);
+    registry.emplace<BoxCollider>(tank, 32, 32);
 
-/*
-    Entity truck = registry->CreateEntity();
-    truck.Group("enemies");
-    truck.AddComponent<TransformComponent>(glm::vec2(120.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
-    truck.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
-    truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
-    truck.AddComponent<BoxColliderComponent>(32, 32);
-    truck.AddComponent<ProjectileEmitterComponent>(glm::vec2(0.0, 100.0), 2000, 5000, 10, false);
-    truck.AddComponent<HealthComponent>(100);
-*/
     const auto truck = registry.create();
+    //truck.Group("enemies");
     registry.emplace<Transform>(truck, glm::vec2(300.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(truck, 20.0, 0.0);
     registry.emplace<Sprite>(truck, "truck-image", 32, 32, 2);
+    registry.emplace<ProjectileEmitter>(truck, glm::vec2(0.0, 100.0), 2000, 5000, 10, false);
+    registry.emplace<Health>(truck, 100);
+    registry.emplace<BoxCollider>(truck, 32, 32);
 
-/*
-    Entity treeA = registry->CreateEntity();
-    treeA.Group("obstacles");
-    treeA.AddComponent<TransformComponent>(glm::vec2(400.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
-    treeA.AddComponent<SpriteComponent>("tree-image", 16, 32, 1);
-    treeA.AddComponent<BoxColliderComponent>(16, 32);
+    const auto treeA = registry.create();
+//    treeA.Group("obstacles");
+    registry.emplace<Transform>(treeA, glm::vec2(400.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Sprite>(treeA, "tree-image", 16, 32, 1);
+    registry.emplace<BoxCollider>(treeA, 16, 32);
+    
+    const auto treeB = registry.create();
+//    treeA.Group("obstacles");
+    registry.emplace<Transform>(treeB, glm::vec2(400.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Sprite>(treeB, "tree-image", 16, 32, 1);
+    registry.emplace<BoxCollider>(treeB, 16, 32);
 
-    Entity treeB = registry->CreateEntity();
-    treeB.Group("obstacles");
-    treeB.AddComponent<TransformComponent>(glm::vec2(600.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
-    treeB.AddComponent<SpriteComponent>("tree-image", 16, 32, 1);
-    treeB.AddComponent<BoxColliderComponent>(16, 32);
-
-    Entity label = registry->CreateEntity();
-    SDL_Color green = {0, 200, 0};
-    label.AddComponent<TextLabelComponent>(glm::vec2(windowWidth / 2 - 40, 10), "Chopper 1.0", "charriot-font", green, true);
-*/
-
+    const auto label = registry.create();
+//    label.Group("UI");
+    SDL_Color green = {30, 200, 30};
+    registry.emplace<TextLabel>(label, glm::vec2(windowWidth / 2 - 40, 10), "Chopper 1.0", "charriot-font", green, true);
 
 }
 
@@ -289,6 +240,7 @@ void Game::Setup()
 {
     LoadLevel(1);
     keyPressedEventListener.connect<&KeyBoardControlSystem::OnKeyPressed>();
+    keyPressedEventListener.connect<&ProjectileEmitSystem::OnKeyPressed>();
 }
 
 void Game::Update()
@@ -310,19 +262,18 @@ void Game::Update()
     // Subscribe to events
     registry->GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
     registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
-    registry->GetSystem<ProjectileEmitSystem>().SubscribeToEvents(eventBus);
 */
 
     // Update systems
 
     MovementSystem::Update(registry, deltaTime);
     AnimationSystem::Update(registry);
+    ProjectileEmitSystem::Update(registry);
+
+
 /*
-    registry->GetSystem<MovementSystem>().Update(deltaTime);
-    registry->GetSystem<AnimationSystem>().Update();
     registry->GetSystem<CollisionSystem>().Update(eventBus);
     registry->GetSystem<CameraMovementSystem>().Update(camera);
-    registry->GetSystem<ProjectileEmitSystem>().Update(registry);
     registry->GetSystem<ProjectileLifecycleSystem>().Update();
 */
     //registry->GetSystem<DamageSystem>().Update();
