@@ -7,7 +7,7 @@
 struct KeyPressedEvent
 {
     entt::registry &registry;
-    SDL_Event &sdlEvent;
+    SDL_Keycode &key; //sdlEvent.key.keysym.sym
 };
 
 entt::sigh<void(KeyPressedEvent)> keyPressedEventEmitter;

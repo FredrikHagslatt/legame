@@ -9,17 +9,18 @@
 
 namespace KeyBoardControlSystem{
 
-    void OnKeyPressed(KeyPressedEvent keyEvent)
+    void OnKeyPressed(KeyPressedEvent event)
     {
-        Logger::Warning(" - EVENT TRIGGERED - ");
-        auto view = keyEvent.registry.view<KeyboardControlled, Sprite, Velocity>();
+        Logger::Info("KeyPressedEvent");
+
+        auto view = event.registry.view<KeyboardControlled, Sprite, Velocity>();
         for (auto entity : view)
         {
             const auto keyboardControl = view.get<KeyboardControlled>(entity);
             auto &sprite = view.get<Sprite>(entity);
             auto &velocity  = view.get<Velocity>(entity);
 
-            switch(keyEvent.sdlEvent.key.keysym.sym)
+            switch(event.key)
             {
                 case SDLK_UP:
                     velocity.x = keyboardControl.upVelocity.x;

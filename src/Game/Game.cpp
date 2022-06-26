@@ -127,9 +127,10 @@ void Game::ProcessInput()
                     Logger::Info("Debug mode dectivated");
                 }
             }
-            KeyPressedEvent keyPressedEvent{registry, sdlEvent};
+
+
+            KeyPressedEvent keyPressedEvent{registry, sdlEvent.key.keysym.sym};
             keyPressedEventEmitter.publish(keyPressedEvent);
-//            eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
             break;
         }
     }
@@ -216,7 +217,7 @@ void Game::LoadLevel(int level)
 
     const auto chopper = registry.create();
     registry.emplace<Transform>(chopper, glm::vec2(100.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
-    registry.emplace<Velocity>(chopper, 100.0, 0.0);
+    registry.emplace<Velocity>(chopper, 0.0, 0.0);
     registry.emplace<Sprite>(chopper, "chopper-image", 32, 32, 10);
     registry.emplace<Animation>(chopper, 2, 12, true);
     registry.emplace<KeyboardControlled>(chopper, glm::vec2(0, -300), glm::vec2(300, 0), glm::vec2(0, 300), glm::vec2(-300, 0));
@@ -304,9 +305,6 @@ void Game::Update()
     millisecsPreviousFrame = SDL_GetTicks();
 
     // Reset all event handlers for the current frame
-//    eventBus->Reset();
-
-//    KeyboardControlSystem::SubscribeToEvents(eventBus);
 
 /*
     // Subscribe to events
