@@ -5,20 +5,21 @@
 #include "Components/Sprite.h"
 #include "Components/Velocity.h"
 #include "Components/KeyboardControlled.h"
+#include "Events/KeyPressedEvent.h"
 
 namespace KeyBoardControlSystem{
 
-    void OnKeyPressed(entt::registry &registry, SDL_Event &event)
+    void OnKeyPressed(KeyPressedEvent keyEvent)
     {
         Logger::Warning(" - EVENT TRIGGERED - ");
-        auto view = registry.view<KeyboardControlled, Sprite, Velocity>();
+        auto view = keyEvent.registry.view<KeyboardControlled, Sprite, Velocity>();
         for (auto entity : view)
         {
             const auto keyboardControl = view.get<KeyboardControlled>(entity);
             auto &sprite = view.get<Sprite>(entity);
             auto &velocity  = view.get<Velocity>(entity);
 
-            switch(event.key.keysym.sym)
+            switch(keyEvent.sdlEvent.key.keysym.sym)
             {
                 case SDLK_UP:
                     velocity.x = keyboardControl.upVelocity.x;

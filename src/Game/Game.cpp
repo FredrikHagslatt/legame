@@ -35,6 +35,8 @@
 #include "Systems/ProjectileLifecycleSystem.h"
 */
 
+#include "Events/KeyPressedEvent.h"
+
 int Game::windowWidth;
 int Game::windowHeight;
 int Game::mapWidth;
@@ -125,7 +127,8 @@ void Game::ProcessInput()
                     Logger::Info("Debug mode dectivated");
                 }
             }
-            keyPressedEvent.publish(registry, sdlEvent);
+            KeyPressedEvent keyPressedEvent{registry, sdlEvent};
+            keyPressedEventEmitter.publish(keyPressedEvent);
 //            eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
             break;
         }
@@ -216,6 +219,7 @@ void Game::LoadLevel(int level)
     registry.emplace<Velocity>(chopper, 100.0, 0.0);
     registry.emplace<Sprite>(chopper, "chopper-image", 32, 32, 10);
     registry.emplace<Animation>(chopper, 2, 12, true);
+    registry.emplace<KeyboardControlled>(chopper, glm::vec2(0, -300), glm::vec2(300, 0), glm::vec2(0, 300), glm::vec2(-300, 0));
 
 /*
     Entity radar = registry->CreateEntity();

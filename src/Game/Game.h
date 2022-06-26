@@ -18,13 +18,14 @@ private:
     SDL_Renderer* renderer;
     SDL_Rect camera;
 
-    entt::sigh<void(entt::registry&, SDL_Event&)> keyPressedEvent;
-    entt::sink keyPressedEventListener{keyPressedEvent};
+//    entt::sigh<void(SDL_Event)> keyPressedEvent;
+//    entt::sink keyPressedEventListener{keyPressedEvent};
 
     entt::registry registry;
     std::unique_ptr<AssetStore> assetStore;
 
 public:
+
     Game();
     ~Game();
     void Initialize();
