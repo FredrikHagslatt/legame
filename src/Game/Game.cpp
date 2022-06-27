@@ -213,7 +213,7 @@ void Game::LoadLevel(int level)
     registry.emplace<Transform>(truck, glm::vec2(300.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(truck, 20.0, 0.0);
     registry.emplace<Sprite>(truck, "truck-image", 32, 32, 2);
-    registry.emplace<ProjectileEmitter>(truck, glm::vec2(0.0, 100.0), 2000, 5000, 10, false);
+    registry.emplace<ProjectileEmitter>(truck, glm::vec2(100.0, -100.0), 2000, 5000, 10, false);
     registry.emplace<Health>(truck, 100);
     registry.emplace<BoxCollider>(truck, 32, 32);
 
