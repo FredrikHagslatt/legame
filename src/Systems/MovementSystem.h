@@ -2,27 +2,54 @@
 #define MOVEMENTSYSTEM_H
 
 #include "entt/entt.hpp"
+#include "Components/Tags.h"
 #include "Components/Transform.h"
 #include "Components/Velocity.h"
 #include "Logger/Logger.h"
 
 namespace MovementSystem
 {
+
     void Update(entt::registry &registry, double deltaTime)
     {
-        // Loop all entities that the system is interested in
-        auto view = registry.view<Transform, Velocity>();
 
+        auto view = registry.view<Transform, Velocity>();
         for (auto entity : view)
         {
-            // Update entity position based on its velocity
+
             auto &transform = view.get<Transform>(entity);
             const auto &velocity = view.get<Velocity>(entity);
 
             transform.position.x += velocity.x * deltaTime;
             transform.position.y += velocity.y * deltaTime;
+
+            if (registry.all_of<StayOnMap_Tag>(entity))
+            {
+                int paddingLeft = 10;
+                int paddingTop = 10;
+                int paddingRight = 50;
+                int paddingBottom = 50;
+                transform.position.x = transform.position.x < paddingLeft ? paddingLeft : transform.position.x;
+                transform.position.x = transform.position.x > Game::mapWidth - paddingRight ? Game::mapWidth - paddingRight : transform.position.x;
+                transform.position.y = transform.position.y < paddingTop ? paddingTop : transform.position.y;
+                transform.position.y = transform.position.y > Game::mapHeight - paddingBottom ? Game::mapHeight - paddingBottom : transform.position.y;
+            }
+
+            bool isEntityOutsideMap = (
+                transform.position.x < 0 ||
+                transform.position.x > Game::mapWidth ||
+                transform.position.y < 0 ||
+                transform.position.y > Game::mapHeight
+            );
+
+            if (isEntityOutsideMap && !registry.all_of<Player_Tag>(entity))
+            {
+                registry.destroy(entity);
+                Logger::Info("Killing entity");
+            }
         }
     }
+
 };
 
     /*

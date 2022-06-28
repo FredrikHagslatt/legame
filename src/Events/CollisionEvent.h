@@ -6,8 +6,8 @@
 struct CollisionEvent
 {
     entt::registry &registry;
-    entt::entity &a;
-    entt::entity &b;
+    entt::entity &entityA;
+    entt::entity &entityB;
 };
 
 entt::sigh<void(CollisionEvent)> CollisionEventEmitter;

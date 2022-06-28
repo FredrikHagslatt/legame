@@ -1,17 +1,17 @@
 #ifndef CAMERAMOVEMENTSYSTEM_H
 #define CAMERAMOVEMENTSYSTEM_H
 
-#include "Logger/Logger.h"
 #include "entt/entt.hpp"
-#include "Components/MainPlayer.h"
+#include "Components/Tags.h"
 #include "Components/Transform.h"
+#include "Logger/Logger.h"
 #include <SDL2/SDL.h>
 
 namespace CameraMovementSystem
 {
         void Update(entt::registry &registry, SDL_Rect &camera)
         {
-            auto view = registry.view<MainPlayer, Transform>();
+            auto view = registry.view<Player_Tag, Transform>();
             for (auto entity : view)
             {
                 auto const transform = view.get<Transform>(entity);

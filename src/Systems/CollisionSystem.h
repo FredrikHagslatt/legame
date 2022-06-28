@@ -2,16 +2,14 @@
 #define COLLISIONSYSTEM_H
 
 #include "entt/entt.hpp"
-#include "EventBus/EventBus.h"
 #include "Events/CollisionEvent.h"
 #include "Components/Transform.h"
 #include "Components/BoxCollider.h"
 
-/*
 
-class CollisionSystem : public System
+/*
+namespace CollisionSystem
 {
-public:
     CollisionSystem()
     {
         RequireComponent<TransformComponent>();
@@ -20,6 +18,7 @@ public:
 
     void Update(std::unique_ptr<EventBus> &eventBus)
     {
+
         auto entities = GetSystemEntities();
 
         // Fancy nested loop to not check same pair of entities twice.

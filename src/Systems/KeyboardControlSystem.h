@@ -11,8 +11,6 @@ namespace KeyBoardControlSystem{
 
     void OnKeyPressed(KeyPressedEvent event)
     {
-        Logger::Info("KeyPressedEvent");
-
         auto view = event.registry.view<KeyboardControlled, Sprite, Velocity>();
         for (auto entity : view)
         {

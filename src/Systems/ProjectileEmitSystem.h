@@ -2,7 +2,7 @@
 #define PROJECTILEEMITSYSTEM_H
 
 #include "entt/entt.hpp"
-#include "Components/MainPlayer.h"
+#include "Components/Tags.h"
 #include "Components/Transform.h"
 #include "Components/Projectile.h"
 #include "Components/ProjectileEmitter.h"
@@ -12,16 +12,16 @@
 
 #include <SDL2/SDL.h>
 
-
 namespace ProjectileEmitSystem
 {
 
     void OnKeyPressed(KeyPressedEvent event)
     {
+        auto &registry = event.registry;
         if(event.key == SDLK_SPACE)
         {
 
-            auto view = event.registry.view<MainPlayer, Transform, Velocity, ProjectileEmitter>();
+            auto view = registry.view<Player_Tag, Transform, Velocity, ProjectileEmitter>();
 
             for(auto entity : view)
             {
@@ -31,9 +31,9 @@ namespace ProjectileEmitSystem
 
                 glm::vec2 projectilePosition = transform.position;
                 
-                if(event.registry.all_of<Sprite>(entity))
+                if(registry.all_of<Sprite>(entity))
                 {
-                    const auto sprite = event.registry.get<Sprite>(entity);
+                    const auto sprite = registry.get<Sprite>(entity);
                     projectilePosition.x += (transform.scale.x * sprite.width / 2);
                     projectilePosition.y += (transform.scale.y * sprite.height / 2);
                 }
@@ -48,15 +48,13 @@ namespace ProjectileEmitSystem
                 projectileVelocity.x = projectileEmitter.projectileVelocity.x * directionX;
                 projectileVelocity.y = projectileEmitter.projectileVelocity.y * directionY;
 
-
-
-                auto projectile = event.registry.create();
-//                projectile.Group("projectiles");
-                event.registry.emplace<Transform>(projectile, projectilePosition, glm::vec2(1.0, 1.0), 0.0);
-                event.registry.emplace<Velocity>(projectile, projectileVelocity);
-                event.registry.emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);
-                event.registry.emplace<BoxCollider>(projectile, 4, 4);
-                event.registry.emplace<Projectile>(projectile, projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.projectileDuration);
+                auto projectile = registry.create();
+                registry.emplace<Projectile_Tag>(projectile);
+                registry.emplace<Transform>(projectile, projectilePosition, glm::vec2(1.0, 1.0), 0.0);
+                registry.emplace<Velocity>(projectile, projectileVelocity);
+                registry.emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);
+                registry.emplace<BoxCollider>(projectile, 4, 4);
+                registry.emplace<Projectile>(projectile, projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.projectileDuration);
 
             }
         }
@@ -88,7 +86,7 @@ namespace ProjectileEmitSystem
                     }
 
                     auto projectile = registry.create();
-    //                projectile.Group("projectiles");
+                    registry.emplace<Projectile_Tag>(projectile);
                     registry.emplace<Transform>(projectile, projectilePosition, glm::vec2(1.0, 1.0), 0.0);
                     registry.emplace<Velocity>(projectile, projectileEmitter.projectileVelocity);
                     registry.emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);

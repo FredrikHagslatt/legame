@@ -8,13 +8,13 @@
 #include "Logger/Logger.h"
 #include <glm/glm.hpp>
 
+#include "Components/Tags.h"
 #include "Components/Transform.h"
 #include "Components/Velocity.h"
 #include "Components/Sprite.h"
 #include "Components/Animation.h"
 #include "Components/BoxCollider.h"
 #include "Components/KeyboardControlled.h"
-#include "Components/MainPlayer.h"
 #include "Components/ProjectileEmitter.h"
 #include "Components/Health.h"
 #include "Components/TextLabel.h"
@@ -25,17 +25,18 @@
 #include "Systems/KeyboardControlSystem.h"
 #include "Systems/ProjectileEmitSystem.h"
 #include "Systems/ProjectileLifecycleSystem.h"
+#include "Systems/CameraMovementSystem.h"
+#include "Systems/DamageSystem.h"
 
 /*
 #include "Systems/RenderColliderSystem.h"
 #include "Systems/RenderTextSystem.h"
 #include "Systems/RenderHealthSystem.h"
 #include "Systems/CollisionSystem.h"
-#include "Systems/DamageSystem.h"
-#include "Systems/CameraMovementSystem.h"
 */
 
 #include "Events/KeyPressedEvent.h"
+#include "Events/CollisionEvent.h"
 
 int Game::windowWidth;
 int Game::windowHeight;
@@ -128,7 +129,6 @@ void Game::ProcessInput()
                 }
             }
 
-
             KeyPressedEvent keyPressedEvent{registry, sdlEvent.key.keysym.sym};
             keyPressedEventEmitter.publish(keyPressedEvent);
             break;
@@ -173,7 +173,6 @@ void Game::LoadLevel(int level)
             const auto tile = registry.create();
             registry.emplace<Transform>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
             registry.emplace<Sprite>(tile, "tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
-//            tile.Group("tiles");
         }
     }
 
@@ -182,8 +181,9 @@ void Game::LoadLevel(int level)
     mapHeight = mapNumRows * tileSize * tileScale;
 
     const auto chopper = registry.create();
-//    chopper.Tag("player");
-    registry.emplace<MainPlayer>(chopper);
+    registry.emplace<Player_Tag>(chopper);
+    registry.emplace<StayOnMap_Tag>(chopper);
+    
     registry.emplace<Transform>(chopper, glm::vec2(100.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(chopper, 0.0, 0.0);
     registry.emplace<Sprite>(chopper, "chopper-image", 32, 32, 10);
@@ -194,13 +194,14 @@ void Game::LoadLevel(int level)
     registry.emplace<BoxCollider>(chopper, 32, 32);
 
     const auto radar = registry.create();
-    //radar.Group("UI");
+    registry.emplace<UI_Tag>(radar);
     registry.emplace<Transform>(radar, glm::vec2(windowWidth - 74, 10.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Sprite>(radar, "radar-image", 64, 64, 100, true);
     registry.emplace<Animation>(radar, 8, 5, true);
 
     const auto tank = registry.create();
-    //tank.Group("enemies");
+    registry.emplace<Enemy_Tag>(tank);
+    registry.emplace<StayOnMap_Tag>(tank);
     registry.emplace<Transform>(tank, glm::vec2(120.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(tank, 30.0, 0.0);
     registry.emplace<Sprite>(tank, "tank-image", 32, 32, 2);
@@ -209,7 +210,8 @@ void Game::LoadLevel(int level)
     registry.emplace<BoxCollider>(tank, 32, 32);
 
     const auto truck = registry.create();
-    //truck.Group("enemies");
+    registry.emplace<Enemy_Tag>(truck);
+    registry.emplace<StayOnMap_Tag>(truck);
     registry.emplace<Transform>(truck, glm::vec2(300.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(truck, 20.0, 0.0);
     registry.emplace<Sprite>(truck, "truck-image", 32, 32, 2);
@@ -218,22 +220,21 @@ void Game::LoadLevel(int level)
     registry.emplace<BoxCollider>(truck, 32, 32);
 
     const auto treeA = registry.create();
-//    treeA.Group("obstacles");
+    registry.emplace<Obstacle_Tag>(treeA);
     registry.emplace<Transform>(treeA, glm::vec2(400.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Sprite>(treeA, "tree-image", 16, 32, 1);
     registry.emplace<BoxCollider>(treeA, 16, 32);
     
     const auto treeB = registry.create();
-//    treeA.Group("obstacles");
+    registry.emplace<Obstacle_Tag>(treeB);
     registry.emplace<Transform>(treeB, glm::vec2(400.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Sprite>(treeB, "tree-image", 16, 32, 1);
     registry.emplace<BoxCollider>(treeB, 16, 32);
 
     const auto label = registry.create();
-//    label.Group("UI");
+    registry.emplace<UI_Tag>(label);
     SDL_Color green = {30, 200, 30};
     registry.emplace<TextLabel>(label, glm::vec2(windowWidth / 2 - 40, 10), "Chopper 1.0", "charriot-font", green, true);
-
 }
 
 void Game::Setup()
@@ -241,6 +242,7 @@ void Game::Setup()
     LoadLevel(1);
     keyPressedEventListener.connect<&KeyBoardControlSystem::OnKeyPressed>();
     keyPressedEventListener.connect<&ProjectileEmitSystem::OnKeyPressed>();
+    CollisionEventListener.connect<&DamageSystem::OnCollision>();
 }
 
 void Game::Update()
@@ -268,13 +270,12 @@ void Game::Update()
 
     MovementSystem::Update(registry, deltaTime);
     AnimationSystem::Update(registry);
+    CameraMovementSystem::Update(registry, camera);
     ProjectileEmitSystem::Update(registry);
-
+    ProjectileLifeCycleSystem::Update(registry);
 
 /*
     registry->GetSystem<CollisionSystem>().Update(eventBus);
-    registry->GetSystem<CameraMovementSystem>().Update(camera);
-    registry->GetSystem<ProjectileLifecycleSystem>().Update();
 */
     //registry->GetSystem<DamageSystem>().Update();
    

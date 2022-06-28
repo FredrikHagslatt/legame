@@ -2,26 +2,18 @@
 #define DAMAGESYSTEM_H
 
 #include "entt/entt.hpp"
+#include "Components/Tags.h"
 #include "Components/BoxCollider.h"
 #include "Components/Health.h"
 #include "Components/Projectile.h"
 #include "Components/Health.h"
 #include "Events/CollisionEvent.h"
-/*
 
-class DamageSystem : public System
+
+namespace DamageSystem
 {
-public:
-    DamageSystem()
-    {
-        RequireComponent<BoxColliderComponent>();
-    }
 
-    void SubscribeToEvents(std::unique_ptr<EventBus> &eventBus)
-    {
-        eventBus->SubscribeToEvent<CollisionEvent>(this, &DamageSystem::OnCollision);
-    }
-
+/*
     void OnProjectileHitsPlayer(Entity projectile, Entity player)
     {
         auto projectileComponent = projectile.GetComponent<ProjectileComponent>();
@@ -53,13 +45,21 @@ public:
             projectile.Kill();
         }
     }
+*/
 
-    void OnCollision(CollisionEvent &event)
+    void OnCollision(CollisionEvent event)
     {
-        Entity a = event.a;
-        Entity b = event.b;
-        Logger::Info("Damage system received collision event between entities: " + std::to_string(a.GetId()) + " and " + std::to_string(b.GetId()) + ".");
+        auto &registry = event.registry;
+        auto &a = event.entityA;
+        auto &b = event.entityB;
+        Logger::Info("Damage system received collision event.");
 
+        if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Player_Tag>(b))
+        {
+            Logger::Error(" HIT ");
+        }
+
+/*
         if (a.BelongsToGroup("projectiles") && b.HasTag("player"))
         {        
             OnProjectileHitsPlayer(a, b);
@@ -78,6 +78,7 @@ public:
         {
             OnProjectileHitsEnemy(b, a);
         }
+*/
     }
 
     void Update()
@@ -86,6 +87,5 @@ public:
     }
 };
 
-*/
 
 #endif

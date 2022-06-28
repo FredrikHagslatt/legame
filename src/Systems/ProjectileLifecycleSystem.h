@@ -5,30 +5,21 @@
 #include "entt/entt.hpp"
 #include "Components/Projectile.h"
 
-/*
-
-class ProjectileLifecycleSystem : public System{
-public:
-    ProjectileLifecycleSystem()
+namespace ProjectileLifeCycleSystem
+{
+    void Update(entt::registry &registry)
     {
-        RequireComponent<ProjectileComponent>();
-    }
-
-    void Update()
-    {
-        for(auto entity : GetSystemEntities())
+        auto view = registry.view<Projectile>();
+        for (auto entity : view)
         {
-            auto projectile = entity.GetComponent<ProjectileComponent>();
+            auto projectile = view.get<Projectile>(entity);
 
             if(SDL_GetTicks() - projectile.startTime > projectile.duration)
             {
-                entity.Kill();
+                registry.destroy(entity);
             }
-
         }
     }
-
 };
 
-*/
 #endif
