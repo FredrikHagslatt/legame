@@ -27,12 +27,12 @@
 #include "Systems/ProjectileLifecycleSystem.h"
 #include "Systems/CameraMovementSystem.h"
 #include "Systems/DamageSystem.h"
+#include "Systems/CollisionSystem.h"
 
 /*
 #include "Systems/RenderColliderSystem.h"
 #include "Systems/RenderTextSystem.h"
 #include "Systems/RenderHealthSystem.h"
-#include "Systems/CollisionSystem.h"
 */
 
 #include "Events/KeyPressedEvent.h"
@@ -205,7 +205,7 @@ void Game::LoadLevel(int level)
     registry.emplace<Transform>(tank, glm::vec2(120.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(tank, 30.0, 0.0);
     registry.emplace<Sprite>(tank, "tank-image", 32, 32, 2);
-    registry.emplace<ProjectileEmitter>(tank, glm::vec2(100.0, 0.0), 1000, 1000, 10, false);
+//    registry.emplace<ProjectileEmitter>(tank, glm::vec2(100.0, 0.0), 1000, 10000, 10, false);
     registry.emplace<Health>(tank, 100);
     registry.emplace<BoxCollider>(tank, 32, 32);
 
@@ -215,7 +215,7 @@ void Game::LoadLevel(int level)
     registry.emplace<Transform>(truck, glm::vec2(300.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(truck, 20.0, 0.0);
     registry.emplace<Sprite>(truck, "truck-image", 32, 32, 2);
-    registry.emplace<ProjectileEmitter>(truck, glm::vec2(100.0, -100.0), 2000, 5000, 10, false);
+//    registry.emplace<ProjectileEmitter>(truck, glm::vec2(100.0, -100.0), 2000, 10000, 10, false);
     registry.emplace<Health>(truck, 100);
     registry.emplace<BoxCollider>(truck, 32, 32);
 
@@ -273,10 +273,11 @@ void Game::Update()
     CameraMovementSystem::Update(registry, camera);
     ProjectileEmitSystem::Update(registry);
     ProjectileLifeCycleSystem::Update(registry);
+    CollisionSystem::Update(registry);
 
-/*
-    registry->GetSystem<CollisionSystem>().Update(eventBus);
-*/
+
+
+
     //registry->GetSystem<DamageSystem>().Update();
    
     //Update registry at end of frame

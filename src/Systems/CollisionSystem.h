@@ -7,61 +7,8 @@
 #include "Components/BoxCollider.h"
 
 
-/*
 namespace CollisionSystem
 {
-    CollisionSystem()
-    {
-        RequireComponent<TransformComponent>();
-        RequireComponent<BoxColliderComponent>();
-    }
-
-    void Update(std::unique_ptr<EventBus> &eventBus)
-    {
-
-        auto entities = GetSystemEntities();
-
-        // Fancy nested loop to not check same pair of entities twice.
-        for (auto i = entities.begin(); i != entities.end(); i++)
-        {
-            Entity a = *i;
-            for (auto j = i; j != entities.end(); j++)
-            {
-                Entity b = *j;
-
-                if (a == b)
-                {
-                    continue;
-                }
-
-                auto aTransform = a.GetComponent<TransformComponent>();
-                auto aCollider = a.GetComponent<BoxColliderComponent>();
-
-                auto bTransform = b.GetComponent<TransformComponent>();
-                auto bCollider = b.GetComponent<BoxColliderComponent>();
-
-                bool collisionHappened = CheckAABBCollision(
-                    aTransform.position.x + aCollider.offset.x,
-                    aTransform.position.y + aCollider.offset.y,
-                    aCollider.width,
-                    aCollider.height,
-                    bTransform.position.x + bCollider.offset.x,
-                    bTransform.position.y + bCollider.offset.x,
-                    bCollider.width,
-                    bCollider.height);
-
-                if (collisionHappened)
-                {
-                    Logger::Info("Collision: Entity " + std::to_string(a.GetId()) + " and " + std::to_string(b.GetId()));
-                    eventBus->EmitEvent<CollisionEvent>(a, b);
-
-                    // TODO: Emit an event
-
-                }
-            }
-        }
-    }
-
     bool CheckAABBCollision(
         double aX,
         double aY,
@@ -78,7 +25,50 @@ namespace CollisionSystem
             aY < bY + bH &&
             aY + aH > bY);
     }
+
+    void Update(entt::registry &registry)
+    {
+
+        auto view = registry.view<Transform, BoxCollider>();
+
+        // Fancy nested loop to not check same pair of entities twice.
+        for (auto i = view.begin(); i != view.end(); i++)
+        {
+            entt::entity a = *i;
+            for (auto j = i; j != view.end(); j++)
+            {
+                entt::entity b = *j;
+
+                if (a == b)
+                {
+                    continue;
+                }
+                auto aTransform = view.get<Transform>(a);
+                auto aCollider = view.get<BoxCollider>(a);
+
+                auto bTransform = view.get<Transform>(b);
+                auto bCollider = view.get<BoxCollider>(b);
+
+                bool collisionHappened = CheckAABBCollision(
+                    aTransform.position.x + aCollider.offset.x,
+                    aTransform.position.y + aCollider.offset.y,
+                    aCollider.width,
+                    aCollider.height,
+                    bTransform.position.x + bCollider.offset.x,
+                    bTransform.position.y + bCollider.offset.x,
+                    bCollider.width,
+                    bCollider.height);
+
+                if (collisionHappened)
+                {
+
+                    Logger::Warning("COLLISION!");
+//                    Logger::Info(aTransform.position.x + aTransform.position.y);
+                    // TODO: Emit an event
+                }
+            }
+        }
+    }
 };
 
-*/
 #endif
