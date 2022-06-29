@@ -10,6 +10,7 @@ struct CollisionEvent
     entt::entity &entityB;
 };
 
+
 entt::sigh<void(CollisionEvent)> CollisionEventEmitter;
 entt::sink CollisionEventListener{CollisionEventEmitter};
 

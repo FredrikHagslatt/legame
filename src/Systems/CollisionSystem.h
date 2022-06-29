@@ -43,6 +43,7 @@ namespace CollisionSystem
                 {
                     continue;
                 }
+
                 auto aTransform = view.get<Transform>(a);
                 auto aCollider = view.get<BoxCollider>(a);
 
@@ -61,10 +62,8 @@ namespace CollisionSystem
 
                 if (collisionHappened)
                 {
-
-                    Logger::Warning("COLLISION!");
-//                    Logger::Info(aTransform.position.x + aTransform.position.y);
-                    // TODO: Emit an event
+                    CollisionEvent collisionEvent{registry, a, b};
+                    CollisionEventEmitter.publish(collisionEvent);
                 }
             }
         }

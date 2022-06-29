@@ -12,40 +12,38 @@
 
 namespace DamageSystem
 {
-
-/*
-    void OnProjectileHitsPlayer(Entity projectile, Entity player)
+    void OnProjectileHitsPlayer(entt::registry &registry, entt::entity &projectile, entt::entity &player)
     {
-        auto projectileComponent = projectile.GetComponent<ProjectileComponent>();
+        auto projectileComponent = registry.get<Projectile>(projectile);
         if(!projectileComponent.isFriendly)
         {
-            auto &health = player.GetComponent<HealthComponent>();
-            health.healthPercentage -= projectile.hitPercentDamage;
+            auto &health = registry.get<Health>(player);
+            health.healthPercentage -= projectileComponent.hitPercentDamage;
 
             if(health.healthPercentage <= 0)
             {
-                player.Kill();
+                registry.destroy(player);
             }
-            projectile.Kill();
+            registry.destroy(projectile);
         }
     }
 
-    void OnProjectileHitsEnemy(Entity projectile, Entity enemy)
+    void OnProjectileHitsEnemy(entt::registry &registry, entt::entity &projectile, entt::entity &enemy)
     {
-        auto projectileComponent = projectile.GetComponent<ProjectileComponent>();
+        auto projectileComponent = registry.get<Projectile>(projectile);
         if(projectileComponent.isFriendly)
         {
-            auto &health = enemy.GetComponent<HealthComponent>();
-            health.healthPercentage -= projectile.hitPercentDamage;
+            auto &health = registry.get<Health>(enemy);
+            health.healthPercentage -= projectileComponent.hitPercentDamage;
 
             if(health.healthPercentage <= 0)
             {
-                enemy.Kill();
+                registry.destroy(enemy);
             }
-            projectile.Kill();
+
+            registry.destroy(projectile);
         }
     }
-*/
 
     void OnCollision(CollisionEvent event)
     {
@@ -56,29 +54,23 @@ namespace DamageSystem
 
         if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Player_Tag>(b))
         {
-            Logger::Error(" HIT ");
+            OnProjectileHitsPlayer(registry, a, b);
         }
 
-/*
-        if (a.BelongsToGroup("projectiles") && b.HasTag("player"))
-        {        
-            OnProjectileHitsPlayer(a, b);
+        else if (registry.all_of<Projectile_Tag>(b) && registry.all_of<Player_Tag>(a))
+        {
+            OnProjectileHitsPlayer(registry, b, a);
         }
 
-        if (b.BelongsToGroup("projectiles") && a.HasTag("player"))
+        else if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Enemy_Tag>(b))
         {
-            OnProjectileHitsPlayer(b, a);
+            OnProjectileHitsEnemy(registry, a, b);
         }
 
-        if (a.BelongsToGroup("projectiles") && b.BelongsToGroup("enemies"))
+        else if (registry.all_of<Projectile_Tag>(b) && registry.all_of<Enemy_Tag>(a))
         {
-            OnProjectileHitsEnemy(a, b);
+            OnProjectileHitsEnemy(registry, b, a);
         }
-        if (b.BelongsToGroup("projectiles") && a.BelongsToGroup("enemies"))
-        {
-            OnProjectileHitsEnemy(b, a);
-        }
-*/
     }
 
     void Update()
