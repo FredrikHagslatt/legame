@@ -8,11 +8,10 @@
 #include "Components/Health.h"
 #include <SDL2/SDL.h>
 
-
 namespace RenderHealthSystem
 {
 
-    void Update(entt::registry &registry, SDL_Renderer* renderer, std::unique_ptr<AssetStore> &assetStore, SDL_Rect &camera)
+    void Update(entt::registry &registry, SDL_Renderer *renderer, std::unique_ptr<AssetStore> &assetStore, SDL_Rect &camera)
     {
         SDL_Color healthBarColor = {255, 255, 255};
         SDL_Color red = {255, 0, 0};
@@ -27,44 +26,42 @@ namespace RenderHealthSystem
             const auto sprite = view.get<Sprite>(entity);
             const auto health = view.get<Health>(entity);
 
-            if(health.healthPercentage >= 0 && health.healthPercentage < 40)
+            if (health.healthPercentage >= 0 && health.healthPercentage < 40)
             {
                 healthBarColor = red;
             }
 
-            else if(health.healthPercentage >= 40 && health.healthPercentage < 80)
+            else if (health.healthPercentage >= 40 && health.healthPercentage < 80)
             {
                 healthBarColor = yellow;
             }
 
-            else if(health.healthPercentage >= 80)
+            else if (health.healthPercentage >= 80)
             {
                 healthBarColor = green;
             }
 
             int healthBarWidth = 15;
             int healthBarHeight = 3;
-            glm::vec2 healthBarPos = 
-            {
-                transform.position.x + (sprite.width * transform.scale.x) - camera.x,
-                transform.position.y - camera.y
-            };
+            glm::vec2 healthBarPos =
+                {
+                    transform.position.x + (sprite.width * transform.scale.x) - camera.x,
+                    transform.position.y - camera.y};
 
-            SDL_Rect healthBarRect = 
-            {
-                static_cast<int>(healthBarPos.x),
-                static_cast<int>(healthBarPos.y),
-                static_cast<int>(healthBarWidth * (health.healthPercentage / 100.0)),
-                static_cast<int>(healthBarHeight)
-            };
+            SDL_Rect healthBarRect =
+                {
+                    static_cast<int>(healthBarPos.x),
+                    static_cast<int>(healthBarPos.y),
+                    static_cast<int>(healthBarWidth * (health.healthPercentage / 100.0)),
+                    static_cast<int>(healthBarHeight)};
 
             SDL_SetRenderDrawColor(renderer, healthBarColor.r, healthBarColor.g, healthBarColor.b, 255);
             SDL_RenderFillRect(renderer, &healthBarRect);
 
             // Render the health percentage text label indicator
             std::string healthText = std::to_string(health.healthPercentage);
-            SDL_Surface* surface = TTF_RenderText_Blended(assetStore->GetFont("pico8-font-5"), healthText.c_str(), healthBarColor);
-            SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+            SDL_Surface *surface = TTF_RenderText_Blended(assetStore->GetFont("pico8-font-5"), healthText.c_str(), healthBarColor);
+            SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_FreeSurface(surface);
 
             int labelWidth = 0;
@@ -74,15 +71,12 @@ namespace RenderHealthSystem
                 static_cast<int>(healthBarPos.x),
                 static_cast<int>(healthBarPos.y) + 5,
                 labelWidth,
-                labelHeight
-            };
-            
+                labelHeight};
+
             SDL_RenderCopy(renderer, texture, NULL, &healthBarTextRect);
             SDL_DestroyTexture(texture);
-
         }
     }
-
 };
 
 #endif

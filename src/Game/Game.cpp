@@ -30,9 +30,8 @@
 
 #include "Systems/RenderSystem.h"
 #include "Systems/RenderHealthSystem.h"
+#include "Systems/RenderTextSystem.h"
 //#include "Systems/RenderColliderSystem.h"
-//#include "Systems/RenderTextSystem.h"
-
 
 #include "Events/KeyPressedEvent.h"
 #include "Events/CollisionEvent.h"
@@ -47,7 +46,7 @@ Game::Game()
 {
     isRunning = false;
     assetStore = std::make_unique<AssetStore>();
-//    eventBus = std::make_unique<EventBus>();
+    //    eventBus = std::make_unique<EventBus>();
     Logger::Info("Game Created!");
 }
 
@@ -91,13 +90,12 @@ void Game::Initialize()
         Logger::Fatal("Error creating SDL renderer.");
     }
 
-
     camera.x = 0;
     camera.y = 0;
     camera.w = windowWidth;
     camera.h = windowHeight;
 
-    //SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+    // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     isRunning = true;
 }
 
@@ -124,7 +122,8 @@ void Game::ProcessInput()
                 {
                     Logger::Info("Debug mode activated");
                 }
-                else{
+                else
+                {
                     Logger::Info("Debug mode dectivated");
                 }
             }
@@ -161,7 +160,7 @@ void Game::LoadLevel(int level)
 
     for (int y = 0; y < mapNumRows; y++)
     {
-        for(int x = 0; x < mapNumCols; x++)
+        for (int x = 0; x < mapNumCols; x++)
         {
             char ch;
             mapFile.get(ch);
@@ -183,7 +182,7 @@ void Game::LoadLevel(int level)
     const auto chopper = registry.create();
     registry.emplace<Player_Tag>(chopper);
     registry.emplace<StayOnMap_Tag>(chopper);
-    
+
     registry.emplace<Transform>(chopper, glm::vec2(100.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(chopper, 0.0, 0.0);
     registry.emplace<Sprite>(chopper, "chopper-image", 32, 32, 10);
@@ -225,7 +224,7 @@ void Game::LoadLevel(int level)
     registry.emplace<Transform>(treeA, glm::vec2(200.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Sprite>(treeA, "tree-image", 16, 32, 1);
     registry.emplace<BoxCollider>(treeA, 16, 32);
-    
+
     const auto treeB = registry.create();
     registry.emplace<Obstacle_Tag>(treeB);
     registry.emplace<Transform>(treeB, glm::vec2(400.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
@@ -261,11 +260,11 @@ void Game::Update()
 
     // Reset all event handlers for the current frame
 
-/*
-    // Subscribe to events
-    registry->GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
-    registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
-*/
+    /*
+        // Subscribe to events
+        registry->GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
+        registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
+    */
 
     // Update systems
     MovementSystem::Update(registry, deltaTime);
@@ -274,7 +273,6 @@ void Game::Update()
     ProjectileEmitSystem::Update(registry);
     ProjectileLifeCycleSystem::Update(registry);
     CollisionSystem::Update(registry);
-   
 
     // Kill entities that are queued for death
     while (!Game::entitiesToKill.empty())
@@ -284,7 +282,6 @@ void Game::Update()
         registry.destroy(entity);
         Logger::Info("Entity Destroyed");
     }
-
 }
 
 void Game::Render()
@@ -294,15 +291,11 @@ void Game::Render()
 
     RenderSystem::Update(registry, renderer, assetStore, camera);
     RenderHealthSystem::Update(registry, renderer, assetStore, camera);
+    RenderTextSystem::Update(registry, renderer, assetStore, camera);
 
-/*
-    registry->GetSystem<RenderTextSystem>().Update(renderer, assetStore, camera);
-    registry->GetSystem<RenderHealthSystem>().Update(renderer, assetStore, camera);
-*/
-
-    if(debugMode)
+    if (debugMode)
     {
-//        registry->GetSystem<RenderColliderSystem>().Update(renderer, camera);
+        // RenderColliderSystem::Update(registry, renderer, camera);
     }
     SDL_RenderPresent(renderer);
 }

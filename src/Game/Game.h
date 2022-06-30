@@ -15,15 +15,14 @@ private:
     bool isRunning;
     double deltaTime = 0;
     int millisecsPreviousFrame = 0;
-    SDL_Window* window;
-    SDL_Renderer* renderer;
+    SDL_Window *window;
+    SDL_Renderer *renderer;
     SDL_Rect camera;
 
     entt::registry registry;
     std::unique_ptr<AssetStore> assetStore;
 
 public:
-
     Game();
     ~Game();
     void Initialize();
