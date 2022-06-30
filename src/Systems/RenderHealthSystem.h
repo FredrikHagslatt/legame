@@ -8,30 +8,24 @@
 #include "Components/Health.h"
 #include <SDL2/SDL.h>
 
-/*
-class RenderHealthSystem : public System
+
+namespace RenderHealthSystem
 {
-public:
-    RenderHealthSystem()
-    {
-        RequireComponent<TransformComponent>();
-        RequireComponent<SpriteComponent>();
-        RequireComponent<HealthComponent>();
-    }
 
-
-    void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore> &assetStore, SDL_Rect &camera)
+    void Update(entt::registry &registry, SDL_Renderer* renderer, std::unique_ptr<AssetStore> &assetStore, SDL_Rect &camera)
     {
         SDL_Color healthBarColor = {255, 255, 255};
         SDL_Color red = {255, 0, 0};
         SDL_Color yellow = {255, 255, 0};
         SDL_Color green = {0, 255, 0};
 
-        for (auto entity : GetSystemEntities())
+        auto view = registry.view<Transform, Sprite, Health>();
+
+        for (auto entity : view)
         {
-            const auto transform = entity.GetComponent<TransformComponent>();
-            const auto sprite = entity.GetComponent<SpriteComponent>();
-            const auto health = entity.GetComponent<HealthComponent>();
+            const auto transform = view.get<Transform>(entity);
+            const auto sprite = view.get<Sprite>(entity);
+            const auto health = view.get<Health>(entity);
 
             if(health.healthPercentage >= 0 && health.healthPercentage < 40)
             {
@@ -90,6 +84,5 @@ public:
     }
 
 };
-*/
 
 #endif

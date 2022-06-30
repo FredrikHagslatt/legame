@@ -19,7 +19,6 @@
 #include "Components/Health.h"
 #include "Components/TextLabel.h"
 
-#include "Systems/RenderSystem.h"
 #include "Systems/AnimationSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/KeyboardControlSystem.h"
@@ -29,11 +28,11 @@
 #include "Systems/DamageSystem.h"
 #include "Systems/CollisionSystem.h"
 
-/*
-#include "Systems/RenderColliderSystem.h"
-#include "Systems/RenderTextSystem.h"
+#include "Systems/RenderSystem.h"
 #include "Systems/RenderHealthSystem.h"
-*/
+//#include "Systems/RenderColliderSystem.h"
+//#include "Systems/RenderTextSystem.h"
+
 
 #include "Events/KeyPressedEvent.h"
 #include "Events/CollisionEvent.h"
@@ -269,21 +268,15 @@ void Game::Update()
 */
 
     // Update systems
-
     MovementSystem::Update(registry, deltaTime);
     AnimationSystem::Update(registry);
     CameraMovementSystem::Update(registry, camera);
     ProjectileEmitSystem::Update(registry);
     ProjectileLifeCycleSystem::Update(registry);
     CollisionSystem::Update(registry);
-
-
-    //registry->GetSystem<DamageSystem>().Update();
    
-    //Update registry at end of frame
-    //registry->Update();
 
-
+    // Kill entities that are queued for death
     while (!Game::entitiesToKill.empty())
     {
         entt::entity entity = Game::entitiesToKill.front();
@@ -300,9 +293,9 @@ void Game::Render()
     SDL_RenderClear(renderer);
 
     RenderSystem::Update(registry, renderer, assetStore, camera);
+    RenderHealthSystem::Update(registry, renderer, assetStore, camera);
 
 /*
-    registry->GetSystem<RenderSystem>().Update(renderer, assetStore, camera);
     registry->GetSystem<RenderTextSystem>().Update(renderer, assetStore, camera);
     registry->GetSystem<RenderHealthSystem>().Update(renderer, assetStore, camera);
 */
