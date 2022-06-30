@@ -283,7 +283,6 @@ void Game::Update()
     //Update registry at end of frame
     //registry->Update();
 
-//    Logger::Info(std::to_string(entitiesToKill.size()));
 
     while (!Game::entitiesToKill.empty())
     {

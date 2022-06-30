@@ -19,11 +19,30 @@ namespace DamageSystem
             auto &health = registry.get<Health>(player);
             health.healthPercentage -= projectileComponent.hitPercentDamage;
 
-            if(health.healthPercentage <= 0)
+            bool playerQueuedForDeath = false;
+            bool projectileQueuedForDeath = false;
+            for (auto entity : Game::entitiesToKill)
             {
-                registry.destroy(player);
+                if (entity == player)
+                {
+                    playerQueuedForDeath = true;
+                }
+                if (entity == projectile)
+                {
+                    projectileQueuedForDeath = true;
+                }
             }
-            registry.destroy(projectile);
+
+            if (!projectileQueuedForDeath)
+            {
+                Game::entitiesToKill.push_back(projectile);
+            }
+
+            if(health.healthPercentage <= 0 && !playerQueuedForDeath)
+            {                
+                Game::entitiesToKill.push_back(player);
+            }
+
         }
     }
 
@@ -35,19 +54,18 @@ namespace DamageSystem
             auto &health = registry.get<Health>(enemy);
             health.healthPercentage -= projectileComponent.hitPercentDamage;
 
-            bool enemyQueuesForDeath = false;
+            bool enemyQueuedForDeath = false;
             bool projectileQueuedForDeath = false;
             for (auto entity : Game::entitiesToKill)
             {
                 if (entity == enemy)
                 {
-                    enemyQueuesForDeath = true;
+                    enemyQueuedForDeath = true;
                 }
                 if (entity == projectile)
                 {
                     projectileQueuedForDeath = true;
                 }
-
             }
 
             if (!projectileQueuedForDeath)
@@ -55,7 +73,7 @@ namespace DamageSystem
                 Game::entitiesToKill.push_back(projectile);
             }
 
-            if(health.healthPercentage <= 0 && !enemyQueuesForDeath)
+            if(health.healthPercentage <= 0 && !enemyQueuedForDeath)
             {                
                 Game::entitiesToKill.push_back(enemy);
             }
