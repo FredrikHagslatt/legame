@@ -31,7 +31,7 @@
 #include "Systems/RenderSystem.h"
 #include "Systems/RenderHealthSystem.h"
 #include "Systems/RenderTextSystem.h"
-//#include "Systems/RenderColliderSystem.h"
+#include "Systems/RenderColliderSystem.h"
 
 #include "Events/KeyPressedEvent.h"
 #include "Events/CollisionEvent.h"
@@ -295,7 +295,7 @@ void Game::Render()
 
     if (debugMode)
     {
-        // RenderColliderSystem::Update(registry, renderer, camera);
+        RenderColliderSystem::Update(registry, renderer, camera);
     }
     SDL_RenderPresent(renderer);
 }
