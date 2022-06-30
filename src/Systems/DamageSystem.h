@@ -9,7 +9,6 @@
 #include "Components/Health.h"
 #include "Events/CollisionEvent.h"
 
-
 namespace DamageSystem
 {
     void OnProjectileHitsPlayer(entt::registry &registry, entt::entity &projectile, entt::entity &player)
@@ -36,12 +35,30 @@ namespace DamageSystem
             auto &health = registry.get<Health>(enemy);
             health.healthPercentage -= projectileComponent.hitPercentDamage;
 
-            if(health.healthPercentage <= 0)
+            bool enemyQueuesForDeath = false;
+            bool projectileQueuedForDeath = false;
+            for (auto entity : Game::entitiesToKill)
             {
-                registry.destroy(enemy);
+                if (entity == enemy)
+                {
+                    enemyQueuesForDeath = true;
+                }
+                if (entity == projectile)
+                {
+                    projectileQueuedForDeath = true;
+                }
+
             }
 
-            registry.destroy(projectile);
+            if (!projectileQueuedForDeath)
+            {
+                Game::entitiesToKill.push_back(projectile);
+            }
+
+            if(health.healthPercentage <= 0 && !enemyQueuesForDeath)
+            {                
+                Game::entitiesToKill.push_back(enemy);
+            }
         }
     }
 

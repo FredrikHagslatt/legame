@@ -1,10 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "vector"
 #include "entt/entt.hpp"
 #include "AssetStore/AssetStore.h"
 #include <SDL2/SDL.h>
+#include <list>
 
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
@@ -35,6 +35,7 @@ public:
     void Render();
     void Destroy();
 
+    static std::list<entt::entity> entitiesToKill;
     static int windowWidth;
     static int windowHeight;
     static int mapWidth;

@@ -42,6 +42,7 @@ int Game::windowWidth;
 int Game::windowHeight;
 int Game::mapWidth;
 int Game::mapHeight;
+std::list<entt::entity> Game::entitiesToKill;
 
 Game::Game()
 {
@@ -277,12 +278,21 @@ void Game::Update()
     CollisionSystem::Update(registry);
 
 
-
-
     //registry->GetSystem<DamageSystem>().Update();
    
     //Update registry at end of frame
     //registry->Update();
+
+//    Logger::Info(std::to_string(entitiesToKill.size()));
+
+    while (!Game::entitiesToKill.empty())
+    {
+        entt::entity entity = Game::entitiesToKill.front();
+        Game::entitiesToKill.pop_front();
+        registry.destroy(entity);
+        Logger::Info("Entity Destroyed");
+    }
+
 }
 
 void Game::Render()
