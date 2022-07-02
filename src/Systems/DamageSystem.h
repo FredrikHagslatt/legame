@@ -85,7 +85,6 @@ namespace DamageSystem
         auto &registry = event.registry;
         auto &a = event.entityA;
         auto &b = event.entityB;
-        Logger::Info("Damage system received collision event.");
 
         if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Player_Tag>(b))
         {

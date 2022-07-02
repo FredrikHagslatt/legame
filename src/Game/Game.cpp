@@ -135,20 +135,9 @@ void Game::ProcessInput()
     }
 }
 
-void Game::LoadLevel(int level)
+void Game::LoadMap(std::string spritesheet, std::string map)
 {
-
-    assetStore->AddTexture(renderer, "tilemap-image", "assets/tilemaps/jungle.png");
-    assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
-    assetStore->AddTexture(renderer, "truck-image", "assets/images/truck-ford-right.png");
-    assetStore->AddTexture(renderer, "tree-image", "assets/images/tree.png");
-    assetStore->AddTexture(renderer, "chopper-image", "assets/images/chopper-spritesheet.png");
-    assetStore->AddTexture(renderer, "radar-image", "assets/images/radar.png");
-    assetStore->AddTexture(renderer, "bullet-image", "assets/images/bullet.png");
-
-    assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20);
-    assetStore->AddFont("pico8-font-5", "assets/fonts/pico8.ttf", 5);
-    assetStore->AddFont("pico8-font-10", "assets/fonts/pico8.ttf", 10);
+    assetStore->AddTexture(renderer, spritesheet, spritesheet);
 
     int tileSize = 32;
     double tileScale = 2.0;
@@ -156,7 +145,7 @@ void Game::LoadLevel(int level)
     int mapNumRows = 20;
 
     std::fstream mapFile;
-    mapFile.open("assets/tilemaps/jungle.map");
+    mapFile.open(map);
 
     for (int y = 0; y < mapNumRows; y++)
     {
@@ -171,13 +160,31 @@ void Game::LoadLevel(int level)
 
             const auto tile = registry.create();
             registry.emplace<Transform>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
-            registry.emplace<Sprite>(tile, "tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
+            registry.emplace<Sprite>(tile, spritesheet, tileSize, tileSize, 0, false, srcRectX, srcRectY);
         }
     }
 
     mapFile.close();
     mapWidth = mapNumCols * tileSize * tileScale;
     mapHeight = mapNumRows * tileSize * tileScale;
+
+}
+
+void Game::LoadLevel(int level)
+{
+
+    assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
+    assetStore->AddTexture(renderer, "truck-image", "assets/images/truck-ford-right.png");
+    assetStore->AddTexture(renderer, "tree-image", "assets/images/tree.png");
+    assetStore->AddTexture(renderer, "chopper-image", "assets/images/chopper-spritesheet.png");
+    assetStore->AddTexture(renderer, "radar-image", "assets/images/radar.png");
+    assetStore->AddTexture(renderer, "bullet-image", "assets/images/bullet.png");
+
+    assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20);
+    assetStore->AddFont("pico8-font-5", "assets/fonts/pico8.ttf", 5);
+    assetStore->AddFont("pico8-font-10", "assets/fonts/pico8.ttf", 10);
+
+    LoadMap("assets/tilemaps/jungle.png", "assets/tilemaps/jungle.map");
 
     const auto chopper = registry.create();
     registry.emplace<Player_Tag>(chopper);

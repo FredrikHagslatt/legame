@@ -28,6 +28,7 @@ public:
     void Initialize();
     void Run();
     void LoadLevel(int level);
+    void LoadMap(std::string spritesheet, std::string map);
     void Setup();
     void ProcessInput();
     void Update();
