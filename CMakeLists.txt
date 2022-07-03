@@ -12,15 +12,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 file(GLOB_RECURSE SOURCES ${SOURCE_DIR}/*.cpp)
 include_directories("${CMAKE_SOURCE_DIR}/src")
-#set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
 set(THIRD_PARTY "${CMAKE_SOURCE_DIR}/3rdparty")
 include_directories(${THIRD_PARTY})
 
 
 
-#if (EXISTS ${ASSETS_DIR} AND IS_DIRECTORY ${ASSETS_DIR})
-#    file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
-#endif()
 
 if(MINGW)
     set(SDL2_DIR "${THIRD_PARTY}/SDL_Bundle_Mingw")
@@ -79,9 +75,22 @@ target_link_libraries(${PROJECT_NAME}
 
 add_definitions(-DSDL_MAIN_HANDLED) #Windows?
 
+
+# COPY DOES NOT NEED ADMIN ACCESS
+#--------------------------------------------------------
+#set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
+#if (EXISTS ${ASSETS_DIR} AND IS_DIRECTORY ${ASSETS_DIR})
+#    file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+#endif()
+#--------------------------------------------------------
+
+
+# SYMLINK NEEDS ADMIN ACCESS
+#--------------------------------------------------------
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E create_symlink "${CMAKE_SOURCE_DIR}/assets" "${CMAKE_BINARY_DIR}/assets" 
     DEPENDS ${destination}
     COMMENT "symbolic link resources folder from ${source} => ${destination}"
 )
+#--------------------------------------------------------

@@ -139,14 +139,38 @@ void Game::LoadMap(std::string spritesheet, std::string map)
 {
     assetStore->AddTexture(renderer, spritesheet, spritesheet);
 
-    int tileSize = 32;
-    double tileScale = 2.0;
-    int mapNumCols = 25;
-    int mapNumRows = 20;
+    int tileSize = 16;
+    double tileScale = 4.0;
+    int mapNumCols = 0;
+    int mapNumRows = 0;
 
     std::fstream mapFile;
     mapFile.open(map);
 
+    //Get map dimensions
+    std::string line;
+    while(std::getline(mapFile, line))
+    {
+        if (mapNumCols == 0)
+        {
+            mapNumCols = (line.size() + 1) / 3;
+        }
+        else{
+            if (mapNumCols != (line.size() + 1) / 3)
+            {
+                Logger::Fatal("Map is fucked! Row length not matching");
+            }
+        }
+        mapNumRows++;
+    }
+
+    mapFile.clear();
+    mapFile.seekg(0);//Go to start of file again.
+
+    Logger::Warning(std::to_string(mapNumCols));
+    Logger::Warning(std::to_string(mapNumRows));
+
+    //Read map, create tiles.
     for (int y = 0; y < mapNumRows; y++)
     {
         for (int x = 0; x < mapNumCols; x++)
@@ -184,12 +208,11 @@ void Game::LoadLevel(int level)
     assetStore->AddFont("pico8-font-5", "assets/fonts/pico8.ttf", 5);
     assetStore->AddFont("pico8-font-10", "assets/fonts/pico8.ttf", 10);
 
-    LoadMap("assets/tilemaps/jungle.png", "assets/tilemaps/jungle.map");
+    LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/hub.map");
 
     const auto chopper = registry.create();
     registry.emplace<Player_Tag>(chopper);
     registry.emplace<StayOnMap_Tag>(chopper);
-
     registry.emplace<Transform>(chopper, glm::vec2(100.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(chopper, 0.0, 0.0);
     registry.emplace<Sprite>(chopper, "chopper-image", 32, 32, 10);
@@ -242,6 +265,7 @@ void Game::LoadLevel(int level)
     registry.emplace<UI_Tag>(label);
     SDL_Color green = {30, 200, 30};
     registry.emplace<TextLabel>(label, glm::vec2(windowWidth / 2 - 40, 10), "Chopper 1.0", "charriot-font", green, true);
+
 }
 
 void Game::Setup()
