@@ -7,9 +7,13 @@
 #include "AssetStore/AssetStore.h"
 #include <SDL2/SDL.h>
 
-namespace RenderSystem
+extern SDL_Renderer *renderer;
+extern AssetStore assetStore;
+extern entt::registry registry;
+class RenderSystem
 {
-    void Update(entt::registry &registry, SDL_Renderer *renderer, std::unique_ptr<AssetStore> &assetStore, SDL_Rect &camera)
+public:
+    static void Update(SDL_Rect &camera)
     {
         struct RenderableEntity
         {
@@ -56,7 +60,7 @@ namespace RenderSystem
 
             SDL_RenderCopyEx(
                 renderer,
-                assetStore->GetTexture(sprite.assetId),
+                assetStore.GetTexture(sprite.assetId),
                 &srcRect,
                 &dstRect,
                 transform.rotation,

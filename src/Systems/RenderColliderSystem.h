@@ -6,9 +6,11 @@
 #include "Components/BoxCollider.h"
 #include <SDL2/SDL.h>
 
-namespace RenderColliderSystem
+extern entt::registry registry;
+class RenderColliderSystem
 {
-    void Update(entt::registry &registry, SDL_Renderer *renderer, SDL_Rect &camera)
+public:
+    static void Update(SDL_Rect &camera)
     {
         auto view = registry.view<Transform, BoxCollider>();
         for (auto entity : view)

@@ -8,10 +8,11 @@
 #include "Components/Health.h"
 #include <SDL2/SDL.h>
 
-namespace RenderHealthSystem
+extern entt::registry registry;
+class RenderHealthSystem
 {
-
-    void Update(entt::registry &registry, SDL_Renderer *renderer, std::unique_ptr<AssetStore> &assetStore, SDL_Rect &camera)
+public:
+    static void Update(SDL_Rect &camera)
     {
         SDL_Color healthBarColor = {255, 255, 255};
         SDL_Color red = {255, 0, 0};
@@ -60,7 +61,7 @@ namespace RenderHealthSystem
 
             // Render the health percentage text label indicator
             std::string healthText = std::to_string(health.healthPercentage);
-            SDL_Surface *surface = TTF_RenderText_Blended(assetStore->GetFont("pico8-font-5"), healthText.c_str(), healthBarColor);
+            SDL_Surface *surface = TTF_RenderText_Blended(assetStore.GetFont("pico8-font-5"), healthText.c_str(), healthBarColor);
             SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_FreeSurface(surface);
 

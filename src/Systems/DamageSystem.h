@@ -9,19 +9,22 @@
 #include "Components/Health.h"
 #include "Events/CollisionEvent.h"
 
-namespace DamageSystem
+extern std::list<entt::entity> entitiesToKill;
+extern entt::registry registry;
+class DamageSystem
 {
-    void OnProjectileHitsPlayer(entt::registry &registry, entt::entity &projectile, entt::entity &player)
+public:
+    static void OnProjectileHitsPlayer(entt::entity &projectile, entt::entity &player)
     {
         auto projectileComponent = registry.get<Projectile>(projectile);
-        if(!projectileComponent.isFriendly)
+        if (!projectileComponent.isFriendly)
         {
             auto &health = registry.get<Health>(player);
             health.healthPercentage -= projectileComponent.hitPercentDamage;
 
             bool playerQueuedForDeath = false;
             bool projectileQueuedForDeath = false;
-            for (auto entity : Game::entitiesToKill)
+            for (auto entity : entitiesToKill)
             {
                 if (entity == player)
                 {
@@ -35,28 +38,27 @@ namespace DamageSystem
 
             if (!projectileQueuedForDeath)
             {
-                Game::entitiesToKill.push_back(projectile);
+                entitiesToKill.push_back(projectile);
             }
 
-            if(health.healthPercentage <= 0 && !playerQueuedForDeath)
-            {                
-                Game::entitiesToKill.push_back(player);
+            if (health.healthPercentage <= 0 && !playerQueuedForDeath)
+            {
+                entitiesToKill.push_back(player);
             }
-
         }
     }
 
-    void OnProjectileHitsEnemy(entt::registry &registry, entt::entity &projectile, entt::entity &enemy)
+    static void OnProjectileHitsEnemy(entt::entity &projectile, entt::entity &enemy)
     {
         auto projectileComponent = registry.get<Projectile>(projectile);
-        if(projectileComponent.isFriendly)
+        if (projectileComponent.isFriendly)
         {
             auto &health = registry.get<Health>(enemy);
             health.healthPercentage -= projectileComponent.hitPercentDamage;
 
             bool enemyQueuedForDeath = false;
             bool projectileQueuedForDeath = false;
-            for (auto entity : Game::entitiesToKill)
+            for (auto entity : entitiesToKill)
             {
                 if (entity == enemy)
                 {
@@ -70,48 +72,45 @@ namespace DamageSystem
 
             if (!projectileQueuedForDeath)
             {
-                Game::entitiesToKill.push_back(projectile);
+                entitiesToKill.push_back(projectile);
             }
 
-            if(health.healthPercentage <= 0 && !enemyQueuedForDeath)
-            {                
-                Game::entitiesToKill.push_back(enemy);
+            if (health.healthPercentage <= 0 && !enemyQueuedForDeath)
+            {
+                entitiesToKill.push_back(enemy);
             }
         }
     }
 
-    void OnCollision(CollisionEvent event)
+    static void OnCollision(CollisionEvent event)
     {
-        auto &registry = event.registry;
-        auto &a = event.entityA;
-        auto &b = event.entityB;
+        auto &a = event.a;
+        auto &b = event.b;
 
         if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Player_Tag>(b))
         {
-            OnProjectileHitsPlayer(registry, a, b);
+            OnProjectileHitsPlayer(a, b);
         }
 
         else if (registry.all_of<Projectile_Tag>(b) && registry.all_of<Player_Tag>(a))
         {
-            OnProjectileHitsPlayer(registry, b, a);
+            OnProjectileHitsPlayer(b, a);
         }
 
         else if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Enemy_Tag>(b))
         {
-            OnProjectileHitsEnemy(registry, a, b);
+            OnProjectileHitsEnemy(a, b);
         }
 
         else if (registry.all_of<Projectile_Tag>(b) && registry.all_of<Enemy_Tag>(a))
         {
-            OnProjectileHitsEnemy(registry, b, a);
+            OnProjectileHitsEnemy(b, a);
         }
     }
 
-    void Update()
+    static void Update()
     {
-
     }
 };
-
 
 #endif

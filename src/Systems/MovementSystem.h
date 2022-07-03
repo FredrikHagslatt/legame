@@ -8,9 +8,13 @@
 #include "Events/CollisionEvent.h"
 #include "Logger/Logger.h"
 
-namespace MovementSystem
+extern entt::registry registry;
+extern int mapWidth;
+extern int mapHeight;
+class MovementSystem
 {
-    void Update(entt::registry &registry, double deltaTime)
+public:
+    static void Update(double deltaTime)
     {
 
         auto view = registry.view<Transform, Velocity>();
@@ -30,17 +34,15 @@ namespace MovementSystem
                 int paddingRight = 50;
                 int paddingBottom = 50;
                 transform.position.x = transform.position.x < paddingLeft ? paddingLeft : transform.position.x;
-                transform.position.x = transform.position.x > Game::mapWidth - paddingRight ? Game::mapWidth - paddingRight : transform.position.x;
+                transform.position.x = transform.position.x > mapWidth - paddingRight ? mapWidth - paddingRight : transform.position.x;
                 transform.position.y = transform.position.y < paddingTop ? paddingTop : transform.position.y;
-                transform.position.y = transform.position.y > Game::mapHeight - paddingBottom ? Game::mapHeight - paddingBottom : transform.position.y;
+                transform.position.y = transform.position.y > mapHeight - paddingBottom ? mapHeight - paddingBottom : transform.position.y;
             }
 
-            bool isEntityOutsideMap = (
-                transform.position.x < 0 ||
-                transform.position.x > Game::mapWidth ||
-                transform.position.y < 0 ||
-                transform.position.y > Game::mapHeight
-            );
+            bool isEntityOutsideMap = (transform.position.x < 0 ||
+                                       transform.position.x > mapWidth ||
+                                       transform.position.y < 0 ||
+                                       transform.position.y > mapHeight);
 
             if (isEntityOutsideMap && !registry.all_of<Player_Tag>(entity))
             {
@@ -50,46 +52,43 @@ namespace MovementSystem
         }
     }
 
-    void OnEnemyHitsObstacle(entt::registry &registry, entt::entity enemy)
+    static void OnEnemyHitsObstacle(entt::entity enemy)
     {
 
-        if(registry.all_of<Velocity, Sprite>(enemy))
+        if (registry.all_of<Velocity, Sprite>(enemy))
         {
             auto &velocity = registry.get<Velocity>(enemy);
             auto &sprite = registry.get<Sprite>(enemy);
 
-            if(velocity.x != 0)
+            if (velocity.x != 0)
             {
                 velocity.x *= -1;
                 sprite.flip = (sprite.flip == SDL_FLIP_NONE) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
             }
 
-            if(velocity.y != 0)
+            if (velocity.y != 0)
             {
                 velocity.y *= -1;
                 sprite.flip = (sprite.flip == SDL_FLIP_NONE) ? SDL_FLIP_VERTICAL : SDL_FLIP_NONE;
             }
-
         }
     }
 
-    void OnCollision(CollisionEvent event)
+    static void OnCollision(CollisionEvent event)
     {
-        auto &registry = event.registry;
-        auto &a = event.entityA;
-        auto &b = event.entityB;
+        auto &a = event.a;
+        auto &b = event.b;
 
         if (registry.all_of<Enemy_Tag>(a) && registry.all_of<Obstacle_Tag>(b))
         {
-            OnEnemyHitsObstacle(registry, a);
+            OnEnemyHitsObstacle(a);
         }
 
         else if (registry.all_of<Enemy_Tag>(b) && registry.all_of<Obstacle_Tag>(a))
         {
-            OnEnemyHitsObstacle(registry, b);
+            OnEnemyHitsObstacle(b);
         }
     }
 };
-
 
 #endif

@@ -3,15 +3,12 @@
 
 #include "entt/entt.hpp"
 
-struct CollisionEvent
+class CollisionEvent
 {
-    entt::registry &registry;
-    entt::entity &entityA;
-    entt::entity &entityB;
+public:
+    entt::entity a;
+    entt::entity b;
+    CollisionEvent(entt::entity a, entt::entity b) : a(a), b(b) {}
 };
-
-
-entt::sigh<void(CollisionEvent)> CollisionEventEmitter;
-entt::sink CollisionEventListener{CollisionEventEmitter};
 
 #endif

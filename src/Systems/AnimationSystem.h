@@ -6,21 +6,23 @@
 #include "Components/Animation.h"
 #include <SDL2/SDL.h>
 
-namespace AnimationSystem
+extern entt::registry registry;
+class AnimationSystem
 {
-        void Update(entt::registry &registry)
+public:
+    static void Update()
+    {
+        auto view = registry.view<Sprite, Animation>();
+        for (auto entity : view)
         {
-            auto view = registry.view<Sprite, Animation>();
-            for (auto entity : view)
-            {
-                // Update entity position based on its velocity
-                auto &sprite = view.get<Sprite>(entity);
-                auto &animation = view.get<Animation>(entity);
+            // Update entity position based on its velocity
+            auto &sprite = view.get<Sprite>(entity);
+            auto &animation = view.get<Animation>(entity);
 
-                animation.currentFrame = static_cast<int>((SDL_GetTicks() - animation.startTime) * animation.frameRateSpeed / 1000.0) % animation.numFrames;
-                sprite.srcRect.x = animation.currentFrame * sprite.width;
-            }
+            animation.currentFrame = static_cast<int>((SDL_GetTicks() - animation.startTime) * animation.frameRateSpeed / 1000.0) % animation.numFrames;
+            sprite.srcRect.x = animation.currentFrame * sprite.width;
         }
+    }
 };
 
 #endif

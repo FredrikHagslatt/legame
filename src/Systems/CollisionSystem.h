@@ -2,14 +2,15 @@
 #define COLLISIONSYSTEM_H
 
 #include "entt/entt.hpp"
-#include "Events/CollisionEvent.h"
 #include "Components/Transform.h"
 #include "Components/BoxCollider.h"
+#include "Events/CollisionEvent.h"
 
-
-namespace CollisionSystem
+extern entt::registry registry;
+class CollisionSystem
 {
-    bool CheckAABBCollision(
+public:
+    static bool CheckAABBCollision(
         double aX,
         double aY,
         double aW,
@@ -26,7 +27,7 @@ namespace CollisionSystem
             aY + aH > bY);
     }
 
-    void Update(entt::registry &registry)
+    static void Update()
     {
 
         auto view = registry.view<Transform, BoxCollider>();
@@ -62,8 +63,8 @@ namespace CollisionSystem
 
                 if (collisionHappened)
                 {
-                    CollisionEvent collisionEvent{registry, a, b};
-                    CollisionEventEmitter.publish(collisionEvent);
+                    // CollisionEvent collisionEvent{a, b};
+                    // collisionEventEmitter.publish(collisionEvent);
                 }
             }
         }

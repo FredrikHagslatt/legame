@@ -5,16 +5,18 @@
 #include "entt/entt.hpp"
 #include "Components/Projectile.h"
 
-namespace ProjectileLifeCycleSystem
+extern entt::registry registry;
+class ProjectileLifeCycleSystem
 {
-    void Update(entt::registry &registry)
+public:
+    static void Update()
     {
         auto view = registry.view<Projectile>();
         for (auto entity : view)
         {
             auto projectile = view.get<Projectile>(entity);
 
-            if(SDL_GetTicks() - projectile.startTime > projectile.duration)
+            if (SDL_GetTicks() - projectile.startTime > projectile.duration)
             {
                 registry.destroy(entity);
             }

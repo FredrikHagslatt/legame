@@ -1,16 +1,13 @@
 #ifndef KEYPRESSEDEVENT_H
 #define KEYPRESSEDEVENT_H
 
-#include "entt/entt.hpp"
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 
-struct KeyPressedEvent
+class KeyPressedEvent
 {
-    entt::registry &registry;
-    SDL_Keycode &key; //sdlEvent.key.keysym.sym
+public:
+    SDL_Keycode key;
+    KeyPressedEvent(SDL_Keycode key) : key(key) {}
 };
-
-entt::sigh<void(KeyPressedEvent)> keyPressedEventEmitter;
-entt::sink keyPressedEventListener{keyPressedEventEmitter};
 
 #endif

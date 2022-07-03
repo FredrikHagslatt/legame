@@ -7,9 +7,11 @@
 #include <SDL2/SDL.h>
 #include "Logger/Logger.h"
 
-namespace RenderTextSystem
+extern entt::registry registry;
+class RenderTextSystem
 {
-    void Update(entt::registry &registry, SDL_Renderer *renderer, std::unique_ptr<AssetStore> &assetStore, const SDL_Rect &camera)
+public:
+    static void Update(const SDL_Rect &camera)
     {
         auto view = registry.view<TextLabel>();
         for (auto entity : view)
@@ -17,7 +19,7 @@ namespace RenderTextSystem
             const auto textLabel = view.get<TextLabel>(entity);
 
             SDL_Surface *surface = TTF_RenderText_Blended(
-                assetStore->GetFont(textLabel.assetId),
+                assetStore.GetFont(textLabel.assetId),
                 textLabel.text.c_str(),
                 textLabel.color);
 
