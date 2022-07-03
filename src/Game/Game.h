@@ -35,8 +35,6 @@ public:
     void Destroy();
 
     static std::list<entt::entity> entitiesToKill;
-    static int windowWidth;
-    static int windowHeight;
     static int mapWidth;
     static int mapHeight;
 };
