@@ -11,6 +11,13 @@ namespace KeyBoardControlSystem{
 
     void OnKeyPressed(KeyPressedEvent event)
     {
+        enum Direction {
+            DIR_RIGHT,
+            DIR_DOWN,
+            DIR_LEFT,
+            DIR_UP,
+        };
+
         auto view = event.registry.view<KeyboardControlled, Sprite, Velocity>();
         for (auto entity : view)
         {
@@ -23,22 +30,22 @@ namespace KeyBoardControlSystem{
                 case SDLK_UP:
                     velocity.x = keyboardControl.upVelocity.x;
                     velocity.y = keyboardControl.upVelocity.y;
-                    sprite.srcRect.y = sprite.height * 0;
+                    sprite.srcRect.y = sprite.height * DIR_UP;
                     break;
                 case SDLK_RIGHT:
                     velocity.x = keyboardControl.rightVelocity.x;
                     velocity.y = keyboardControl.rightVelocity.y;
-                    sprite.srcRect.y = sprite.height * 1;
+                    sprite.srcRect.y = sprite.height * DIR_RIGHT;
                     break;
                 case SDLK_DOWN:
                     velocity.x = keyboardControl.downVelocity.x;
                     velocity.y = keyboardControl.downVelocity.y;
-                    sprite.srcRect.y = sprite.height * 2;
+                    sprite.srcRect.y = sprite.height * DIR_DOWN;
                     break;
                 case SDLK_LEFT:
                     velocity.x = keyboardControl.leftVelocity.x;
                     velocity.y = keyboardControl.leftVelocity.y;
-                    sprite.srcRect.y = sprite.height * 3;
+                    sprite.srcRect.y = sprite.height * DIR_LEFT;
                     break;
 
             }

@@ -197,6 +197,7 @@ void Game::LoadMap(std::string spritesheet, std::string map)
 void Game::LoadLevel(int level)
 {
 
+    assetStore->AddTexture(renderer, "spike-image", "assets/images/Spike.png");
     assetStore->AddTexture(renderer, "tank-image", "assets/images/tank-panther-right.png");
     assetStore->AddTexture(renderer, "truck-image", "assets/images/truck-ford-right.png");
     assetStore->AddTexture(renderer, "tree-image", "assets/images/tree.png");
@@ -210,14 +211,24 @@ void Game::LoadLevel(int level)
 
     LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/hub.map");
 
+    const auto player = registry.create();
+    registry.emplace<Player_Tag>(player);
+    registry.emplace<StayOnMap_Tag>(player);
+    registry.emplace<Transform>(player, glm::vec2(200.0, 400.0), glm::vec2(4.0, 4.0), 0.0);
+    registry.emplace<Velocity>(player, 0.0, 0.0);
+    registry.emplace<Sprite>(player, "spike-image", 16, 32, 10);
+    registry.emplace<Animation>(player, 5, 5, true);
+    registry.emplace<KeyboardControlled>(player, glm::vec2(0, -200), glm::vec2(200, 0), glm::vec2(0, 200), glm::vec2(-200, 0));
+    registry.emplace<ProjectileEmitter>(player, glm::vec2(300.0, 300.0), 0, 10000, 10, true);
+    registry.emplace<Health>(player, 100);
+    registry.emplace<BoxCollider>(player, 16, 32);
+
     const auto chopper = registry.create();
-    registry.emplace<Player_Tag>(chopper);
     registry.emplace<StayOnMap_Tag>(chopper);
     registry.emplace<Transform>(chopper, glm::vec2(100.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
-    registry.emplace<Velocity>(chopper, 0.0, 0.0);
+    registry.emplace<Velocity>(chopper, 50.0, 0.0);
     registry.emplace<Sprite>(chopper, "chopper-image", 32, 32, 10);
     registry.emplace<Animation>(chopper, 2, 12, true);
-    registry.emplace<KeyboardControlled>(chopper, glm::vec2(0, -100), glm::vec2(100, 0), glm::vec2(0, 100), glm::vec2(-100, 0));
     registry.emplace<ProjectileEmitter>(chopper, glm::vec2(300.0, 300.0), 0, 10000, 10, true);
     registry.emplace<Health>(chopper, 100);
     registry.emplace<BoxCollider>(chopper, 32, 32);
@@ -231,7 +242,7 @@ void Game::LoadLevel(int level)
     const auto tank = registry.create();
     registry.emplace<Enemy_Tag>(tank);
     registry.emplace<StayOnMap_Tag>(tank);
-    registry.emplace<Transform>(tank, glm::vec2(120.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Transform>(tank, glm::vec2(120.0, 300.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Velocity>(tank, 30.0, 0.0);
     registry.emplace<Sprite>(tank, "tank-image", 32, 32, 2);
     registry.emplace<ProjectileEmitter>(tank, glm::vec2(100.0, 0.0), 1000, 10000, 10, false);
@@ -250,7 +261,6 @@ void Game::LoadLevel(int level)
 
     const auto treeA = registry.create();
     registry.emplace<Obstacle_Tag>(treeA);
-
     registry.emplace<Transform>(treeA, glm::vec2(200.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Sprite>(treeA, "tree-image", 16, 32, 1);
     registry.emplace<BoxCollider>(treeA, 16, 32);
