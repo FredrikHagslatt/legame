@@ -11,7 +11,6 @@ AssetStore::~AssetStore()
 {
     ClearAssets();
     Logger::Info("Asset Store Destroyed!");
-
 }
 
 void AssetStore::ClearAssets()
@@ -28,7 +27,7 @@ void AssetStore::ClearAssets()
     }
     fonts.clear();
 
-    //TODO: Clear all audio
+    // TODO: Clear all audio
 }
 
 void AssetStore::AddTexture(SDL_Renderer *renderer, const std::string &assetId, const std::string &filePath)
@@ -57,7 +56,7 @@ void AssetStore::AddFont(const std::string &assetId, const std::string &filePath
 
 TTF_Font *AssetStore::GetFont(const std::string assetId) const
 {
-    if(!fonts.count(assetId))
+    if (!fonts.count(assetId))
     {
         Logger::Fatal("Font with ID: '" + assetId + "' not in asset store");
     }

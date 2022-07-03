@@ -1,13 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "ECS/ECS.h"
+#include "entt/entt.hpp"
 #include "AssetStore/AssetStore.h"
-#include "EventBus/EventBus.h"
+#include "Constants/Constants.h"
 #include <SDL2/SDL.h>
+#include <list>
 
-const int FPS = 60;
-const int MILLISECS_PER_FRAME = 1000 / FPS;
 class Game
 {
 private:
@@ -15,13 +14,12 @@ private:
     bool isRunning;
     double deltaTime = 0;
     int millisecsPreviousFrame = 0;
-    SDL_Window* window;
-    SDL_Renderer* renderer;
+    SDL_Window *window;
+    SDL_Renderer *renderer;
     SDL_Rect camera;
 
-    std::unique_ptr<Registry> registry;
+    entt::registry registry;
     std::unique_ptr<AssetStore> assetStore;
-    std::unique_ptr<EventBus> eventBus;
 
 public:
     Game();
@@ -29,14 +27,14 @@ public:
     void Initialize();
     void Run();
     void LoadLevel(int level);
+    void LoadMap(std::string spritesheet, std::string map);
     void Setup();
     void ProcessInput();
     void Update();
     void Render();
     void Destroy();
 
-    static int windowWidth;
-    static int windowHeight;
+    static std::list<entt::entity> entitiesToKill;
     static int mapWidth;
     static int mapHeight;
 };

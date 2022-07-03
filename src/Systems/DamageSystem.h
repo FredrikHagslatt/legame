@@ -1,82 +1,109 @@
 #ifndef DAMAGESYSTEM_H
 #define DAMAGESYSTEM_H
 
-#include "ECS/ECS.h"
-#include "Components/BoxColliderComponent.h"
-#include "Components/HealthComponent.h"
-#include "Components/ProjectileComponent.h"
-#include "Components/HealthComponent.h"
-#include "EventBus/EventBus.h"
+#include "entt/entt.hpp"
+#include "Components/Tags.h"
+#include "Components/BoxCollider.h"
+#include "Components/Health.h"
+#include "Components/Projectile.h"
+#include "Components/Health.h"
 #include "Events/CollisionEvent.h"
 
-class DamageSystem : public System
+namespace DamageSystem
 {
-public:
-    DamageSystem()
+    void OnProjectileHitsPlayer(entt::registry &registry, entt::entity &projectile, entt::entity &player)
     {
-        RequireComponent<BoxColliderComponent>();
-    }
-
-    void SubscribeToEvents(std::unique_ptr<EventBus> &eventBus)
-    {
-        eventBus->SubscribeToEvent<CollisionEvent>(this, &DamageSystem::OnCollision);
-    }
-
-    void OnProjectileHitsPlayer(Entity projectile, Entity player)
-    {
-        auto projectileComponent = projectile.GetComponent<ProjectileComponent>();
+        auto projectileComponent = registry.get<Projectile>(projectile);
         if(!projectileComponent.isFriendly)
         {
-            auto &health = player.GetComponent<HealthComponent>();
+            auto &health = registry.get<Health>(player);
             health.healthPercentage -= projectileComponent.hitPercentDamage;
 
-            if(health.healthPercentage <= 0)
+            bool playerQueuedForDeath = false;
+            bool projectileQueuedForDeath = false;
+            for (auto entity : Game::entitiesToKill)
             {
-                player.Kill();
+                if (entity == player)
+                {
+                    playerQueuedForDeath = true;
+                }
+                if (entity == projectile)
+                {
+                    projectileQueuedForDeath = true;
+                }
             }
-            projectile.Kill();
+
+            if (!projectileQueuedForDeath)
+            {
+                Game::entitiesToKill.push_back(projectile);
+            }
+
+            if(health.healthPercentage <= 0 && !playerQueuedForDeath)
+            {                
+                Game::entitiesToKill.push_back(player);
+            }
+
         }
     }
 
-    void OnProjectileHitsEnemy(Entity projectile, Entity enemy)
+    void OnProjectileHitsEnemy(entt::registry &registry, entt::entity &projectile, entt::entity &enemy)
     {
-        auto projectileComponent = projectile.GetComponent<ProjectileComponent>();
+        auto projectileComponent = registry.get<Projectile>(projectile);
         if(projectileComponent.isFriendly)
         {
-            auto &health = enemy.GetComponent<HealthComponent>();
+            auto &health = registry.get<Health>(enemy);
             health.healthPercentage -= projectileComponent.hitPercentDamage;
 
-            if(health.healthPercentage <= 0)
+            bool enemyQueuedForDeath = false;
+            bool projectileQueuedForDeath = false;
+            for (auto entity : Game::entitiesToKill)
             {
-                enemy.Kill();
+                if (entity == enemy)
+                {
+                    enemyQueuedForDeath = true;
+                }
+                if (entity == projectile)
+                {
+                    projectileQueuedForDeath = true;
+                }
             }
-            projectile.Kill();
+
+            if (!projectileQueuedForDeath)
+            {
+                Game::entitiesToKill.push_back(projectile);
+            }
+
+            if(health.healthPercentage <= 0 && !enemyQueuedForDeath)
+            {                
+                Game::entitiesToKill.push_back(enemy);
+            }
         }
     }
 
-    void OnCollision(CollisionEvent &event)
+    void OnCollision(CollisionEvent event)
     {
-        Entity a = event.a;
-        Entity b = event.b;
-        Logger::Info("Damage system received collision event between entities: " + std::to_string(a.GetId()) + " and " + std::to_string(b.GetId()) + ".");
+        auto &registry = event.registry;
+        auto &a = event.entityA;
+        auto &b = event.entityB;
 
-        if (a.BelongsToGroup("projectiles") && b.HasTag("player"))
-        {        
-            OnProjectileHitsPlayer(a, b);
+        if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Player_Tag>(b))
+        {
+            OnProjectileHitsPlayer(registry, a, b);
         }
 
-        if (b.BelongsToGroup("projectiles") && a.HasTag("player"))
+        else if (registry.all_of<Projectile_Tag>(b) && registry.all_of<Player_Tag>(a))
         {
-            OnProjectileHitsPlayer(b, a);
+            OnProjectileHitsPlayer(registry, b, a);
         }
 
-        if (a.BelongsToGroup("projectiles") && b.BelongsToGroup("enemies"))
+        else if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Enemy_Tag>(b))
         {
-            OnProjectileHitsEnemy(a, b);
+            OnProjectileHitsEnemy(registry, a, b);
         }
-        if (b.BelongsToGroup("projectiles") && a.BelongsToGroup("enemies"))
+
+        else if (registry.all_of<Projectile_Tag>(b) && registry.all_of<Enemy_Tag>(a))
         {
-            OnProjectileHitsEnemy(b, a);
+            OnProjectileHitsEnemy(registry, b, a);
         }
     }
 
@@ -85,5 +112,6 @@ public:
 
     }
 };
+
 
 #endif

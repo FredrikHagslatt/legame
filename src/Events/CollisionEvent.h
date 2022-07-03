@@ -1,15 +1,17 @@
 #ifndef COLLISIONEVENT_H
 #define COLLISIONEVENT_H
 
-#include "ECS/ECS.h"
-#include "EventBus/Event.h"
+#include "entt/entt.hpp"
 
-class CollisionEvent : public Event
+struct CollisionEvent
 {
-public:
-    Entity a;
-    Entity b;
-    CollisionEvent(Entity a, Entity b) : a(a), b(b) {}
+    entt::registry &registry;
+    entt::entity &entityA;
+    entt::entity &entityB;
 };
+
+
+entt::sigh<void(CollisionEvent)> CollisionEventEmitter;
+entt::sink CollisionEventListener{CollisionEventEmitter};
 
 #endif

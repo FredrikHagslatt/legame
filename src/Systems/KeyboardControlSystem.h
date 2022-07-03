@@ -1,54 +1,51 @@
 #ifndef KEYBOARDCONTROLSYSTEM_H
 #define KEYBOARDCONTROLSYSTEM_H
 
-#include "ECS/ECS.h"
-#include "EventBus/EventBus.h"
+#include "entt/entt.hpp"
+#include "Components/Sprite.h"
+#include "Components/Velocity.h"
+#include "Components/KeyboardControlled.h"
 #include "Events/KeyPressedEvent.h"
-#include "Components/SpriteComponent.h"
-#include "Components/RigidBodyComponent.h"
 
-class KeyboardControlSystem : public System
-{
-public:
-    KeyboardControlSystem()
+namespace KeyBoardControlSystem{
+
+    void OnKeyPressed(KeyPressedEvent event)
     {
-        RequireComponent<KeyboardControlledComponent>();
-        RequireComponent<SpriteComponent>();
-        RequireComponent<RigidBodyComponent>();
-    }
+        enum Direction {
+            DIR_RIGHT,
+            DIR_DOWN,
+            DIR_LEFT,
+            DIR_UP,
+        };
 
-    void SubscribeToEvents(std::unique_ptr<EventBus> &eventBus)
-    {
-        eventBus->SubscribeToEvent<KeyPressedEvent>(this, &KeyboardControlSystem::onKeyPressed);
-    }
-
-
-
-    void onKeyPressed(KeyPressedEvent &event)
-    {
-        for(auto entity : GetSystemEntities())
+        auto view = event.registry.view<KeyboardControlled, Sprite, Velocity>();
+        for (auto entity : view)
         {
-            const auto keyboardControl = entity.GetComponent<KeyboardControlledComponent>();
-            auto& sprite = entity.GetComponent<SpriteComponent>();
-            auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
+            const auto keyboardControl = view.get<KeyboardControlled>(entity);
+            auto &sprite = view.get<Sprite>(entity);
+            auto &velocity  = view.get<Velocity>(entity);
 
-            switch(event.symbol)
+            switch(event.key)
             {
                 case SDLK_UP:
-                    rigidBody.velocity = keyboardControl.upVelocity;
-                    sprite.srcRect.y = sprite.height * 0;
+                    velocity.x = keyboardControl.upVelocity.x;
+                    velocity.y = keyboardControl.upVelocity.y;
+                    sprite.srcRect.y = sprite.height * DIR_UP;
                     break;
                 case SDLK_RIGHT:
-                    rigidBody.velocity = keyboardControl.rightVelocity;
-                    sprite.srcRect.y = sprite.height * 1;
+                    velocity.x = keyboardControl.rightVelocity.x;
+                    velocity.y = keyboardControl.rightVelocity.y;
+                    sprite.srcRect.y = sprite.height * DIR_RIGHT;
                     break;
                 case SDLK_DOWN:
-                    rigidBody.velocity = keyboardControl.downVelocity;
-                    sprite.srcRect.y = sprite.height * 2;
+                    velocity.x = keyboardControl.downVelocity.x;
+                    velocity.y = keyboardControl.downVelocity.y;
+                    sprite.srcRect.y = sprite.height * DIR_DOWN;
                     break;
                 case SDLK_LEFT:
-                    rigidBody.velocity = keyboardControl.leftVelocity;
-                    sprite.srcRect.y = sprite.height * 3;
+                    velocity.x = keyboardControl.leftVelocity.x;
+                    velocity.y = keyboardControl.leftVelocity.y;
+                    sprite.srcRect.y = sprite.height * DIR_LEFT;
                     break;
 
             }

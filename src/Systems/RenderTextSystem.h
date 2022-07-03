@@ -1,25 +1,20 @@
 #ifndef RENDERTEXTSYSTEM_H
 #define RENDERTEXTSYSTEM_H
 
-#include "ECS/ECS.h"
-#include "Components/TextLabelComponent.h"
+#include "entt/entt.hpp"
+#include "Components/TextLabel.h"
 #include "AssetStore/AssetStore.h"
 #include <SDL2/SDL.h>
 #include "Logger/Logger.h"
 
-class RenderTextSystem : public System
+namespace RenderTextSystem
 {
-public:
-    RenderTextSystem()
+    void Update(entt::registry &registry, SDL_Renderer *renderer, std::unique_ptr<AssetStore> &assetStore, const SDL_Rect &camera)
     {
-        RequireComponent<TextLabelComponent>();
-    }
-
-    void Update(SDL_Renderer *renderer, std::unique_ptr<AssetStore> &assetStore, const SDL_Rect &camera)
-    {
-        for (auto entity : GetSystemEntities())
+        auto view = registry.view<TextLabel>();
+        for (auto entity : view)
         {
-            const auto textLabel = entity.GetComponent<TextLabelComponent>();
+            const auto textLabel = view.get<TextLabel>(entity);
 
             SDL_Surface *surface = TTF_RenderText_Blended(
                 assetStore->GetFont(textLabel.assetId),
@@ -33,13 +28,12 @@ public:
             int labelHeight = 0;
             SDL_QueryTexture(texture, NULL, NULL, &labelWidth, &labelHeight);
 
-            SDL_Rect dstRect = 
-            {
-                static_cast<int>(textLabel.position.x - (textLabel.isFixed ? 0 : camera.x)),
-                static_cast<int>(textLabel.position.y - (textLabel.isFixed ? 0 : camera.y)),
-                labelWidth,
-                labelHeight                
-            };
+            SDL_Rect dstRect =
+                {
+                    static_cast<int>(textLabel.position.x - (textLabel.isFixed ? 0 : camera.x)),
+                    static_cast<int>(textLabel.position.y - (textLabel.isFixed ? 0 : camera.y)),
+                    labelWidth,
+                    labelHeight};
             SDL_RenderCopy(renderer, texture, NULL, &dstRect);
             SDL_DestroyTexture(texture);
         }

@@ -1,83 +1,73 @@
 #ifndef PROJECTILEEMITSYSTEM_H
 #define PROJECTILEEMITSYSTEM_H
 
-#include "ECS/ECS.h"
-#include "Components/TransformComponent.h"
-#include "Components/ProjectileComponent.h"
-#include "Components/ProjectileEmitterComponent.h"
-#include "Components/SpriteComponent.h"
-#include "Components/BoxColliderComponent.h"
-#include "Components/RigidBodyComponent.h"
+#include "entt/entt.hpp"
+#include "Components/Tags.h"
+#include "Components/Transform.h"
+#include "Components/Projectile.h"
+#include "Components/ProjectileEmitter.h"
+#include "Components/Sprite.h"
+#include "Components/BoxCollider.h"
+#include "Components/Velocity.h"
 
 #include <SDL2/SDL.h>
 
-
-class ProjectileEmitSystem : public System
+namespace ProjectileEmitSystem
 {
-public:
-    ProjectileEmitSystem()
-    {
-        RequireComponent<TransformComponent>();
-        RequireComponent<ProjectileEmitterComponent>();
-    }
 
-    void SubscribeToEvents(std::unique_ptr<EventBus> &eventBus)
+    void OnKeyPressed(KeyPressedEvent event)
     {
-        eventBus->SubscribeToEvent<KeyPressedEvent>(this, &ProjectileEmitSystem::OnKeyPressed);
-    }
-
-    void OnKeyPressed(KeyPressedEvent &event)
-    {
-        if(event.symbol == SDLK_SPACE)
+        auto &registry = event.registry;
+        if(event.key == SDLK_SPACE)
         {
-            for(auto entity : GetSystemEntities())
+
+            auto view = registry.view<Player_Tag, Transform, Velocity, ProjectileEmitter>();
+
+            for(auto entity : view)
             {
-                if (entity.HasTag("player"))
+                const auto transform = view.get<Transform>(entity);
+                const auto velocity = view.get<Velocity>(entity);
+                const auto projectileEmitter = view.get<ProjectileEmitter>(entity);
+
+                glm::vec2 projectilePosition = transform.position;
+                
+                if(registry.all_of<Sprite>(entity))
                 {
-                    const auto projectileEmitter = entity.GetComponent<ProjectileEmitterComponent>();
-                    const auto transform = entity.GetComponent<TransformComponent>();
-                    const auto rigidBody = entity.GetComponent<RigidBodyComponent>();
-
-                    glm::vec2 projectilePosition = transform.position;
-                    if(entity.HasComponent<SpriteComponent>())
-                    {
-                        const auto sprite = entity.GetComponent<SpriteComponent>();
-                        projectilePosition.x += (transform.scale.x * sprite.width / 2);
-                        projectilePosition.y += (transform.scale.y * sprite.height / 2);
-                    }
-
-                    glm::vec2 projectileVelocity = projectileEmitter.projectileVelocity;
-                    int directionX = 0;
-                    int directionY = 0;
-                    if(rigidBody.velocity.x > 0) directionX = 1;
-                    if(rigidBody.velocity.x < 0) directionX = -1;
-                    if(rigidBody.velocity.y > 0) directionY = 1;
-                    if(rigidBody.velocity.y < 0) directionY = -1;
-                    projectileVelocity.x = projectileEmitter.projectileVelocity.x * directionX;
-                    projectileVelocity.y = projectileEmitter.projectileVelocity.y * directionY;
-
-                    Entity projectile = entity.registry->CreateEntity();
-                    projectile.Group("projectiles");
-                    projectile.AddComponent<TransformComponent>(projectilePosition, glm::vec2(1.0, 1.0), 0.0);
-                    projectile.AddComponent<RigidBodyComponent>(projectileVelocity);
-                    projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 4);
-                    projectile.AddComponent<BoxColliderComponent>(4, 4);
-                    projectile.AddComponent<ProjectileComponent>(projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.projectileDuration);
-
+                    const auto sprite = registry.get<Sprite>(entity);
+                    projectilePosition.x += (transform.scale.x * sprite.width / 2);
+                    projectilePosition.y += (transform.scale.y * sprite.height / 2);
                 }
 
+                glm::vec2 projectileVelocity = projectileEmitter.projectileVelocity;
+                int directionX = 0;
+                int directionY = 0;
+                if(velocity.x > 0) directionX = 1;
+                if(velocity.x < 0) directionX = -1;
+                if(velocity.y > 0) directionY = 1;
+                if(velocity.y < 0) directionY = -1;
+                projectileVelocity.x = projectileEmitter.projectileVelocity.x * directionX;
+                projectileVelocity.y = projectileEmitter.projectileVelocity.y * directionY;
+
+                auto projectile = registry.create();
+                registry.emplace<Projectile_Tag>(projectile);
+                registry.emplace<Transform>(projectile, projectilePosition, glm::vec2(1.0, 1.0), 0.0);
+                registry.emplace<Velocity>(projectile, projectileVelocity);
+                registry.emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);
+                registry.emplace<BoxCollider>(projectile, 4, 4);
+                registry.emplace<Projectile>(projectile, projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.projectileDuration);
 
             }
-
         }
     }
 
-    void Update(std::unique_ptr<Registry> &registry)
+    void Update(entt::registry &registry)
     {
-        for(auto entity : GetSystemEntities())
+        auto view = registry.view<Transform, ProjectileEmitter>();
+
+        for(auto entity : view)
         {
-            const auto transform = entity.GetComponent<TransformComponent>();
-            auto &projectileEmitter = entity.GetComponent<ProjectileEmitterComponent>();
+            const auto transform = view.get<Transform>(entity);
+            auto &projectileEmitter = view.get<ProjectileEmitter>(entity);
 
                 if(projectileEmitter.repeatFrequency == 0)
                 {   //Dont fire if repeatrate is 0
@@ -87,25 +77,22 @@ public:
                 if (SDL_GetTicks() - projectileEmitter.lastEmissionTime > projectileEmitter.repeatFrequency) 
                 {
                     glm::vec2 projectilePosition = transform.position;
-                    if (entity.HasComponent<SpriteComponent>()) 
+
+                    if(registry.all_of<Sprite>(entity))
                     {
-                        const auto sprite = entity.GetComponent<SpriteComponent>();
+                        const auto sprite = registry.get<Sprite>(entity);
                         projectilePosition.x += (transform.scale.x * sprite.width / 2);
                         projectilePosition.y += (transform.scale.y * sprite.height / 2);
                     }
 
-                    // Add a new projectile entity to the registry
-                    Entity projectile = registry->CreateEntity();
-                    projectile.Group("projectiles");
-                    projectile.AddComponent<TransformComponent>(projectilePosition, glm::vec2(1.0, 1.0), 0.0);
-                    projectile.AddComponent<RigidBodyComponent>(projectileEmitter.projectileVelocity);
-                    projectile.AddComponent<SpriteComponent>("bullet-image", 4, 4, 4);
-                    projectile.AddComponent<BoxColliderComponent>(4, 4);
-                    projectile.AddComponent<ProjectileComponent>(
-                        projectileEmitter.isFriendly,
-                        projectileEmitter.hitPercentDamage,
-                        projectileEmitter.projectileDuration
-                    );
+                    auto projectile = registry.create();
+                    registry.emplace<Projectile_Tag>(projectile);
+                    registry.emplace<Transform>(projectile, projectilePosition, glm::vec2(1.0, 1.0), 0.0);
+                    registry.emplace<Velocity>(projectile, projectileEmitter.projectileVelocity);
+                    registry.emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);
+                    registry.emplace<BoxCollider>(projectile, 4, 4);
+                    registry.emplace<Projectile>(projectile, projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.projectileDuration);
+
                     // Update the projectile emitter component last emission to the current milliseconds
                     projectileEmitter.lastEmissionTime = SDL_GetTicks();
                 }

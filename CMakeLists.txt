@@ -11,16 +11,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 file(GLOB_RECURSE SOURCES ${SOURCE_DIR}/*.cpp)
-set(ASSETS_FOLDER "${CMAKE_SOURCE_DIR}/assets")
 include_directories("${CMAKE_SOURCE_DIR}/src")
+set(THIRD_PARTY "${CMAKE_SOURCE_DIR}/3rdparty")
+include_directories(${THIRD_PARTY})
 
-if (EXISTS ${ASSETS_FOLDER} AND IS_DIRECTORY ${ASSETS_FOLDER})
-    file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
-endif()
+
+
 
 if(MINGW)
-    set(THIRD_PARTY "${CMAKE_SOURCE_DIR}/third-party")
-    set(SDL2_DIR "${CMAKE_SOURCE_DIR}/third-party/SDL_Bundle_Mingw")
+    set(SDL2_DIR "${THIRD_PARTY}/SDL_Bundle_Mingw")
     set(SDL2_INCLUDE_DIRS ${SDL2_DIR}/include) # Same as SDL2_IMAGE_INCLUDE_DIR and SDL2_MIXER_INCLUDE_DIR
     set(SDL2_LIBRARIES
         -lmingw32 
@@ -75,3 +74,25 @@ target_link_libraries(${PROJECT_NAME}
      -static-libgcc -static-libstdc++)
 
 add_definitions(-DSDL_MAIN_HANDLED) #Windows?
+
+
+# COPY DOES NOT NEED ADMIN ACCESS
+#--------------------------------------------------------
+#set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
+#if (EXISTS ${ASSETS_DIR} AND IS_DIRECTORY ${ASSETS_DIR})
+#    file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+#endif()
+#--------------------------------------------------------
+
+
+# SYMLINK NEEDS ADMIN ACCESS
+#--------------------------------------------------------
+set(assetsource "${CMAKE_SOURCE_DIR}/assets")
+set(assetbuild "${CMAKE_BINARY_DIR}/assets")
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E create_symlink "${assetsource}" "${assetbuild}" 
+    DEPENDS ${assetsource}
+    COMMENT "symbolic link resources folder from ${assetsource} => ${assetbuild}"
+)
+#--------------------------------------------------------
