@@ -136,7 +136,6 @@ void Game::LoadMap(std::string spritesheet, std::string map)
 {
     assetStore->AddTexture(renderer, spritesheet, spritesheet);
 
-    double tileScale = SCALE;
     int mapNumCols = 0;
     int mapNumRows = 0;
 
@@ -160,11 +159,26 @@ void Game::LoadMap(std::string spritesheet, std::string map)
         mapNumRows++;
     }
 
+
     mapFile.clear();
     mapFile.seekg(0);//Go to start of file again.
 
-    Logger::Warning(std::to_string(mapNumCols));
-    Logger::Warning(std::to_string(mapNumRows));
+    Logger::Info("Mapsize: " + std::to_string(mapNumCols) + " * " + std::to_string(mapNumRows));
+
+    mapWidth = mapNumCols * TILESIZE * SCALE;
+    mapHeight = mapNumRows * TILESIZE * SCALE;
+
+
+    glm::vec2 offset;
+    if (mapWidth < WINDOWWIDTH)
+    {
+        offset.x = (WINDOWWIDTH - mapWidth) / 2;
+    }
+    if (mapHeight < WINDOWHEIGHT)
+    {
+        offset.y = (WINDOWHEIGHT - mapHeight) / 2;
+    }
+
 
     //Read map, create tiles.
     for (int y = 0; y < mapNumRows; y++)
@@ -179,14 +193,12 @@ void Game::LoadMap(std::string spritesheet, std::string map)
             mapFile.ignore();
 
             const auto tile = registry.create();
-            registry.emplace<Transform>(tile, glm::vec2(x * (tileScale * TILESIZE), y * (tileScale * TILESIZE)), glm::vec2(tileScale, tileScale), 0.0);
+            registry.emplace<Transform>(tile, glm::vec2(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y), glm::vec2(SCALE, SCALE), 0.0);
             registry.emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
         }
     }
 
     mapFile.close();
-    mapWidth = mapNumCols * TILESIZE * tileScale;
-    mapHeight = mapNumRows * TILESIZE * tileScale;
 }
 
 void Game::LoadLevel(int level)
