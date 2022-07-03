@@ -4,6 +4,7 @@
 #include "entt/entt.hpp"
 #include "Components/Tags.h"
 #include "Components/Transform.h"
+#include "Constants/Constants.h"
 #include "Logger/Logger.h"
 #include <SDL2/SDL.h>
 
@@ -18,11 +19,11 @@ namespace CameraMovementSystem
 
                 if (transform.position.x + (camera.w / 2) < Game::mapWidth)
                 {
-                    camera.x = transform.position.x - (Game::windowWidth / 2);
+                    camera.x = transform.position.x - (WINDOWWIDTH / 2);
                 }
                 if (transform.position.y + (camera.h / 2) < Game::mapHeight)
                 {
-                    camera.y = transform.position.y - (Game::windowHeight / 2);
+                    camera.y = transform.position.y - (WINDOWHEIGHT / 2);
                 }
 
                 camera.x = camera.x < 0 ? 0 : camera.x;

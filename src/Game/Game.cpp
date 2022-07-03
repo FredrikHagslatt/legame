@@ -36,8 +36,6 @@
 #include "Events/KeyPressedEvent.h"
 #include "Events/CollisionEvent.h"
 
-int Game::windowWidth;
-int Game::windowHeight;
 int Game::mapWidth;
 int Game::mapHeight;
 std::list<entt::entity> Game::entitiesToKill;
@@ -46,7 +44,6 @@ Game::Game()
 {
     isRunning = false;
     assetStore = std::make_unique<AssetStore>();
-    //    eventBus = std::make_unique<EventBus>();
     Logger::Info("Game Created!");
 }
 
@@ -69,15 +66,15 @@ void Game::Initialize()
         return;
     }
 
-    windowWidth = 800;  // displayMode.w;
-    windowHeight = 600; // displayMode.h;
+//    windowWidth = 800;  // displayMode.w;
+//    windowHeight = 600; // displayMode.h;
 
     window = SDL_CreateWindow(
         NULL,
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        windowWidth,
-        windowHeight,
+        WINDOWWIDTH,
+        WINDOWHEIGHT,
         SDL_WINDOW_BORDERLESS);
     if (!window)
     {
@@ -92,8 +89,8 @@ void Game::Initialize()
 
     camera.x = 0;
     camera.y = 0;
-    camera.w = windowWidth;
-    camera.h = windowHeight;
+    camera.w = WINDOWWIDTH;
+    camera.h = WINDOWHEIGHT;
 
     // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     isRunning = true;
@@ -139,8 +136,7 @@ void Game::LoadMap(std::string spritesheet, std::string map)
 {
     assetStore->AddTexture(renderer, spritesheet, spritesheet);
 
-    int tileSize = 16;
-    double tileScale = 4.0;
+    double tileScale = SCALE;
     int mapNumCols = 0;
     int mapNumRows = 0;
 
@@ -177,21 +173,20 @@ void Game::LoadMap(std::string spritesheet, std::string map)
         {
             char ch;
             mapFile.get(ch);
-            int srcRectY = std::atoi(&ch) * tileSize;
+            int srcRectY = std::atoi(&ch) * TILESIZE;
             mapFile.get(ch);
-            int srcRectX = std::atoi(&ch) * tileSize;
+            int srcRectX = std::atoi(&ch) * TILESIZE;
             mapFile.ignore();
 
             const auto tile = registry.create();
-            registry.emplace<Transform>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
-            registry.emplace<Sprite>(tile, spritesheet, tileSize, tileSize, 0, false, srcRectX, srcRectY);
+            registry.emplace<Transform>(tile, glm::vec2(x * (tileScale * TILESIZE), y * (tileScale * TILESIZE)), glm::vec2(tileScale, tileScale), 0.0);
+            registry.emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
         }
     }
 
     mapFile.close();
-    mapWidth = mapNumCols * tileSize * tileScale;
-    mapHeight = mapNumRows * tileSize * tileScale;
-
+    mapWidth = mapNumCols * TILESIZE * tileScale;
+    mapHeight = mapNumRows * TILESIZE * tileScale;
 }
 
 void Game::LoadLevel(int level)
@@ -235,7 +230,7 @@ void Game::LoadLevel(int level)
 
     const auto radar = registry.create();
     registry.emplace<UI_Tag>(radar);
-    registry.emplace<Transform>(radar, glm::vec2(windowWidth - 74, 10.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Transform>(radar, glm::vec2(WINDOWWIDTH - 74, 10.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Sprite>(radar, "radar-image", 64, 64, 100, true);
     registry.emplace<Animation>(radar, 8, 5, true);
 
@@ -261,20 +256,20 @@ void Game::LoadLevel(int level)
 
     const auto treeA = registry.create();
     registry.emplace<Obstacle_Tag>(treeA);
-    registry.emplace<Transform>(treeA, glm::vec2(200.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Transform>(treeA, glm::vec2(200.0, 345.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Sprite>(treeA, "tree-image", 16, 32, 1);
     registry.emplace<BoxCollider>(treeA, 16, 32);
 
     const auto treeB = registry.create();
     registry.emplace<Obstacle_Tag>(treeB);
-    registry.emplace<Transform>(treeB, glm::vec2(400.0, 495.0), glm::vec2(1.0, 1.0), 0.0);
+    registry.emplace<Transform>(treeB, glm::vec2(400.0, 345.0), glm::vec2(1.0, 1.0), 0.0);
     registry.emplace<Sprite>(treeB, "tree-image", 16, 32, 1);
     registry.emplace<BoxCollider>(treeB, 16, 32);
 
     const auto label = registry.create();
     registry.emplace<UI_Tag>(label);
     SDL_Color green = {30, 200, 30};
-    registry.emplace<TextLabel>(label, glm::vec2(windowWidth / 2 - 40, 10), "Chopper 1.0", "charriot-font", green, true);
+    registry.emplace<TextLabel>(label, glm::vec2(WINDOWWIDTH / 2 - 40, 10), "Chopper 1.0", "charriot-font", green, true);
 
 }
 
@@ -284,6 +279,7 @@ void Game::Setup()
     keyPressedEventListener.connect<&KeyBoardControlSystem::OnKeyPressed>();
     keyPressedEventListener.connect<&ProjectileEmitSystem::OnKeyPressed>();
     CollisionEventListener.connect<&DamageSystem::OnCollision>();
+    CollisionEventListener.connect<&MovementSystem::OnCollision>();
 }
 
 void Game::Update()
@@ -299,13 +295,6 @@ void Game::Update()
 
     millisecsPreviousFrame = SDL_GetTicks();
 
-    // Reset all event handlers for the current frame
-
-    /*
-        // Subscribe to events
-        registry->GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
-        registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
-    */
 
     // Update systems
     MovementSystem::Update(registry, deltaTime);
