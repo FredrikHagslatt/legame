@@ -8,11 +8,10 @@
 #include <SDL2/SDL.h>
 #include "Constants.h"
 
-extern entt::registry registry;
 class CameraMovementSystem
 {
 public:
-    static void Update(SDL_Rect &camera)
+    static void Update(entt::registry &registry, SDL_Rect &camera)
     {
         auto view = registry.view<Player_Tag, Transform>();
         for (auto entity : view)

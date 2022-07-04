@@ -6,9 +6,10 @@
 class CollisionEvent
 {
 public:
+    entt::registry &registry;
     entt::entity a;
     entt::entity b;
-    CollisionEvent(entt::entity a, entt::entity b) : a(a), b(b) {}
+    CollisionEvent(entt::registry &registry, entt::entity a, entt::entity b) : registry(registry), a(a), b(b) {}
 };
 
 #endif

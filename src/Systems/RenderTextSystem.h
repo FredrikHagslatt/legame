@@ -7,11 +7,10 @@
 #include <SDL2/SDL.h>
 #include "Logger/Logger.h"
 
-extern entt::registry registry;
 class RenderTextSystem
 {
 public:
-    static void Update(const SDL_Rect &camera)
+    static void Update(entt::registry &registry, SDL_Renderer *renderer, AssetStore &assetStore, const SDL_Rect &camera)
     {
         auto view = registry.view<TextLabel>();
         for (auto entity : view)

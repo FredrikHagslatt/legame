@@ -1,25 +1,15 @@
 #include "Scenes/Stardew.h"
 #include <fstream>
 
-extern entt::registry registry;
 void Stardew::Update(double elapsedTime)
 {
     // Update systems
-    MovementSystem::Update(elapsedTime);
-    AnimationSystem::Update();
-    CameraMovementSystem::Update(camera);
-    ProjectileEmitSystem::Update();
-    ProjectileLifeCycleSystem::Update();
-    CollisionSystem::Update();
-
-    /*
-        MovementSystem::Update(registry, elapsedTime);
-        AnimationSystem::Update(registry);
-        CameraMovementSystem::Update(registry, camera);
-        ProjectileEmitSystem::Update(registry);
-        ProjectileLifeCycleSystem::Update(registry);
-        CollisionSystem::Update(registry);
-    */
+    MovementSystem::Update(m_registry, elapsedTime);
+    AnimationSystem::Update(m_registry);
+    CameraMovementSystem::Update(m_registry, camera);
+    ProjectileEmitSystem::Update(m_registry);
+    ProjectileLifeCycleSystem::Update(m_registry);
+    CollisionSystem::Update(m_registry);
 
     UpdateScene(elapsedTime);
 
@@ -28,36 +18,32 @@ void Stardew::Update(double elapsedTime)
     {
         entt::entity entity = entitiesToKill.front();
         entitiesToKill.pop_front();
-        registry.destroy(entity);
+        m_registry.destroy(entity);
         Logger::Info("Entity Destroyed");
     }
 }
 
 void Stardew::RenderGraphics(double elapsedTime)
 {
-    SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
-    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
+    SDL_RenderClear(m_renderer);
 
-    RenderSystem::Update(camera);
-    RenderHealthSystem::Update(camera);
-    RenderTextSystem::Update(camera);
-    /*
-        RenderSystem::Update(registry, renderer, assetStore, camera);
-        RenderHealthSystem::Update(registry, renderer, assetStore, camera);
-        RenderTextSystem::Update(registry, renderer, assetStore, camera);
-    */
+    RenderSystem::Update(m_registry, m_renderer, m_assetStore, camera);
+    RenderHealthSystem::Update(m_registry, m_renderer, m_assetStore, camera);
+    RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, camera);
 
     if (debugMode)
     {
-        RenderColliderSystem::Update(camera);
-        //        RenderColliderSystem::Update(registry, renderer, camera);
+        RenderColliderSystem::Update(m_registry, m_renderer, camera);
     }
-    SDL_RenderPresent(renderer);
+
+    RenderScene(elapsedTime);
+    SDL_RenderPresent(m_renderer);
 }
 
 void Stardew::LoadMap(std::string spritesheet, std::string map)
 {
-    assetStore.AddTexture(renderer, spritesheet, spritesheet);
+    m_assetStore.AddTexture(m_renderer, spritesheet, spritesheet);
 
     int mapNumCols = 0;
     int mapNumRows = 0;
@@ -86,7 +72,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
     mapFile.clear();
     mapFile.seekg(0); // Go to start of file again.
 
-    Logger::Info("Mapsize: " + std::to_string(mapNumCols) + " * " + std::to_string(mapNumRows));
+    Logger::Info("Mapsize: " + std::to_string(mapNumCols) + " x " + std::to_string(mapNumRows));
 
     mapWidth = mapNumCols * TILESIZE * SCALE;
     mapHeight = mapNumRows * TILESIZE * SCALE;
@@ -113,9 +99,9 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
             int srcRectX = std::atoi(&ch) * TILESIZE;
             mapFile.ignore();
 
-            const auto tile = registry.create();
-            registry.emplace<Transform>(tile, glm::vec2(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y), glm::vec2(SCALE, SCALE), 0.0);
-            registry.emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
+            const auto tile = m_registry.create();
+            m_registry.emplace<Transform>(tile, glm::vec2(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y), glm::vec2(SCALE, SCALE), 0.0);
+            m_registry.emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
         }
     }
     mapFile.close();
@@ -141,7 +127,7 @@ void Stardew::Unload()
     UnloadScene();
 }
 
-Stardew::Stardew(SceneManager &sceneManager)
-    : Scene(sceneManager)
+Stardew::Stardew(SceneManager &sceneManager, SDL_Renderer *renderer, entt::registry &registry, AssetStore &assetStore)
+    : Scene(sceneManager, renderer, registry, assetStore)
 {
 }

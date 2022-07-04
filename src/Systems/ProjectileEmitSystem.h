@@ -11,7 +11,6 @@
 #include "Components/Velocity.h"
 #include <SDL2/SDL.h>
 
-extern entt::registry registry;
 class ProjectileEmitSystem
 {
 public:
@@ -62,7 +61,7 @@ public:
         }
     }
 
-    static void Update()
+    static void Update(entt::registry &registry)
     {
         auto view = registry.view<Transform, ProjectileEmitter>();
 

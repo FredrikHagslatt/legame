@@ -8,11 +8,10 @@
 #include "Components/Health.h"
 #include <SDL2/SDL.h>
 
-extern entt::registry registry;
 class RenderHealthSystem
 {
 public:
-    static void Update(SDL_Rect &camera)
+    static void Update(entt::registry &registry, SDL_Renderer *renderer, AssetStore &assetStore, SDL_Rect &camera)
     {
         SDL_Color healthBarColor = {255, 255, 255};
         SDL_Color red = {255, 0, 0};

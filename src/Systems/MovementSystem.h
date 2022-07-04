@@ -8,15 +8,13 @@
 #include "Events/CollisionEvent.h"
 #include "Logger/Logger.h"
 
-extern entt::registry registry;
 extern int mapWidth;
 extern int mapHeight;
 class MovementSystem
 {
 public:
-    static void Update(double deltaTime)
+    static void Update(entt::registry &registry, double deltaTime)
     {
-
         auto view = registry.view<Transform, Velocity>();
         for (auto entity : view)
         {
@@ -52,7 +50,7 @@ public:
         }
     }
 
-    static void OnEnemyHitsObstacle(entt::entity enemy)
+    static void OnEnemyHitsObstacle(entt::registry &registry, entt::entity enemy)
     {
 
         if (registry.all_of<Velocity, Sprite>(enemy))
@@ -76,17 +74,18 @@ public:
 
     static void OnCollision(CollisionEvent event)
     {
+        auto &registry = event.registry;
         auto &a = event.a;
         auto &b = event.b;
 
         if (registry.all_of<Enemy_Tag>(a) && registry.all_of<Obstacle_Tag>(b))
         {
-            OnEnemyHitsObstacle(a);
+            OnEnemyHitsObstacle(registry, a);
         }
 
         else if (registry.all_of<Enemy_Tag>(b) && registry.all_of<Obstacle_Tag>(a))
         {
-            OnEnemyHitsObstacle(b);
+            OnEnemyHitsObstacle(registry, b);
         }
     }
 };

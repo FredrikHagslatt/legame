@@ -10,7 +10,7 @@ extern entt::registry registry;
 class AnimationSystem
 {
 public:
-    static void Update()
+    static void Update(entt::registry &registry)
     {
         auto view = registry.view<Sprite, Animation>();
         for (auto entity : view)

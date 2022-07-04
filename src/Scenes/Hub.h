@@ -6,11 +6,11 @@
 class Hub : public Stardew
 {
 public:
-    void UpdateScene(double elapsedTime) override;
+	void UpdateScene(double elapsedTime) override;
 	void RenderScene(double elapsedTime) override;
 	void LoadScene() override;
 	void UnloadScene() override;
-    using Stardew::Stardew;
+	using Stardew::Stardew;
 };
 
 #endif

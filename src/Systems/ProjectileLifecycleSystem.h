@@ -5,11 +5,10 @@
 #include "entt/entt.hpp"
 #include "Components/Projectile.h"
 
-extern entt::registry registry;
 class ProjectileLifeCycleSystem
 {
 public:
-    static void Update()
+    static void Update(entt::registry &registry)
     {
         auto view = registry.view<Projectile>();
         for (auto entity : view)

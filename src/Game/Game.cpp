@@ -8,10 +8,6 @@
 #include <glm/glm.hpp>
 #include "Scenes/Hub.h"
 
-extern entt::registry registry;
-extern SDL_Renderer *renderer;
-extern AssetStore assetStore;
-
 Game::Game()
 {
     isRunning = false;
@@ -39,20 +35,20 @@ void Game::Initialize()
         return;
     }
 
-    window = SDL_CreateWindow(
+    m_window = SDL_CreateWindow(
         NULL,
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         WINDOWWIDTH,
         WINDOWHEIGHT,
         SDL_WINDOW_BORDERLESS);
-    if (!window)
+    if (!m_window)
     {
         Logger::Fatal("Error creating SDL window.");
         return;
     }
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer)
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
+    if (!m_renderer)
     {
         Logger::Fatal("Error creating SDL renderer.");
     }
@@ -102,9 +98,8 @@ void Game::ProcessInput()
 
 void Game::Setup()
 {
-
     // m_sceneManager.AddScene("MENU", new MenuRoot(m_sceneManager));
-    m_sceneManager.AddScene("HUB", new Hub(m_sceneManager));
+    m_sceneManager.AddScene("HUB", new Hub(m_sceneManager, m_renderer, m_registry, m_assetStore));
     // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
@@ -141,7 +136,7 @@ void Game::Run()
 
 void Game::Destroy()
 {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(m_renderer);
+    SDL_DestroyWindow(m_window);
     SDL_Quit();
 }

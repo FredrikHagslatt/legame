@@ -6,7 +6,6 @@
 #include "Components/BoxCollider.h"
 #include "Events/CollisionEvent.h"
 
-extern entt::registry registry;
 class CollisionSystem
 {
 public:
@@ -27,9 +26,8 @@ public:
             aY + aH > bY);
     }
 
-    static void Update()
+    static void Update(entt::registry &registry)
     {
-
         auto view = registry.view<Transform, BoxCollider>();
 
         // Fancy nested loop to not check same pair of entities twice.

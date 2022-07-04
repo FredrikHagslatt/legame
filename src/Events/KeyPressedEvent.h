@@ -6,8 +6,9 @@
 class KeyPressedEvent
 {
 public:
+    entt::registry &registry;
     SDL_Keycode key;
-    KeyPressedEvent(SDL_Keycode key) : key(key) {}
+    KeyPressedEvent(entt::registry &registry, SDL_Keycode key) : registry(registry), key(key) {}
 };
 
 #endif

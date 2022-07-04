@@ -7,13 +7,10 @@
 #include "AssetStore/AssetStore.h"
 #include <SDL2/SDL.h>
 
-extern SDL_Renderer *renderer;
-extern AssetStore assetStore;
-extern entt::registry registry;
 class RenderSystem
 {
 public:
-    static void Update(SDL_Rect &camera)
+    static void Update(entt::registry &registry, SDL_Renderer *renderer, AssetStore &assetStore, SDL_Rect &camera)
     {
         struct RenderableEntity
         {

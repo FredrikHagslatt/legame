@@ -15,12 +15,12 @@ private:
     bool isRunning;
     double deltaTime = 0;
     int millisecsPreviousFrame = 0;
-    SDL_Window *window;
-    //    SDL_Renderer *renderer;
-
+    SDL_Window *m_window;
+    SDL_Renderer *m_renderer;
     SceneManager m_sceneManager;
-    //    entt::registry registry;
-    //    std::unique_ptr<AssetStore> assetStore;
+    entt::registry m_registry;
+    AssetStore m_assetStore;
+
     double ElapsedTime();
     void Setup();
     void Update();

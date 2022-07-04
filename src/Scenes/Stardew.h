@@ -32,6 +32,7 @@
 #include "Systems/RenderColliderSystem.h"
 
 #include "SceneManager/Scene.h"
+#include "AssetStore/AssetStore.h"
 
 class Stardew : public Scene
 {
@@ -54,7 +55,7 @@ public:
 	void RenderGraphics(double elapsedTime) override;
 	void Load() override;
 	void Unload() override;
-	Stardew(SceneManager &sceneManager);
+	Stardew(SceneManager &sceneManager, SDL_Renderer *renderer, entt::registry &registry, AssetStore &assetStore);
 };
 
 #endif
