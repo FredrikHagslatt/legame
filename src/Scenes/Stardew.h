@@ -55,7 +55,7 @@ public:
 	void RenderGraphics(double elapsedTime) override;
 	void Load() override;
 	void Unload() override;
-	Stardew(SceneManager &sceneManager, SDL_Renderer *renderer, entt::registry &registry, AssetStore &assetStore);
+	Stardew(SceneManager &sceneManager, SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore, entt::dispatcher &dispatcher);
 };
 
 #endif

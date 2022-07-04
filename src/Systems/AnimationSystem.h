@@ -6,13 +6,12 @@
 #include "Components/Animation.h"
 #include <SDL2/SDL.h>
 
-extern entt::registry registry;
 class AnimationSystem
 {
 public:
-    static void Update(entt::registry &registry)
+    static void Update(std::shared_ptr<entt::registry> registry)
     {
-        auto view = registry.view<Sprite, Animation>();
+        auto view = registry->view<Sprite, Animation>();
         for (auto entity : view)
         {
             // Update entity position based on its velocity

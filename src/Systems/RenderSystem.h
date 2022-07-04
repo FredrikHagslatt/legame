@@ -10,7 +10,7 @@
 class RenderSystem
 {
 public:
-    static void Update(entt::registry &registry, SDL_Renderer *renderer, AssetStore &assetStore, SDL_Rect &camera)
+    static void Update(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, SDL_Rect &camera)
     {
         struct RenderableEntity
         {
@@ -19,7 +19,7 @@ public:
         };
         std::vector<RenderableEntity> renderableEntities;
 
-        auto view = registry.view<Transform, Sprite>();
+        auto view = registry->view<Transform, Sprite>();
         for (auto entity : view)
         {
             RenderableEntity renderableEntity;
@@ -57,7 +57,7 @@ public:
 
             SDL_RenderCopyEx(
                 renderer,
-                assetStore.GetTexture(sprite.assetId),
+                assetStore->GetTexture(sprite.assetId),
                 &srcRect,
                 &dstRect,
                 transform.rotation,

@@ -11,14 +11,14 @@
 class RenderHealthSystem
 {
 public:
-    static void Update(entt::registry &registry, SDL_Renderer *renderer, AssetStore &assetStore, SDL_Rect &camera)
+    static void Update(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, SDL_Rect &camera)
     {
         SDL_Color healthBarColor = {255, 255, 255};
         SDL_Color red = {255, 0, 0};
         SDL_Color yellow = {255, 255, 0};
         SDL_Color green = {0, 255, 0};
 
-        auto view = registry.view<Transform, Sprite, Health>();
+        auto view = registry->view<Transform, Sprite, Health>();
 
         for (auto entity : view)
         {
@@ -60,7 +60,7 @@ public:
 
             // Render the health percentage text label indicator
             std::string healthText = std::to_string(health.healthPercentage);
-            SDL_Surface *surface = TTF_RenderText_Blended(assetStore.GetFont("pico8-font-5"), healthText.c_str(), healthBarColor);
+            SDL_Surface *surface = TTF_RenderText_Blended(assetStore->GetFont("pico8-font-5"), healthText.c_str(), healthBarColor);
             SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_FreeSurface(surface);
 

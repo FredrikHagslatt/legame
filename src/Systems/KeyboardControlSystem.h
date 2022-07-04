@@ -7,11 +7,10 @@
 #include "Components/KeyboardControlled.h"
 #include "Events/KeyPressedEvent.h"
 
-extern entt::registry registry;
-class KeyBoardControlSystem
+class KeyboardControlSystem
 {
 public:
-    static void OnKeyPressed(KeyPressedEvent event)
+    static void OnKeyPressed(const KeyPressedEvent &event)
     {
         enum Direction
         {
@@ -21,7 +20,8 @@ public:
             DIR_UP,
         };
 
-        auto view = registry.view<KeyboardControlled, Sprite, Velocity>();
+        auto registry = event.registry;
+        auto view = registry->view<KeyboardControlled, Sprite, Velocity>();
         for (auto entity : view)
         {
             const auto keyboardControl = view.get<KeyboardControlled>(entity);

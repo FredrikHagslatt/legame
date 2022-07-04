@@ -2,14 +2,13 @@
 #define COLLISIONEVENT_H
 
 #include "entt/entt.hpp"
+#include <memory>
 
-class CollisionEvent
+struct CollisionEvent
 {
-public:
-    entt::registry &registry;
+    std::shared_ptr<entt::registry> registry;
     entt::entity a;
     entt::entity b;
-    CollisionEvent(entt::registry &registry, entt::entity a, entt::entity b) : registry(registry), a(a), b(b) {}
 };
 
 #endif

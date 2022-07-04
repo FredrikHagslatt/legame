@@ -8,12 +8,15 @@
 #include <glm/glm.hpp>
 #include "Scenes/Hub.h"
 
+#include "Events/KeyPressedEvent.h"
+#include "Systems/KeyboardControlSystem.h"
+
 Game::Game()
 {
     isRunning = false;
-    //    assetStore = std::make_unique<AssetStore>();
-
     Logger::Info("Game Created.");
+    m_registry = std::make_shared<entt::registry>();
+    m_assetStore = std::make_shared<AssetStore>();
 }
 
 Game::~Game()
@@ -89,8 +92,7 @@ void Game::ProcessInput()
 
                         }
             */
-            // KeyPressedEvent keyPressedEvent{sdlEvent.key.keysym.sym};
-            // keyPressedEventEmitter.publish(keyPressedEvent);
+            m_dispatcher.trigger(KeyPressedEvent{m_registry, sdlEvent.key.keysym.sym});
             break;
         }
     }
@@ -99,11 +101,16 @@ void Game::ProcessInput()
 void Game::Setup()
 {
     // m_sceneManager.AddScene("MENU", new MenuRoot(m_sceneManager));
-    m_sceneManager.AddScene("HUB", new Hub(m_sceneManager, m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("HUB", new Hub(m_sceneManager, m_renderer, m_registry, m_assetStore, m_dispatcher));
     // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
     m_sceneManager.ChangeScene("HUB");
+
+    m_dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
+    m_dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
+    m_dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
+    m_dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
     Logger::Info("Game Setup.");
 }
 

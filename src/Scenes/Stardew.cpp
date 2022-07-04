@@ -9,7 +9,7 @@ void Stardew::Update(double elapsedTime)
     CameraMovementSystem::Update(m_registry, camera);
     ProjectileEmitSystem::Update(m_registry);
     ProjectileLifeCycleSystem::Update(m_registry);
-    CollisionSystem::Update(m_registry);
+    CollisionSystem::Update(m_registry, m_dispatcher);
 
     UpdateScene(elapsedTime);
 
@@ -18,7 +18,7 @@ void Stardew::Update(double elapsedTime)
     {
         entt::entity entity = entitiesToKill.front();
         entitiesToKill.pop_front();
-        m_registry.destroy(entity);
+        m_registry->destroy(entity);
         Logger::Info("Entity Destroyed");
     }
 }
@@ -43,7 +43,7 @@ void Stardew::RenderGraphics(double elapsedTime)
 
 void Stardew::LoadMap(std::string spritesheet, std::string map)
 {
-    m_assetStore.AddTexture(m_renderer, spritesheet, spritesheet);
+    m_assetStore->AddTexture(m_renderer, spritesheet, spritesheet);
 
     int mapNumCols = 0;
     int mapNumRows = 0;
@@ -99,9 +99,9 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
             int srcRectX = std::atoi(&ch) * TILESIZE;
             mapFile.ignore();
 
-            const auto tile = m_registry.create();
-            m_registry.emplace<Transform>(tile, glm::vec2(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y), glm::vec2(SCALE, SCALE), 0.0);
-            m_registry.emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
+            const auto tile = m_registry->create();
+            m_registry->emplace<Transform>(tile, glm::vec2(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y), glm::vec2(SCALE, SCALE), 0.0);
+            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
         }
     }
     mapFile.close();
@@ -113,12 +113,6 @@ void Stardew::Load()
     camera.y = 0;
     camera.w = WINDOWWIDTH;
     camera.h = WINDOWHEIGHT;
-
-    //    keyPressedEventListener.connect<&KeyBoardControlSystem::OnKeyPressed>();
-    //    keyPressedEventListener.connect<&ProjectileEmitSystem::OnKeyPressed>();
-    //    collisionEventListener.connect<&DamageSystem::OnCollision>();
-    //    collisionEventListener.connect<&MovementSystem::OnCollision>();
-
     LoadScene();
 }
 
@@ -127,7 +121,7 @@ void Stardew::Unload()
     UnloadScene();
 }
 
-Stardew::Stardew(SceneManager &sceneManager, SDL_Renderer *renderer, entt::registry &registry, AssetStore &assetStore)
-    : Scene(sceneManager, renderer, registry, assetStore)
+Stardew::Stardew(SceneManager &sceneManager, SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore, entt::dispatcher &dispatcher)
+    : Scene(sceneManager, renderer, registry, assetStore, dispatcher)
 {
 }

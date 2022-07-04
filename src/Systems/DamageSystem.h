@@ -10,16 +10,15 @@
 #include "Events/CollisionEvent.h"
 
 extern std::list<entt::entity> entitiesToKill;
-extern entt::registry registry;
 class DamageSystem
 {
 public:
-    static void OnProjectileHitsPlayer(entt::entity &projectile, entt::entity &player)
+    static void OnProjectileHitsPlayer(std::shared_ptr<entt::registry> registry, entt::entity &projectile, entt::entity &player)
     {
-        auto projectileComponent = registry.get<Projectile>(projectile);
+        auto projectileComponent = registry->get<Projectile>(projectile);
         if (!projectileComponent.isFriendly)
         {
-            auto &health = registry.get<Health>(player);
+            auto &health = registry->get<Health>(player);
             health.healthPercentage -= projectileComponent.hitPercentDamage;
 
             bool playerQueuedForDeath = false;
@@ -48,12 +47,12 @@ public:
         }
     }
 
-    static void OnProjectileHitsEnemy(entt::entity &projectile, entt::entity &enemy)
+    static void OnProjectileHitsEnemy(std::shared_ptr<entt::registry> registry, entt::entity &projectile, entt::entity &enemy)
     {
-        auto projectileComponent = registry.get<Projectile>(projectile);
+        auto projectileComponent = registry->get<Projectile>(projectile);
         if (projectileComponent.isFriendly)
         {
-            auto &health = registry.get<Health>(enemy);
+            auto &health = registry->get<Health>(enemy);
             health.healthPercentage -= projectileComponent.hitPercentDamage;
 
             bool enemyQueuedForDeath = false;
@@ -84,27 +83,28 @@ public:
 
     static void OnCollision(CollisionEvent event)
     {
+        auto registry = event.registry;
         auto &a = event.a;
         auto &b = event.b;
 
-        if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Player_Tag>(b))
+        if (registry->all_of<Projectile_Tag>(a) && registry->all_of<Player_Tag>(b))
         {
-            OnProjectileHitsPlayer(a, b);
+            OnProjectileHitsPlayer(registry, a, b);
         }
 
-        else if (registry.all_of<Projectile_Tag>(b) && registry.all_of<Player_Tag>(a))
+        else if (registry->all_of<Projectile_Tag>(b) && registry->all_of<Player_Tag>(a))
         {
-            OnProjectileHitsPlayer(b, a);
+            OnProjectileHitsPlayer(registry, b, a);
         }
 
-        else if (registry.all_of<Projectile_Tag>(a) && registry.all_of<Enemy_Tag>(b))
+        else if (registry->all_of<Projectile_Tag>(a) && registry->all_of<Enemy_Tag>(b))
         {
-            OnProjectileHitsEnemy(a, b);
+            OnProjectileHitsEnemy(registry, a, b);
         }
 
-        else if (registry.all_of<Projectile_Tag>(b) && registry.all_of<Enemy_Tag>(a))
+        else if (registry->all_of<Projectile_Tag>(b) && registry->all_of<Enemy_Tag>(a))
         {
-            OnProjectileHitsEnemy(b, a);
+            OnProjectileHitsEnemy(registry, b, a);
         }
     }
 

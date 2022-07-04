@@ -8,16 +8,16 @@
 class ProjectileLifeCycleSystem
 {
 public:
-    static void Update(entt::registry &registry)
+    static void Update(std::shared_ptr<entt::registry> registry)
     {
-        auto view = registry.view<Projectile>();
+        auto view = registry->view<Projectile>();
         for (auto entity : view)
         {
             auto projectile = view.get<Projectile>(entity);
 
             if (SDL_GetTicks() - projectile.startTime > projectile.duration)
             {
-                registry.destroy(entity);
+                registry->destroy(entity);
             }
         }
     }

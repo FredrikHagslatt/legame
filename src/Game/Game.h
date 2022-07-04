@@ -18,8 +18,13 @@ private:
     SDL_Window *m_window;
     SDL_Renderer *m_renderer;
     SceneManager m_sceneManager;
-    entt::registry m_registry;
-    AssetStore m_assetStore;
+    std::shared_ptr<entt::registry> m_registry;
+    std::shared_ptr<AssetStore> m_assetStore;
+    entt::dispatcher m_dispatcher{};
+
+    // entt::sigh<void(KeyPressedEvent)> keyPressedEventEmitter;
+    //  entt::sink keyPressedEventListener;
+    //  entt::sink keyPressedEventListener{keyPressedEventEmitter};
 
     double ElapsedTime();
     void Setup();

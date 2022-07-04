@@ -10,15 +10,15 @@
 class RenderTextSystem
 {
 public:
-    static void Update(entt::registry &registry, SDL_Renderer *renderer, AssetStore &assetStore, const SDL_Rect &camera)
+    static void Update(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, const SDL_Rect &camera)
     {
-        auto view = registry.view<TextLabel>();
+        auto view = registry->view<TextLabel>();
         for (auto entity : view)
         {
             const auto textLabel = view.get<TextLabel>(entity);
 
             SDL_Surface *surface = TTF_RenderText_Blended(
-                assetStore.GetFont(textLabel.assetId),
+                assetStore->GetFont(textLabel.assetId),
                 textLabel.text.c_str(),
                 textLabel.color);
 

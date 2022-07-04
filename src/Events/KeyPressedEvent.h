@@ -2,13 +2,13 @@
 #define KEYPRESSEDEVENT_H
 
 #include <SDL2/SDL.h>
+#include <memory>
+#include "entt/entt.hpp"
 
-class KeyPressedEvent
+struct KeyPressedEvent
 {
-public:
-    entt::registry &registry;
+    std::shared_ptr<entt::registry> registry;
     SDL_Keycode key;
-    KeyPressedEvent(entt::registry &registry, SDL_Keycode key) : registry(registry), key(key) {}
 };
 
 #endif

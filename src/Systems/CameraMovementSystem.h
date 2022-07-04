@@ -11,9 +11,9 @@
 class CameraMovementSystem
 {
 public:
-    static void Update(entt::registry &registry, SDL_Rect &camera)
+    static void Update(std::shared_ptr<entt::registry> registry, SDL_Rect &camera)
     {
-        auto view = registry.view<Player_Tag, Transform>();
+        auto view = registry->view<Player_Tag, Transform>();
         for (auto entity : view)
         {
             auto const transform = view.get<Transform>(entity);

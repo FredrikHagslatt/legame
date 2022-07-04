@@ -26,9 +26,9 @@ public:
             aY + aH > bY);
     }
 
-    static void Update(entt::registry &registry)
+    static void Update(std::shared_ptr<entt::registry> registry, entt::dispatcher &dispatcher)
     {
-        auto view = registry.view<Transform, BoxCollider>();
+        auto view = registry->view<Transform, BoxCollider>();
 
         // Fancy nested loop to not check same pair of entities twice.
         for (auto i = view.begin(); i != view.end(); i++)
@@ -61,8 +61,7 @@ public:
 
                 if (collisionHappened)
                 {
-                    // CollisionEvent collisionEvent{a, b};
-                    // collisionEventEmitter.publish(collisionEvent);
+                    dispatcher.trigger(CollisionEvent{registry, a, b});
                 }
             }
         }
