@@ -8,7 +8,5 @@
 
 /*  Move to some clas. Here temporarily */
 std::list<entt::entity> entitiesToKill;
-int mapWidth = 0;
-int mapHeight = 0;
 
 #endif

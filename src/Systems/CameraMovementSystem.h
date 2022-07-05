@@ -7,6 +7,7 @@
 #include "Logger/Logger.h"
 #include <SDL2/SDL.h>
 #include "Constants.h"
+#include "Game/Game.h"
 
 class CameraMovementSystem
 {
@@ -18,11 +19,11 @@ public:
         {
             auto const transform = view.get<Transform>(entity);
 
-            if (transform.position.x + (camera.w / 2) < mapWidth)
+            if (transform.position.x + (camera.w / 2) < Game::mapWidth)
             {
                 camera.x = transform.position.x - (WINDOWWIDTH / 2);
             }
-            if (transform.position.y + (camera.h / 2) < mapHeight)
+            if (transform.position.y + (camera.h / 2) < Game::mapHeight)
             {
                 camera.y = transform.position.y - (WINDOWHEIGHT / 2);
             }

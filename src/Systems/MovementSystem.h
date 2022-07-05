@@ -7,9 +7,8 @@
 #include "Components/Velocity.h"
 #include "Events/CollisionEvent.h"
 #include "Logger/Logger.h"
+#include "Game/Game.h"
 
-extern int mapWidth;
-extern int mapHeight;
 class MovementSystem
 {
 public:
@@ -31,15 +30,15 @@ public:
                 int paddingRight = 50;
                 int paddingBottom = 50;
                 transform.position.x = transform.position.x < paddingLeft ? paddingLeft : transform.position.x;
-                transform.position.x = transform.position.x > mapWidth - paddingRight ? mapWidth - paddingRight : transform.position.x;
+                transform.position.x = transform.position.x > Game::mapWidth - paddingRight ? Game::mapWidth - paddingRight : transform.position.x;
                 transform.position.y = transform.position.y < paddingTop ? paddingTop : transform.position.y;
-                transform.position.y = transform.position.y > mapHeight - paddingBottom ? mapHeight - paddingBottom : transform.position.y;
+                transform.position.y = transform.position.y > Game::mapHeight - paddingBottom ? Game::mapHeight - paddingBottom : transform.position.y;
             }
 
             bool isEntityOutsideMap = (transform.position.x < 0 ||
-                                       transform.position.x > mapWidth ||
+                                       transform.position.x > Game::mapWidth ||
                                        transform.position.y < 0 ||
-                                       transform.position.y > mapHeight);
+                                       transform.position.y > Game::mapHeight);
 
             if (isEntityOutsideMap && !registry->all_of<Player_Tag>(entity))
             {

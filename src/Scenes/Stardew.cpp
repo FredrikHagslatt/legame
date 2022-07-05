@@ -1,6 +1,8 @@
 #include "Scenes/Stardew.h"
 #include <fstream>
 
+#include "Game/Game.h"
+
 void Stardew::ToggleDebugMode(const KeyPressedEvent &event)
 {
     if (event.key == SDLK_d)
@@ -82,17 +84,17 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
 
     Logger::Info("[Stardew] Mapsize: " + std::to_string(mapNumCols) + " x " + std::to_string(mapNumRows));
 
-    mapWidth = mapNumCols * TILESIZE * SCALE;
-    mapHeight = mapNumRows * TILESIZE * SCALE;
+    Game::mapWidth = mapNumCols * TILESIZE * SCALE;
+    Game::mapHeight = mapNumRows * TILESIZE * SCALE;
 
     glm::vec2 offset;
-    if (mapWidth < WINDOWWIDTH)
+    if (Game::mapWidth < WINDOWWIDTH)
     {
-        offset.x = (WINDOWWIDTH - mapWidth) / 2;
+        offset.x = (WINDOWWIDTH - Game::mapWidth) / 2;
     }
-    if (mapHeight < WINDOWHEIGHT)
+    if (Game::mapHeight < WINDOWHEIGHT)
     {
-        offset.y = (WINDOWHEIGHT - mapHeight) / 2;
+        offset.y = (WINDOWHEIGHT - Game::mapHeight) / 2;
     }
 
     // Read map, create tiles.

@@ -13,12 +13,13 @@
 #include "Events/KeyPressedEvent.h"
 #include "Systems/KeyboardControlSystem.h"
 
-int Game::gameStatic;
+int Game::mapWidth;
+int Game::mapHeight;
 
 Game::Game()
 {
-    gameStatic = 315;
-
+    mapWidth = 0;
+    mapHeight = 0;
     isRunning = false;
     Logger::Info("Game Created.");
     m_registry = std::make_shared<entt::registry>();
