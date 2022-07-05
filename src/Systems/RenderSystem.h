@@ -7,9 +7,10 @@
 #include "AssetStore/AssetStore.h"
 #include <SDL2/SDL.h>
 
-namespace RenderSystem
+class RenderSystem
 {
-    void Update(entt::registry &registry, SDL_Renderer *renderer, std::unique_ptr<AssetStore> &assetStore, SDL_Rect &camera)
+public:
+    static void Update(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, SDL_Rect &camera)
     {
         struct RenderableEntity
         {
@@ -18,7 +19,7 @@ namespace RenderSystem
         };
         std::vector<RenderableEntity> renderableEntities;
 
-        auto view = registry.view<Transform, Sprite>();
+        auto view = registry->view<Transform, Sprite>();
         for (auto entity : view)
         {
             RenderableEntity renderableEntity;

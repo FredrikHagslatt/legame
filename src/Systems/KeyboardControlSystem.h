@@ -7,58 +7,56 @@
 #include "Components/KeyboardControlled.h"
 #include "Events/KeyPressedEvent.h"
 
-namespace KeyBoardControlSystem{
-
-    void OnKeyPressed(KeyPressedEvent event)
+class KeyboardControlSystem
+{
+public:
+    static void OnKeyPressed(const KeyPressedEvent &event)
     {
-        enum Direction {
+        enum Direction
+        {
             DIR_RIGHT,
             DIR_DOWN,
             DIR_LEFT,
             DIR_UP,
         };
 
-        auto view = event.registry.view<KeyboardControlled, Sprite, Velocity>();
+        auto registry = event.registry;
+        auto view = registry->view<KeyboardControlled, Sprite, Velocity>();
         for (auto entity : view)
         {
             const auto keyboardControl = view.get<KeyboardControlled>(entity);
             auto &sprite = view.get<Sprite>(entity);
-            auto &velocity  = view.get<Velocity>(entity);
+            auto &velocity = view.get<Velocity>(entity);
 
-            switch(event.key)
+            switch (event.key)
             {
-                case SDLK_UP:
-                    velocity.x = keyboardControl.upVelocity.x;
-                    velocity.y = keyboardControl.upVelocity.y;
-                    sprite.srcRect.y = sprite.height * DIR_UP;
-                    break;
-                case SDLK_RIGHT:
-                    velocity.x = keyboardControl.rightVelocity.x;
-                    velocity.y = keyboardControl.rightVelocity.y;
-                    sprite.srcRect.y = sprite.height * DIR_RIGHT;
-                    break;
-                case SDLK_DOWN:
-                    velocity.x = keyboardControl.downVelocity.x;
-                    velocity.y = keyboardControl.downVelocity.y;
-                    sprite.srcRect.y = sprite.height * DIR_DOWN;
-                    break;
-                case SDLK_LEFT:
-                    velocity.x = keyboardControl.leftVelocity.x;
-                    velocity.y = keyboardControl.leftVelocity.y;
-                    sprite.srcRect.y = sprite.height * DIR_LEFT;
-                    break;
-
+            case SDLK_UP:
+                velocity.x = keyboardControl.upVelocity.x;
+                velocity.y = keyboardControl.upVelocity.y;
+                sprite.srcRect.y = sprite.height * DIR_UP;
+                break;
+            case SDLK_RIGHT:
+                velocity.x = keyboardControl.rightVelocity.x;
+                velocity.y = keyboardControl.rightVelocity.y;
+                sprite.srcRect.y = sprite.height * DIR_RIGHT;
+                break;
+            case SDLK_DOWN:
+                velocity.x = keyboardControl.downVelocity.x;
+                velocity.y = keyboardControl.downVelocity.y;
+                sprite.srcRect.y = sprite.height * DIR_DOWN;
+                break;
+            case SDLK_LEFT:
+                velocity.x = keyboardControl.leftVelocity.x;
+                velocity.y = keyboardControl.leftVelocity.y;
+                sprite.srcRect.y = sprite.height * DIR_LEFT;
+                break;
             }
-
         }
-
     }
 
-    void Update()
+    static void Update()
     {
-
     }
-
 };
 
 #endif

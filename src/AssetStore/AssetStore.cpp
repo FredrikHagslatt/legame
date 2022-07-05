@@ -4,13 +4,13 @@
 
 AssetStore::AssetStore()
 {
-    Logger::Info("Asset Store Created!");
+    Logger::Info("Asset Store Created.");
 }
 
 AssetStore::~AssetStore()
 {
     ClearAssets();
-    Logger::Info("Asset Store Destroyed!");
+    Logger::Info("Asset Store Destroyed.");
 }
 
 void AssetStore::ClearAssets()

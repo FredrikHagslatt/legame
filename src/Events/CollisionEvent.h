@@ -2,16 +2,13 @@
 #define COLLISIONEVENT_H
 
 #include "entt/entt.hpp"
+#include <memory>
 
 struct CollisionEvent
 {
-    entt::registry &registry;
-    entt::entity &entityA;
-    entt::entity &entityB;
+    std::shared_ptr<entt::registry> registry;
+    entt::entity a;
+    entt::entity b;
 };
-
-
-entt::sigh<void(CollisionEvent)> CollisionEventEmitter;
-entt::sink CollisionEventListener{CollisionEventEmitter};
 
 #endif

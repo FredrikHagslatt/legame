@@ -93,6 +93,6 @@ add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E create_symlink "${assetsource}" "${assetbuild}" 
     DEPENDS ${assetsource}
-    COMMENT "symbolic link resources folder from ${assetsource} => ${assetbuild}"
+    COMMENT "symbolic link resources folder from ${assetsource} <= ${assetbuild}"
 )
 #--------------------------------------------------------

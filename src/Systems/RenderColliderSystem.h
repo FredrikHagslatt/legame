@@ -6,11 +6,12 @@
 #include "Components/BoxCollider.h"
 #include <SDL2/SDL.h>
 
-namespace RenderColliderSystem
+class RenderColliderSystem
 {
-    void Update(entt::registry &registry, SDL_Renderer *renderer, SDL_Rect &camera)
+public:
+    static void Update(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, SDL_Rect &camera)
     {
-        auto view = registry.view<Transform, BoxCollider>();
+        auto view = registry->view<Transform, BoxCollider>();
         for (auto entity : view)
         {
             const auto transform = view.get<Transform>(entity);

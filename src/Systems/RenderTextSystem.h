@@ -7,11 +7,12 @@
 #include <SDL2/SDL.h>
 #include "Logger/Logger.h"
 
-namespace RenderTextSystem
+class RenderTextSystem
 {
-    void Update(entt::registry &registry, SDL_Renderer *renderer, std::unique_ptr<AssetStore> &assetStore, const SDL_Rect &camera)
+public:
+    static void Update(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, const SDL_Rect &camera)
     {
-        auto view = registry.view<TextLabel>();
+        auto view = registry->view<TextLabel>();
         for (auto entity : view)
         {
             const auto textLabel = view.get<TextLabel>(entity);

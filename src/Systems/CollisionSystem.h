@@ -2,14 +2,14 @@
 #define COLLISIONSYSTEM_H
 
 #include "entt/entt.hpp"
-#include "Events/CollisionEvent.h"
 #include "Components/Transform.h"
 #include "Components/BoxCollider.h"
+#include "Events/CollisionEvent.h"
 
-
-namespace CollisionSystem
+class CollisionSystem
 {
-    bool CheckAABBCollision(
+public:
+    static bool CheckAABBCollision(
         double aX,
         double aY,
         double aW,
@@ -26,10 +26,9 @@ namespace CollisionSystem
             aY + aH > bY);
     }
 
-    void Update(entt::registry &registry)
+    static void Update(std::shared_ptr<entt::registry> registry, entt::dispatcher &dispatcher)
     {
-
-        auto view = registry.view<Transform, BoxCollider>();
+        auto view = registry->view<Transform, BoxCollider>();
 
         // Fancy nested loop to not check same pair of entities twice.
         for (auto i = view.begin(); i != view.end(); i++)
@@ -62,8 +61,7 @@ namespace CollisionSystem
 
                 if (collisionHappened)
                 {
-                    CollisionEvent collisionEvent{registry, a, b};
-                    CollisionEventEmitter.publish(collisionEvent);
+                    dispatcher.trigger(CollisionEvent{registry, a, b});
                 }
             }
         }

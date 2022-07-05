@@ -11,4 +11,4 @@ inline constexpr unsigned short MILLISECS_PER_FRAME { 1000 / 60 };
 inline constexpr unsigned short TILESIZE{ 16 };
 inline constexpr double SCALE{ 3.0 };
 
-#endif //CONSTANTS_H
+#endif

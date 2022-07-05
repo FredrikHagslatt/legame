@@ -8,17 +8,17 @@
 #include "Components/Health.h"
 #include <SDL2/SDL.h>
 
-namespace RenderHealthSystem
+class RenderHealthSystem
 {
-
-    void Update(entt::registry &registry, SDL_Renderer *renderer, std::unique_ptr<AssetStore> &assetStore, SDL_Rect &camera)
+public:
+    static void Update(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, SDL_Rect &camera)
     {
         SDL_Color healthBarColor = {255, 255, 255};
         SDL_Color red = {255, 0, 0};
         SDL_Color yellow = {255, 255, 0};
         SDL_Color green = {0, 255, 0};
 
-        auto view = registry.view<Transform, Sprite, Health>();
+        auto view = registry->view<Transform, Sprite, Health>();
 
         for (auto entity : view)
         {
