@@ -1,6 +1,5 @@
 #include "Scenes/Stardew.h"
 #include <fstream>
-
 #include "Game/Game.h"
 
 void Stardew::ToggleDebugMode(const KeyPressedEvent &event)
@@ -24,10 +23,10 @@ void Stardew::Update(double elapsedTime)
     UpdateScene(elapsedTime);
 
     // Kill entities that are queued for death
-    while (!entitiesToKill.empty())
+    while (!Game::entitiesToKill.empty())
     {
-        entt::entity entity = entitiesToKill.front();
-        entitiesToKill.pop_front();
+        entt::entity entity = Game::entitiesToKill.front();
+        Game::entitiesToKill.pop_front();
         m_registry->destroy(entity);
         Logger::Info("Queued entity destroyed");
     }

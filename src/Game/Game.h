@@ -32,13 +32,15 @@ private:
     void ProcessInput();
 
 public:
-    static int mapWidth;
-    static int mapHeight;
     Game();
     ~Game();
     void Initialize();
     void Run();
     void Destroy();
+
+    static int mapWidth;
+    static int mapHeight;
+    static std::list<entt::entity> entitiesToKill;
 };
 
 #endif

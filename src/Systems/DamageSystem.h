@@ -8,8 +8,8 @@
 #include "Components/Projectile.h"
 #include "Components/Health.h"
 #include "Events/CollisionEvent.h"
+#include "Game/Game.h"
 
-extern std::list<entt::entity> entitiesToKill;
 class DamageSystem
 {
 public:
@@ -23,7 +23,7 @@ public:
 
             bool playerQueuedForDeath = false;
             bool projectileQueuedForDeath = false;
-            for (auto entity : entitiesToKill)
+            for (auto entity : Game::entitiesToKill)
             {
                 if (entity == player)
                 {
@@ -37,12 +37,12 @@ public:
 
             if (!projectileQueuedForDeath)
             {
-                entitiesToKill.push_back(projectile);
+                Game::entitiesToKill.push_back(projectile);
             }
 
             if (health.healthPercentage <= 0 && !playerQueuedForDeath)
             {
-                entitiesToKill.push_back(player);
+                Game::entitiesToKill.push_back(player);
             }
         }
     }
@@ -57,7 +57,7 @@ public:
 
             bool enemyQueuedForDeath = false;
             bool projectileQueuedForDeath = false;
-            for (auto entity : entitiesToKill)
+            for (auto entity : Game::entitiesToKill)
             {
                 if (entity == enemy)
                 {
@@ -71,12 +71,12 @@ public:
 
             if (!projectileQueuedForDeath)
             {
-                entitiesToKill.push_back(projectile);
+                Game::entitiesToKill.push_back(projectile);
             }
 
             if (health.healthPercentage <= 0 && !enemyQueuedForDeath)
             {
-                entitiesToKill.push_back(enemy);
+                Game::entitiesToKill.push_back(enemy);
             }
         }
     }

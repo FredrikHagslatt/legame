@@ -15,6 +15,7 @@
 
 int Game::mapWidth;
 int Game::mapHeight;
+std::list<entt::entity> Game::entitiesToKill;
 
 Game::Game()
 {
