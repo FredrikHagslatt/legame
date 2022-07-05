@@ -1,6 +1,14 @@
 #include "Scenes/Stardew.h"
 #include <fstream>
 
+void Stardew::ToggleDebugMode(const KeyPressedEvent &event)
+{
+    if (event.key == SDLK_d)
+    {
+        debugMode = !debugMode;
+    }
+}
+
 void Stardew::Update(double elapsedTime)
 {
     // Update systems
@@ -19,7 +27,7 @@ void Stardew::Update(double elapsedTime)
         entt::entity entity = entitiesToKill.front();
         entitiesToKill.pop_front();
         m_registry->destroy(entity);
-        Logger::Info("Entity Destroyed");
+        Logger::Info("Queued entity destroyed");
     }
 }
 
@@ -63,7 +71,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
         {
             if (mapNumCols != (line.size() + 1) / 3)
             {
-                Logger::Fatal("Map is fucked! Row length not matching");
+                Logger::Fatal("[Stardew] Map is fucked! Row length not matching");
             }
         }
         mapNumRows++;
@@ -72,7 +80,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
     mapFile.clear();
     mapFile.seekg(0); // Go to start of file again.
 
-    Logger::Info("Mapsize: " + std::to_string(mapNumCols) + " x " + std::to_string(mapNumRows));
+    Logger::Info("[Stardew] Mapsize: " + std::to_string(mapNumCols) + " x " + std::to_string(mapNumRows));
 
     mapWidth = mapNumCols * TILESIZE * SCALE;
     mapHeight = mapNumRows * TILESIZE * SCALE;
@@ -113,11 +121,26 @@ void Stardew::Load()
     camera.y = 0;
     camera.w = WINDOWWIDTH;
     camera.h = WINDOWHEIGHT;
+
+    m_dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
+    m_dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
+    m_dispatcher.sink<KeyPressedEvent>().connect<&Stardew::ToggleDebugMode>(this);
+    m_dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
+    m_dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
+    Logger::Info("[Stardew] Connecting eventlisteners");
+
     LoadScene();
 }
 
 void Stardew::Unload()
 {
+    m_dispatcher.sink<KeyPressedEvent>().disconnect<&KeyboardControlSystem::OnKeyPressed>();
+    m_dispatcher.sink<KeyPressedEvent>().disconnect<&ProjectileEmitSystem::OnKeyPressed>();
+    m_dispatcher.sink<KeyPressedEvent>().disconnect<&Stardew::ToggleDebugMode>(this);
+    m_dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
+    m_dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();
+    Logger::Info("[Stardew] Disconnecting eventlisteners");
+
     UnloadScene();
 }
 

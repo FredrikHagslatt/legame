@@ -34,6 +34,8 @@
 #include "SceneManager/Scene.h"
 #include "AssetStore/AssetStore.h"
 
+#include "Events/KeyPressedEvent.h"
+
 class Stardew : public Scene
 {
 protected:
@@ -44,6 +46,9 @@ protected:
 	bool debugMode = false;
 
 public:
+	// Misc
+	void ToggleDebugMode(const KeyPressedEvent &event);
+
 	// Funcs for children
 	virtual void UpdateScene(double elapsedTime) = 0;
 	virtual void RenderScene(double elapsedTime) = 0;

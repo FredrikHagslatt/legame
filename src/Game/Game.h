@@ -32,6 +32,7 @@ private:
     void ProcessInput();
 
 public:
+    static int gameStatic;
     Game();
     ~Game();
     void Initialize();

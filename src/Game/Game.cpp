@@ -13,8 +13,12 @@
 #include "Events/KeyPressedEvent.h"
 #include "Systems/KeyboardControlSystem.h"
 
+int Game::gameStatic;
+
 Game::Game()
 {
+    gameStatic = 315;
+
     isRunning = false;
     Logger::Info("Game Created.");
     m_registry = std::make_shared<entt::registry>();
@@ -28,6 +32,7 @@ Game::~Game()
 
 void Game::Initialize()
 {
+
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         Logger::Fatal("Error initializing SDL.");
@@ -104,17 +109,19 @@ void Game::Setup()
 {
     // m_sceneManager.AddScene("MENU", new MenuRoot(m_sceneManager));
     m_sceneManager.AddScene("HUB", new Hub(m_sceneManager, m_renderer, m_registry, m_assetStore, m_dispatcher));
-    // m_sceneManager.AddScene("GARDEN", new Garden(m_sceneManager, m_renderer, m_registry, m_assetStore, m_dispatcher));
+    m_sceneManager.AddScene("GARDEN", new Garden(m_sceneManager, m_renderer, m_registry, m_assetStore, m_dispatcher));
 
     // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
     m_sceneManager.ChangeScene("HUB");
 
-    m_dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
-    m_dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
-    m_dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
-    m_dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
+    /*
+        m_dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
+        m_dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
+        m_dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
+        m_dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
+    */
     Logger::Info("Game Setup.");
 }
 

@@ -81,11 +81,11 @@ public:
         }
     }
 
-    static void OnCollision(CollisionEvent event)
+    static void OnCollision(const CollisionEvent event)
     {
         auto registry = event.registry;
-        auto &a = event.a;
-        auto &b = event.b;
+        auto a = event.a;
+        auto b = event.b;
 
         if (registry->all_of<Projectile_Tag>(a) && registry->all_of<Player_Tag>(b))
         {

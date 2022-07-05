@@ -1,4 +1,6 @@
 #include "Hub.h"
+#include "Components/SceneSwitcher.h"
+#include "Systems/TriggerSystem.h"
 
 void Hub::UpdateScene(double elapsedTime)
 {
@@ -27,7 +29,7 @@ void Hub::LoadScene()
     const auto player = m_registry->create();
     m_registry->emplace<Player_Tag>(player);
     m_registry->emplace<StayOnMap_Tag>(player);
-    m_registry->emplace<Transform>(player, glm::vec2(200.0, 400.0), glm::vec2(4.0, 4.0), 0.0);
+    m_registry->emplace<Transform>(player, glm::vec2(200.0, 400.0), glm::vec2(3.0, 3.0), 0.0);
     m_registry->emplace<Velocity>(player, 0.0, 0.0);
     m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 10);
     m_registry->emplace<Animation>(player, 5, 5, true);
@@ -65,7 +67,7 @@ void Hub::LoadScene()
     const auto truck = m_registry->create();
     m_registry->emplace<Enemy_Tag>(truck);
     m_registry->emplace<StayOnMap_Tag>(truck);
-    m_registry->emplace<Transform>(truck, glm::vec2(300.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
+    m_registry->emplace<Transform>(truck, glm::vec2(300.0, 350.0), glm::vec2(1.0, 1.0), 0.0);
     m_registry->emplace<Velocity>(truck, 20.0, 0.0);
     m_registry->emplace<Sprite>(truck, "truck-image", 32, 32, 2);
     m_registry->emplace<ProjectileEmitter>(truck, glm::vec2(100.0, -100.0), 2000, 10000, 10, false);
@@ -87,7 +89,14 @@ void Hub::LoadScene()
     const auto label = m_registry->create();
     m_registry->emplace<UI_Tag>(label);
     SDL_Color green = {30, 200, 30};
-    m_registry->emplace<TextLabel>(label, glm::vec2(WINDOWWIDTH / 2 - 40, 10), "Example Title 1.0", "charriot-font", green, true);
+    m_registry->emplace<TextLabel>(label, glm::vec2(WINDOWWIDTH / 2 - 40, 10), "- Hub Scene- ", "charriot-font", green, true);
+
+    const auto trigger = m_registry->create();
+    m_registry->emplace<Transform>(trigger, glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0), 0.0);
+    m_registry->emplace<BoxCollider>(trigger, 30, 30);
+    m_registry->emplace<SceneSwitcher>(trigger, "GARDEN");
+
+    m_dispatcher.sink<CollisionEvent>().connect<&TriggerSystem::OnCollision>();
 }
 
 void Hub::UnloadScene()
