@@ -6,7 +6,9 @@
 #include "entt/entt.hpp"
 #include "Logger/Logger.h"
 #include <glm/glm.hpp>
+
 #include "Scenes/Hub.h"
+#include "Scenes/Garden.h"
 
 #include "Events/KeyPressedEvent.h"
 #include "Systems/KeyboardControlSystem.h"
@@ -102,6 +104,8 @@ void Game::Setup()
 {
     // m_sceneManager.AddScene("MENU", new MenuRoot(m_sceneManager));
     m_sceneManager.AddScene("HUB", new Hub(m_sceneManager, m_renderer, m_registry, m_assetStore, m_dispatcher));
+    // m_sceneManager.AddScene("GARDEN", new Garden(m_sceneManager, m_renderer, m_registry, m_assetStore, m_dispatcher));
+
     // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
