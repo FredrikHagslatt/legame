@@ -1,12 +1,21 @@
 #include "Scenes/Stardew.h"
 #include <fstream>
 #include "Game/Game.h"
+#include "Logger/Logger.h"
 
 void Stardew::ToggleDebugMode(const KeyPressedEvent &event)
 {
     if (event.key == SDLK_d)
     {
         debugMode = !debugMode;
+        if (debugMode)
+        {
+            Logger::Info("Debugmode activated");
+        }
+        else
+        {
+            Logger::Info("Debugmode deactivated");
+        }
     }
 }
 
@@ -86,7 +95,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
     Game::mapWidth = mapNumCols * TILESIZE * SCALE;
     Game::mapHeight = mapNumRows * TILESIZE * SCALE;
 
-    glm::vec2 offset;
+    glm::vec2 offset(0.0);
     if (Game::mapWidth < WINDOWWIDTH)
     {
         offset.x = (WINDOWWIDTH - Game::mapWidth) / 2;
@@ -97,20 +106,20 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
     }
 
     // Read map, create tiles.
-    mapFile.open(map);
-
     for (int y = 0; y < mapNumRows; y++)
     {
         for (int x = 0; x < mapNumCols; x++)
         {
             char ch;
             mapFile.get(ch);
+
             int srcRectY = std::atoi(&ch) * TILESIZE;
             mapFile.get(ch);
             int srcRectX = std::atoi(&ch) * TILESIZE;
             mapFile.ignore();
 
             const auto tile = m_registry->create();
+            m_registry->emplace<Tile_Tag>(tile);
             m_registry->emplace<Transform>(tile, glm::vec2(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y), glm::vec2(SCALE, SCALE), 0.0);
             m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
         }

@@ -12,7 +12,6 @@ class KeyboardControlSystem
 public:
     static void OnKeyPressed(const KeyPressedEvent &event)
     {
-        Logger::Warning("KeyPressed: " + std::to_string(event.key));
         enum Direction
         {
             DIR_RIGHT,

@@ -10,7 +10,7 @@ void Garden::RenderScene(double elapsedTime)
 void Garden::LoadScene()
 {
 
-    LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/jungle.map");
+    LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/debug.map");
 
     m_assetStore->AddTexture(m_renderer, "spike-image", "assets/images/Spike.png");
     m_assetStore->AddTexture(m_renderer, "radar-image", "assets/images/radar.png");

@@ -34,8 +34,8 @@ void Hub::LoadScene()
     m_registry->emplace<Velocity>(player, 0.0, 0.0);
     m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 10);
     m_registry->emplace<Animation>(player, 5, 5, true);
-    m_registry->emplace<KeyboardControlled>(player, glm::vec2(0, -200), glm::vec2(200, 0), glm::vec2(0, 200), glm::vec2(-200, 0));
-    m_registry->emplace<ProjectileEmitter>(player, glm::vec2(300.0, 300.0), 0, 10000, 10, true);
+    m_registry->emplace<KeyboardControlled>(player, glm::vec2(0, -300), glm::vec2(300, 0), glm::vec2(0, 300), glm::vec2(-300, 0));
+    m_registry->emplace<ProjectileEmitter>(player, glm::vec2(600.0, 600.0), 0, 10000, 10, true);
     m_registry->emplace<Health>(player, 100);
     m_registry->emplace<BoxCollider>(player, 16, 32);
 

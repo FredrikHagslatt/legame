@@ -75,21 +75,21 @@ add_definitions(-DSDL_MAIN_HANDLED) #Windows?
 
 # COPY DOES NOT NEED ADMIN ACCESS
 #--------------------------------------------------------
-#set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
-#if (EXISTS ${ASSETS_DIR} AND IS_DIRECTORY ${ASSETS_DIR})
-#    file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
-#endif()
+set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
+if (EXISTS ${ASSETS_DIR} AND IS_DIRECTORY ${ASSETS_DIR})
+    file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+endif()
 #--------------------------------------------------------
 
 
 # SYMLINK NEEDS ADMIN ACCESS
 #--------------------------------------------------------
-set(assetsource "${CMAKE_SOURCE_DIR}/assets")
-set(assetbuild "${CMAKE_BINARY_DIR}/assets")
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink "${assetsource}" "${assetbuild}" 
-    DEPENDS ${assetsource}
-    COMMENT "symbolic link resources folder from ${assetsource} <= ${assetbuild}"
-)
+#set(assetsource "${CMAKE_SOURCE_DIR}/assets")
+#set(assetbuild "${CMAKE_BINARY_DIR}/assets")
+#add_custom_command(
+#    TARGET ${PROJECT_NAME} POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E create_symlink "${assetsource}" "${assetbuild}" 
+#    DEPENDS ${assetsource}
+#    COMMENT "symbolic link resources folder from ${assetsource} <= ${assetbuild}"
+#)
 #--------------------------------------------------------
