@@ -1,5 +1,10 @@
 #include "SceneManager.h"
 
+void SceneManager::OnSceneSwitchEvent(const SceneSwitchEvent event)
+{
+	Logger::Info("[Scenemanager] Received SceneSwitchEvent: " + event.scene);
+	QueueSceneChange(event.scene);
+}
 
 void SceneManager::QueueSceneChange(std::string name)
 {
@@ -18,14 +23,17 @@ void SceneManager::ChangeScene(std::string name)
 
 void SceneManager::AddScene(std::string name, Scene *scene)
 {
-	m_scenes.insert( std::pair<std::string, Scene*>(name, scene) );
+	m_scenes.insert(std::pair<std::string, Scene *>(name, scene));
 }
 
 bool SceneManager::Cycle(double elapsedTime)
 {
-	if(m_queuedScene.empty()){
+	if (m_queuedScene.empty())
+	{
 		m_currentScene->Cycle(elapsedTime);
-	}else{
+	}
+	else
+	{
 		ChangeScene(m_queuedScene);
 		m_queuedScene = "";
 	}

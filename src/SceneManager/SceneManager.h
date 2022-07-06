@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 #include "Scene.h"
+#include "Events/SceneSwitchEvent.h"
+#include "Logger/Logger.h"
 
 class SceneManager
 {
@@ -13,6 +15,7 @@ private:
 	std::string m_queuedScene = "";
 
 public:
+	void OnSceneSwitchEvent(const SceneSwitchEvent event);
 	void QueueSceneChange(std::string name);
 	void ChangeScene(std::string name);
 	bool Cycle(double elapsedTime);

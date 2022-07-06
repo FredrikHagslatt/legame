@@ -27,18 +27,6 @@ void Hub::LoadScene()
     m_assetStore->AddFont("pico8-font-5", "assets/fonts/pico8.ttf", 5);
     m_assetStore->AddFont("pico8-font-10", "assets/fonts/pico8.ttf", 10);
 
-    const auto player = m_registry->create();
-    m_registry->emplace<Player_Tag>(player);
-    m_registry->emplace<StayOnMap_Tag>(player);
-    m_registry->emplace<Transform>(player, vec2f(200.0, 400.0), vec2f(SCALE, SCALE), 0.0);
-    m_registry->emplace<Velocity>(player, 0.0, 0.0);
-    m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 10);
-    m_registry->emplace<Animation>(player, 5, 5, true);
-    m_registry->emplace<KeyboardControlled>(player, vec2f(0, -300), vec2f(300, 0), vec2f(0, 300), vec2f(-300, 0));
-    m_registry->emplace<ProjectileEmitter>(player, vec2f(600.0, 600.0), 0, 10000, 10, true);
-    m_registry->emplace<Health>(player, 100);
-    m_registry->emplace<BoxCollider>(player, 16, 32);
-
     const auto chopper = m_registry->create();
     m_registry->emplace<StayOnMap_Tag>(chopper);
     m_registry->emplace<Transform>(chopper, vec2f(100.0, 100.0), vec2f(1.0, 1.0), 0.0);

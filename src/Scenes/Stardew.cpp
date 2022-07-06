@@ -134,11 +134,34 @@ void Stardew::Load()
     camera.w = WINDOWWIDTH;
     camera.h = WINDOWHEIGHT;
 
+    auto view = m_registry->view<Player_Tag>();
+    if (view.empty())
+    {
+        Logger::Info("Creating player");
+        const auto player = m_registry->create();
+        m_registry->emplace<Player_Tag>(player);
+        m_registry->emplace<StayOnMap_Tag>(player);
+        m_registry->emplace<Transform>(player, vec2f(200.0, 400.0), vec2f(SCALE, SCALE), 0.0);
+        m_registry->emplace<Velocity>(player, 0.0, 0.0);
+        m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 10);
+        m_registry->emplace<Animation>(player, 5, 5, true);
+        m_registry->emplace<KeyboardControlled>(player, vec2f(0, -300), vec2f(300, 0), vec2f(0, 300), vec2f(-300, 0));
+        m_registry->emplace<ProjectileEmitter>(player, vec2f(600.0, 600.0), 0, 10000, 10, true);
+        m_registry->emplace<Health>(player, 100);
+        m_registry->emplace<BoxCollider>(player, 16, 32);
+    }
+    else
+    {
+        Logger::Info("Player already exists. Not creating");
+    }
+
     Game::dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
     Game::dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
     Game::dispatcher.sink<KeyPressedEvent>().connect<&Stardew::ToggleDebugMode>(this);
     Game::dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
     Game::dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
+    Game::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
+
     Logger::Info("[Stardew] Connecting eventlisteners");
 
     LoadScene();
@@ -151,7 +174,23 @@ void Stardew::Unload()
     Game::dispatcher.sink<KeyPressedEvent>().disconnect<&Stardew::ToggleDebugMode>(this);
     Game::dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
     Game::dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();
+    Game::dispatcher.sink<SceneSwitchEvent>().disconnect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
     Logger::Info("[Stardew] Disconnecting eventlisteners");
+
+    auto projectiles = m_registry->view<Projectile_Tag>();
+    m_registry->destroy(projectiles.begin(), projectiles.end());
+
+    auto enemies = m_registry->view<Enemy_Tag>();
+    m_registry->destroy(enemies.begin(), enemies.end());
+
+    auto obstacles = m_registry->view<Obstacle_Tag>();
+    m_registry->destroy(obstacles.begin(), obstacles.end());
+
+    auto tiles = m_registry->view<Tile_Tag>();
+    m_registry->destroy(tiles.begin(), tiles.end());
+
+    auto labels = m_registry->view<TextLabel>();
+    m_registry->destroy(labels.begin(), labels.end());
 
     UnloadScene();
 }
