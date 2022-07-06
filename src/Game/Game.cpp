@@ -5,7 +5,7 @@
 
 #include "entt/entt.hpp"
 #include "Logger/Logger.h"
-#include <glm/glm.hpp>
+#include "Types.h"
 
 #include "Scenes/Hub.h"
 #include "Scenes/Garden.h"
@@ -86,22 +86,6 @@ void Game::ProcessInput()
             {
                 isRunning = false;
             }
-
-            /*   --  SETUP EVENTLISTENER IN STARDEW  --
-                        if (sdlEvent.key.keysym.sym == SDLK_d)
-                        {
-                            debugMode = !debugMode;
-                            if (debugMode)
-                            {
-                                Logger::Info("Debug mode activated");
-                            }
-                            else
-                            {
-                                Logger::Info("Debug mode dectivated");
-                            }
-
-                        }
-            */
             Game::dispatcher.trigger(KeyPressedEvent{m_registry, sdlEvent.key.keysym.sym});
             break;
         }

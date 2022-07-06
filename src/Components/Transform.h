@@ -1,17 +1,17 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-#include <glm/glm.hpp>
+#include "Types.h"
 
 struct Transform
 {
-    glm::vec2 position;
-    glm::vec2 scale;
+    vec2f position;
+    vec2f scale;
     double rotation;
 
     Transform(
-        glm::vec2 position = glm::vec2(0, 0),
-        glm::vec2 scale = glm::vec2(1, 1),
+        vec2f position = vec2f(0, 0),
+        vec2f scale = vec2f(1, 1),
         double rotation = 0.0)
         : position(position),
           scale(scale),

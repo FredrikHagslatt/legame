@@ -1,28 +1,26 @@
 #ifndef KEYBOARDCONTROLLED_H
 #define KEYBOARDCONTROLLED_H
 
-#include <glm/glm.hpp>
+#include <Types.h>
 
 struct KeyboardControlled
 {
-    glm::vec2 upVelocity;
-    glm::vec2 rightVelocity;
-    glm::vec2 downVelocity;
-    glm::vec2 leftVelocity;
+    vec2f upVelocity;
+    vec2f rightVelocity;
+    vec2f downVelocity;
+    vec2f leftVelocity;
 
     KeyboardControlled(
-        glm::vec2 upVelocity = glm::vec2(0),
-        glm::vec2 rightVelocity = glm::vec2(0),
-        glm::vec2 downVelocity = glm::vec2(0),
-        glm::vec2 leftVelocity = glm::vec2(0))
+        vec2f upVelocity = vec2f(0),
+        vec2f rightVelocity = vec2f(0),
+        vec2f downVelocity = vec2f(0),
+        vec2f leftVelocity = vec2f(0))
         : upVelocity(upVelocity),
           rightVelocity(rightVelocity),
           downVelocity(downVelocity),
           leftVelocity(leftVelocity)
     {
-
     }
 };
-
 
 #endif

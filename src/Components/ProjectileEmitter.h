@@ -1,11 +1,11 @@
 #ifndef PROJECTILEEMITTER_H
 #define PROJECTILEEMITTER_H
 
-#include <glm/glm.hpp>
+#include "Types.h"
 
 struct ProjectileEmitter
 {
-    glm::vec2 projectileVelocity;
+    vec2f projectileVelocity;
     int repeatFrequency;
     int projectileDuration;
     int hitPercentDamage;
@@ -13,7 +13,7 @@ struct ProjectileEmitter
     int lastEmissionTime;
 
     ProjectileEmitter(
-        glm::vec2 projectileVelocity = glm::vec2(0),
+        vec2f projectileVelocity = vec2f(0),
         int repeatFrequency = 0,
         int projectileDuration = 10000,
         int hitPercentDamage = 10,

@@ -2,19 +2,19 @@
 #define TEXTLABEL_H
 
 #include <string>
-#include <glm/glm.hpp>
+#include "Types.h"
 #include <SDL2/SDL.h>
 
 struct TextLabel
 {
-    glm::vec2 position;
+    vec2f position;
     std::string text;
     std::string assetId;
     SDL_Color color;
     bool isFixed;
 
     TextLabel(
-        glm::vec2 position = glm::vec2(0),
+        vec2f position = vec2f(0),
         const std::string &text = "",
         const std::string &assetId = "",
         const SDL_Color &color = {0, 0, 0},

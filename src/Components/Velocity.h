@@ -1,7 +1,7 @@
 #ifndef VELOCITY_H
 #define VELOCITY_H
 
-#include "glm/glm.hpp"
+#include "Types.h"
 
 struct Velocity
 {
@@ -12,12 +12,10 @@ struct Velocity
         : x(x), y(y)
     {
     }
-    Velocity(glm::vec2 velocity = glm::vec2(0))
+    Velocity(vec2f velocity = vec2f(0))
         : x(velocity.x), y(velocity.y)
     {
     }
-
-
 };
 
 #endif

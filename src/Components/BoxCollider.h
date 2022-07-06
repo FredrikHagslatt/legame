@@ -1,18 +1,18 @@
 #ifndef BOXCOLLIDER_H
 #define BOXCOLLIDER_H
 
-#include <glm/glm.hpp>
+#include <Types.h>
 
 struct BoxCollider
 {
     int width;
     int height;
-    glm::vec2 offset;
+    vec2f offset;
 
     BoxCollider(
         int width = 0,
         int height = 0,
-        glm::vec2 offset = glm::vec2(0))
+        vec2f offset = vec2f(0))
         : width(width),
           height(height),
           offset(offset)

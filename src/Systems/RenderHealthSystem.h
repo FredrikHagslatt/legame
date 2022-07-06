@@ -43,7 +43,7 @@ public:
 
             int healthBarWidth = 15;
             int healthBarHeight = 3;
-            glm::vec2 healthBarPos =
+            vec2f healthBarPos =
                 {
                     transform.position.x + (sprite.width * transform.scale.x) - camera.x,
                     transform.position.y - camera.y};

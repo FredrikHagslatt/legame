@@ -27,7 +27,7 @@ public:
                 const auto velocity = view.get<Velocity>(entity);
                 const auto projectileEmitter = view.get<ProjectileEmitter>(entity);
 
-                glm::vec2 projectilePosition = transform.position;
+                vec2f projectilePosition = transform.position;
 
                 if (registry->all_of<Sprite>(entity))
                 {
@@ -36,7 +36,7 @@ public:
                     projectilePosition.y += (transform.scale.y * sprite.height / 2);
                 }
 
-                glm::vec2 projectileVelocity = projectileEmitter.projectileVelocity;
+                vec2f projectileVelocity = projectileEmitter.projectileVelocity;
                 int directionX = 0;
                 int directionY = 0;
                 if (velocity.x > 0)
@@ -52,7 +52,7 @@ public:
 
                 auto projectile = registry->create();
                 registry->emplace<Projectile_Tag>(projectile);
-                registry->emplace<Transform>(projectile, projectilePosition, glm::vec2(1.0, 1.0), 0.0);
+                registry->emplace<Transform>(projectile, projectilePosition, vec2f(1.0, 1.0), 0.0);
                 registry->emplace<Velocity>(projectile, projectileVelocity);
                 registry->emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);
                 registry->emplace<BoxCollider>(projectile, 4, 4);
@@ -77,7 +77,7 @@ public:
 
             if (SDL_GetTicks() - projectileEmitter.lastEmissionTime > projectileEmitter.repeatFrequency)
             {
-                glm::vec2 projectilePosition = transform.position;
+                vec2f projectilePosition = transform.position;
 
                 if (registry->all_of<Sprite>(entity))
                 {
@@ -88,7 +88,7 @@ public:
 
                 auto projectile = registry->create();
                 registry->emplace<Projectile_Tag>(projectile);
-                registry->emplace<Transform>(projectile, projectilePosition, glm::vec2(1.0, 1.0), 0.0);
+                registry->emplace<Transform>(projectile, projectilePosition, vec2f(1.0, 1.0), 0.0);
                 registry->emplace<Velocity>(projectile, projectileEmitter.projectileVelocity);
                 registry->emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);
                 registry->emplace<BoxCollider>(projectile, 4, 4);
