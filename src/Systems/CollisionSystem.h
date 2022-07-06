@@ -26,7 +26,7 @@ public:
             aY + aH > bY);
     }
 
-    static void Update(std::shared_ptr<entt::registry> registry, entt::dispatcher &dispatcher)
+    static void Update(std::shared_ptr<entt::registry> registry)
     {
         auto view = registry->view<Transform, BoxCollider>();
 
@@ -61,7 +61,7 @@ public:
 
                 if (collisionHappened)
                 {
-                    dispatcher.trigger(CollisionEvent{registry, a, b});
+                    Game::dispatcher.trigger(CollisionEvent{registry, a, b});
                 }
             }
         }

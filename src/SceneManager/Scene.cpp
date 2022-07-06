@@ -7,11 +7,10 @@ void Scene::Cycle(double elapsedTime)
 	RenderGraphics(elapsedTime);
 }
 
-Scene::Scene(SceneManager &sceneManager, SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore, entt::dispatcher &dispatcher)
+Scene::Scene(SceneManager &sceneManager, SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore)
 	: m_sceneManager(sceneManager),
 	  m_renderer(renderer),
 	  m_registry(registry),
-	  m_assetStore(assetStore),
-	  m_dispatcher(dispatcher)
+	  m_assetStore(assetStore)
 {
 }

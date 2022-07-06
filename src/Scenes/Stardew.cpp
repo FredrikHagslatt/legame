@@ -18,7 +18,7 @@ void Stardew::Update(double elapsedTime)
     CameraMovementSystem::Update(m_registry, camera);
     ProjectileEmitSystem::Update(m_registry);
     ProjectileLifeCycleSystem::Update(m_registry);
-    CollisionSystem::Update(m_registry, m_dispatcher);
+    CollisionSystem::Update(m_registry);
 
     UpdateScene(elapsedTime);
 
@@ -97,6 +97,8 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
     }
 
     // Read map, create tiles.
+    mapFile.open(map);
+
     for (int y = 0; y < mapNumRows; y++)
     {
         for (int x = 0; x < mapNumCols; x++)
@@ -123,11 +125,11 @@ void Stardew::Load()
     camera.w = WINDOWWIDTH;
     camera.h = WINDOWHEIGHT;
 
-    m_dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
-    m_dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
-    m_dispatcher.sink<KeyPressedEvent>().connect<&Stardew::ToggleDebugMode>(this);
-    m_dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
-    m_dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
+    Game::dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
+    Game::dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
+    Game::dispatcher.sink<KeyPressedEvent>().connect<&Stardew::ToggleDebugMode>(this);
+    Game::dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
+    Game::dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
     Logger::Info("[Stardew] Connecting eventlisteners");
 
     LoadScene();
@@ -135,17 +137,17 @@ void Stardew::Load()
 
 void Stardew::Unload()
 {
-    m_dispatcher.sink<KeyPressedEvent>().disconnect<&KeyboardControlSystem::OnKeyPressed>();
-    m_dispatcher.sink<KeyPressedEvent>().disconnect<&ProjectileEmitSystem::OnKeyPressed>();
-    m_dispatcher.sink<KeyPressedEvent>().disconnect<&Stardew::ToggleDebugMode>(this);
-    m_dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
-    m_dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();
+    Game::dispatcher.sink<KeyPressedEvent>().disconnect<&KeyboardControlSystem::OnKeyPressed>();
+    Game::dispatcher.sink<KeyPressedEvent>().disconnect<&ProjectileEmitSystem::OnKeyPressed>();
+    Game::dispatcher.sink<KeyPressedEvent>().disconnect<&Stardew::ToggleDebugMode>(this);
+    Game::dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
+    Game::dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();
     Logger::Info("[Stardew] Disconnecting eventlisteners");
 
     UnloadScene();
 }
 
-Stardew::Stardew(SceneManager &sceneManager, SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore, entt::dispatcher &dispatcher)
-    : Scene(sceneManager, renderer, registry, assetStore, dispatcher)
+Stardew::Stardew(SceneManager &sceneManager, SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore)
+    : Scene(sceneManager, renderer, registry, assetStore)
 {
 }

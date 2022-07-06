@@ -1,6 +1,7 @@
 #include "Hub.h"
 #include "Components/SceneSwitcher.h"
 #include "Systems/TriggerSystem.h"
+#include "Constants.h"
 
 void Hub::UpdateScene(double elapsedTime)
 {
@@ -29,7 +30,7 @@ void Hub::LoadScene()
     const auto player = m_registry->create();
     m_registry->emplace<Player_Tag>(player);
     m_registry->emplace<StayOnMap_Tag>(player);
-    m_registry->emplace<Transform>(player, glm::vec2(200.0, 400.0), glm::vec2(3.0, 3.0), 0.0);
+    m_registry->emplace<Transform>(player, glm::vec2(200.0, 400.0), glm::vec2(SCALE, SCALE), 0.0);
     m_registry->emplace<Velocity>(player, 0.0, 0.0);
     m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 10);
     m_registry->emplace<Animation>(player, 5, 5, true);
@@ -96,9 +97,10 @@ void Hub::LoadScene()
     m_registry->emplace<BoxCollider>(trigger, 30, 30);
     m_registry->emplace<SceneSwitcher>(trigger, "GARDEN");
 
-    m_dispatcher.sink<CollisionEvent>().connect<&TriggerSystem::OnCollision>();
+    Game::dispatcher.sink<CollisionEvent>().connect<&TriggerSystem::OnCollision>();
 }
 
 void Hub::UnloadScene()
 {
+    Game::dispatcher.sink<CollisionEvent>().disconnect<&TriggerSystem::OnCollision>();
 }

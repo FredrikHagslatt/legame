@@ -16,6 +16,7 @@
 int Game::mapWidth;
 int Game::mapHeight;
 std::list<entt::entity> Game::entitiesToKill;
+entt::dispatcher Game::dispatcher;
 
 Game::Game()
 {
@@ -34,7 +35,6 @@ Game::~Game()
 
 void Game::Initialize()
 {
-
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         Logger::Fatal("Error initializing SDL.");
@@ -67,6 +67,7 @@ void Game::Initialize()
 
     // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     isRunning = true;
+    Game::dispatcher = entt::dispatcher{};
     Logger::Info("SDL Initialized.");
 }
 
@@ -101,7 +102,7 @@ void Game::ProcessInput()
 
                         }
             */
-            m_dispatcher.trigger(KeyPressedEvent{m_registry, sdlEvent.key.keysym.sym});
+            Game::dispatcher.trigger(KeyPressedEvent{m_registry, sdlEvent.key.keysym.sym});
             break;
         }
     }
@@ -110,20 +111,14 @@ void Game::ProcessInput()
 void Game::Setup()
 {
     // m_sceneManager.AddScene("MENU", new MenuRoot(m_sceneManager));
-    m_sceneManager.AddScene("HUB", new Hub(m_sceneManager, m_renderer, m_registry, m_assetStore, m_dispatcher));
-    m_sceneManager.AddScene("GARDEN", new Garden(m_sceneManager, m_renderer, m_registry, m_assetStore, m_dispatcher));
+    m_sceneManager.AddScene("HUB", new Hub(m_sceneManager, m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("GARDEN", new Garden(m_sceneManager, m_renderer, m_registry, m_assetStore));
 
     // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
     m_sceneManager.ChangeScene("HUB");
 
-    /*
-        m_dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
-        m_dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
-        m_dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
-        m_dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
-    */
     Logger::Info("Game Setup.");
 }
 
