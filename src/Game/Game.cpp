@@ -26,25 +26,25 @@ Game::Game()
     isRunning = false;
     m_registry = std::make_shared<entt::registry>();
     m_assetStore = std::make_shared<AssetStore>();
-    Logger::Info("Game Created.");
+    Logger::Info("[Game] Game Created.");
 }
 
 Game::~Game()
 {
-    Logger::Info("Game Destroyed.");
+    Logger::Info("[Game] Game Destroyed.");
 }
 
 void Game::Initialize()
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
-        Logger::Fatal("Error initializing SDL.");
+        Logger::Fatal("[Game] Error initializing SDL.");
         return;
     }
 
     if (TTF_Init() != 0)
     {
-        Logger::Fatal("Error initializing TTF.");
+        Logger::Fatal("[Game] Error initializing TTF.");
         return;
     }
 
@@ -57,19 +57,19 @@ void Game::Initialize()
         SDL_WINDOW_BORDERLESS);
     if (!m_window)
     {
-        Logger::Fatal("Error creating SDL window.");
+        Logger::Fatal("[Game] Error creating SDL window.");
         return;
     }
     m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
     if (!m_renderer)
     {
-        Logger::Fatal("Error creating SDL renderer.");
+        Logger::Fatal("[Game] Error creating SDL renderer.");
     }
 
     // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     isRunning = true;
     Event::dispatcher = entt::dispatcher{};
-    Logger::Info("SDL Initialized.");
+    Logger::Info("[Game] SDL Initialized.");
 }
 
 void Game::ProcessInput()
@@ -106,7 +106,7 @@ void Game::Setup()
     m_sceneManager.ChangeScene("HUB");
 
     Event::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
-    Logger::Info("Game Setup.");
+    Logger::Info("[Game] Game Setup.");
 }
 
 double Game::ElapsedTime()

@@ -24,7 +24,7 @@ void SceneManager::ChangeScene(std::string sceneName)
 	{
 		m_currentScene->Unload();
 	}
-	Logger::Info("Changing scene to " + sceneName);
+	Logger::Info("[SceneManager] Changing scene to '" + sceneName + "'");
 	m_currentScene = m_scenes.at(sceneName);
 	m_currentScene->Load();
 }

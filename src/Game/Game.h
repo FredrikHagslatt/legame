@@ -21,10 +21,6 @@ private:
     std::shared_ptr<entt::registry> m_registry;
     std::shared_ptr<AssetStore> m_assetStore;
 
-    // entt::sigh<void(KeyPressedEvent)> keyPressedEventEmitter;
-    //  entt::sink keyPressedEventListener;
-    //  entt::sink keyPressedEventListener{keyPressedEventEmitter};
-
     double ElapsedTime();
     void Setup();
     void Update();
@@ -40,7 +36,6 @@ public:
     static int mapWidth;
     static int mapHeight;
     static std::list<entt::entity> entitiesToKill;
-    static entt::dispatcher dispatcher;
 };
 
 #endif

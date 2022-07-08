@@ -37,7 +37,7 @@ void Stardew::Update(double elapsedTime)
         entt::entity entity = Game::entitiesToKill.front();
         Game::entitiesToKill.pop_front();
         m_registry->destroy(entity);
-        Logger::Info("Queued entity destroyed");
+        Logger::Info("[Stardew] Queued entity destroyed");
     }
 }
 
@@ -137,7 +137,7 @@ void Stardew::Load()
     auto view = m_registry->view<Player_Tag>();
     if (view.empty())
     {
-        Logger::Info("Creating player");
+        Logger::Info("[Stardew] Creating player");
         const auto player = m_registry->create();
         m_registry->emplace<Player_Tag>(player);
         m_registry->emplace<StayOnMap_Tag>(player);
@@ -152,7 +152,7 @@ void Stardew::Load()
     }
     else
     {
-        Logger::Info("Player already exists. Not creating");
+        Logger::Info("[Stardew] Player already exists. Not creating");
     }
 
     Event::dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();

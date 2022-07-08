@@ -4,13 +4,13 @@
 
 AssetStore::AssetStore()
 {
-    Logger::Info("Asset Store Created.");
+    Logger::Info("[AssetStore] Asset Store Created.");
 }
 
 AssetStore::~AssetStore()
 {
     ClearAssets();
-    Logger::Info("Asset Store Destroyed.");
+    Logger::Info("[AssetStore] Asset Store Destroyed.");
 }
 
 void AssetStore::ClearAssets()
@@ -37,14 +37,14 @@ void AssetStore::AddTexture(SDL_Renderer *renderer, const std::string &assetId, 
     SDL_FreeSurface(surface);
 
     textures.emplace(assetId, texture);
-    Logger::Info("AssetId: '" + assetId + "' added to AssetStore");
+    Logger::Info("[AssetStore] AssetId: '" + assetId + "' added");
 }
 
 SDL_Texture *AssetStore::GetTexture(const std::string &assetId) const
 {
     if (!textures.count(assetId))
     {
-        Logger::Fatal("Texture with ID: '" + assetId + "' not in asset store");
+        Logger::Fatal("[AssetStore] Missing texture with ID: '" + assetId + "'");
     }
     return textures.at(assetId);
 }
@@ -58,7 +58,7 @@ TTF_Font *AssetStore::GetFont(const std::string assetId) const
 {
     if (!fonts.count(assetId))
     {
-        Logger::Fatal("Font with ID: '" + assetId + "' not in asset store");
+        Logger::Fatal("[AssetStore] MIssing font with ID: '" + assetId + "'");
     }
     return fonts.at(assetId);
 }

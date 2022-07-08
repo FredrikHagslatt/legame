@@ -43,7 +43,7 @@ public:
             if (isEntityOutsideMap && !registry->all_of<Player_Tag>(entity))
             {
                 registry->destroy(entity);
-                Logger::Info("Killing entity");
+                Logger::Info("[MovementSystem] Killing entity");
             }
         }
     }
