@@ -4,7 +4,8 @@
 #include <string>
 struct SceneSwitcher
 {
-    std::string scene;
+    std::string sceneManagerId;
+    std::string sceneName;
 };
 
 #endif

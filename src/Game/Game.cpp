@@ -105,7 +105,7 @@ void Game::Setup()
     // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
-    m_sceneManager.QueueSceneChange("MenuRoot");
+    m_sceneManager.QueueSceneChange("Hub");
 
     Event::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
     Logger::Info("[Game] Game Setup.");
