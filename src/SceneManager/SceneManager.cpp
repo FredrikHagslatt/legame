@@ -13,10 +13,17 @@ void SceneManager::QueueSceneChange(std::string name)
 
 void SceneManager::ChangeScene(std::string name)
 {
+	if (m_scenes.count(name) != 1)
+	{
+		Logger::Error("[Scenemanager] Scene '" + name + "' does not exist in SceneManager");
+		return;
+	}
+
 	if (m_currentScene)
 	{
 		m_currentScene->Unload();
 	}
+	Logger::Info("Changing scene to " + name);
 	m_currentScene = m_scenes.at(name);
 	m_currentScene->Load();
 }
@@ -28,11 +35,9 @@ void SceneManager::AddScene(std::string name, Scene *scene)
 
 bool SceneManager::Cycle(double elapsedTime)
 {
-	if (m_queuedScene.empty())
-	{
-		m_currentScene->Cycle(elapsedTime);
-	}
-	else
+	m_currentScene->Cycle(elapsedTime);
+
+	if (!m_queuedScene.empty())
 	{
 		ChangeScene(m_queuedScene);
 		m_queuedScene = "";

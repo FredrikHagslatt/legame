@@ -23,9 +23,9 @@ Game::Game()
     mapWidth = 0;
     mapHeight = 0;
     isRunning = false;
-    Logger::Info("Game Created.");
     m_registry = std::make_shared<entt::registry>();
     m_assetStore = std::make_shared<AssetStore>();
+    Logger::Info("Game Created.");
 }
 
 Game::~Game()
@@ -95,14 +95,15 @@ void Game::ProcessInput()
 void Game::Setup()
 {
     // m_sceneManager.AddScene("MENU", new MenuRoot(m_sceneManager));
-    m_sceneManager.AddScene("HUB", new Hub(m_sceneManager, m_renderer, m_registry, m_assetStore));
-    m_sceneManager.AddScene("GARDEN", new Garden(m_sceneManager, m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("HUB", new Hub(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("GARDEN", new Garden(m_renderer, m_registry, m_assetStore));
 
     // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
     m_sceneManager.ChangeScene("HUB");
 
+    Game::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
     Logger::Info("Game Setup.");
 }
 

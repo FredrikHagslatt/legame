@@ -160,7 +160,7 @@ void Stardew::Load()
     Game::dispatcher.sink<KeyPressedEvent>().connect<&Stardew::ToggleDebugMode>(this);
     Game::dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
     Game::dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
-    Game::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
+    //    Game::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
 
     Logger::Info("[Stardew] Connecting eventlisteners");
 
@@ -174,7 +174,7 @@ void Stardew::Unload()
     Game::dispatcher.sink<KeyPressedEvent>().disconnect<&Stardew::ToggleDebugMode>(this);
     Game::dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
     Game::dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();
-    Game::dispatcher.sink<SceneSwitchEvent>().disconnect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
+    //    Game::dispatcher.sink<SceneSwitchEvent>().disconnect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
     Logger::Info("[Stardew] Disconnecting eventlisteners");
 
     auto projectiles = m_registry->view<Projectile_Tag>();
@@ -195,7 +195,7 @@ void Stardew::Unload()
     UnloadScene();
 }
 
-Stardew::Stardew(SceneManager &sceneManager, SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore)
-    : Scene(sceneManager, renderer, registry, assetStore)
+Stardew::Stardew(SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore)
+    : Scene(renderer, registry, assetStore)
 {
 }

@@ -13,8 +13,8 @@ std::string Logger::Timestamp()
 void Logger::Info(const std::string &message)
 {
     LogEntry logEntry = {
-        LOG_INFO, 
-        Green() + "Log [" + Timestamp() + "] : " + message + Reset()};
+        LOG_INFO,
+        Green() + "Log  [" + Timestamp() + "] : " + message + Reset()};
     std::cout << logEntry.message << std::endl;
     messages.push_back(logEntry);
 }
@@ -22,8 +22,8 @@ void Logger::Info(const std::string &message)
 void Logger::Warning(const std::string &message)
 {
     LogEntry logEntry = {
-        LOG_WARNING, 
-        Yellow() + "Log [" + Timestamp() + "] : " + message + Reset()};
+        LOG_WARNING,
+        Yellow() + "Warn [" + Timestamp() + "] : " + message + Reset()};
     std::cout << logEntry.message << std::endl;
     messages.push_back(logEntry);
 }
@@ -32,7 +32,7 @@ void Logger::Error(const std::string &message)
 {
     LogEntry logEntry = {
         LOG_ERROR,
-        Red() + "Error [" + Timestamp() + "] : " + message + Reset()};
+        Red() + "Err  [" + Timestamp() + "] : " + message + Reset()};
     std::cout << logEntry.message << std::endl;
     messages.push_back(logEntry);
 }
