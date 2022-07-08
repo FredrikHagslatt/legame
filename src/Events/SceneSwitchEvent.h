@@ -5,7 +5,7 @@
 
 struct SceneSwitchEvent
 {
-    std::string scene;
+    std::string sceneName;
 };
 
 #endif

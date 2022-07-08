@@ -10,8 +10,12 @@
 class SceneManager
 {
 private:
-	Scene *m_currentScene;
-	std::unordered_map<std::string, Scene *> m_scenes;
+	std::shared_ptr<Scene> m_currentScene;
+	// Scene *m_currentScene;
+
+	std::unordered_map<std::string, std::shared_ptr<Scene>> m_scenes;
+	// std::unordered_map<std::string, Scene *> m_scenes;
+
 	std::string m_queuedScene = "";
 
 public:
@@ -19,7 +23,7 @@ public:
 	void QueueSceneChange(std::string name);
 	void ChangeScene(std::string name);
 	bool Cycle(double elapsedTime);
-	void AddScene(std::string name, Scene *scene);
+	void AddScene(std::string name, std::shared_ptr<Scene> scene);
 	SceneManager();
 	//~SceneManager();
 };

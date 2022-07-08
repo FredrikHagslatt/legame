@@ -2,20 +2,20 @@
 
 void SceneManager::OnSceneSwitchEvent(const SceneSwitchEvent event)
 {
-	Logger::Info("[Scenemanager] Received SceneSwitchEvent: " + event.scene);
-	QueueSceneChange(event.scene);
+	Logger::Info("[Scenemanager] Received SceneSwitchEvent: " + event.sceneName);
+	QueueSceneChange(event.sceneName);
 }
 
-void SceneManager::QueueSceneChange(std::string name)
+void SceneManager::QueueSceneChange(std::string sceneName)
 {
-	m_queuedScene = name;
+	m_queuedScene = sceneName;
 }
 
-void SceneManager::ChangeScene(std::string name)
+void SceneManager::ChangeScene(std::string sceneName)
 {
-	if (m_scenes.count(name) != 1)
+	if (m_scenes.count(sceneName) != 1)
 	{
-		Logger::Error("[Scenemanager] Scene '" + name + "' does not exist in SceneManager");
+		Logger::Error("[Scenemanager] Scene '" + sceneName + "' does not exist in SceneManager");
 		return;
 	}
 
@@ -23,14 +23,14 @@ void SceneManager::ChangeScene(std::string name)
 	{
 		m_currentScene->Unload();
 	}
-	Logger::Info("Changing scene to " + name);
-	m_currentScene = m_scenes.at(name);
+	Logger::Info("Changing scene to " + sceneName);
+	m_currentScene = m_scenes.at(sceneName);
 	m_currentScene->Load();
 }
 
-void SceneManager::AddScene(std::string name, Scene *scene)
+void SceneManager::AddScene(std::string sceneName, std::shared_ptr<Scene> scene)
 {
-	m_scenes.insert(std::pair<std::string, Scene *>(name, scene));
+	m_scenes.insert(std::pair<std::string, std::shared_ptr<Scene>>(sceneName, scene));
 }
 
 bool SceneManager::Cycle(double elapsedTime)

@@ -95,8 +95,9 @@ void Game::ProcessInput()
 void Game::Setup()
 {
     // m_sceneManager.AddScene("MENU", new MenuRoot(m_sceneManager));
-    m_sceneManager.AddScene("HUB", new Hub(m_renderer, m_registry, m_assetStore));
-    m_sceneManager.AddScene("GARDEN", new Garden(m_renderer, m_registry, m_assetStore));
+
+    m_sceneManager.AddScene("HUB", std::make_shared<Hub>(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("GARDEN", std::make_shared<Garden>(m_renderer, m_registry, m_assetStore));
 
     // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
