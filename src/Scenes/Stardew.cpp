@@ -1,6 +1,6 @@
 #include "Scenes/Stardew.h"
 #include <fstream>
-#include "Game/Game.h"
+#include "Events/EventDispatcher.h"
 #include "Logger/Logger.h"
 
 void Stardew::ToggleDebugMode(const KeyPressedEvent &event)
@@ -155,12 +155,11 @@ void Stardew::Load()
         Logger::Info("Player already exists. Not creating");
     }
 
-    Game::dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
-    Game::dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
-    Game::dispatcher.sink<KeyPressedEvent>().connect<&Stardew::ToggleDebugMode>(this);
-    Game::dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
-    Game::dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
-    //    Game::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
+    Event::dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
+    Event::dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
+    Event::dispatcher.sink<KeyPressedEvent>().connect<&Stardew::ToggleDebugMode>(this);
+    Event::dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
+    Event::dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
 
     Logger::Info("[Stardew] Connecting eventlisteners");
 
@@ -169,12 +168,11 @@ void Stardew::Load()
 
 void Stardew::Unload()
 {
-    Game::dispatcher.sink<KeyPressedEvent>().disconnect<&KeyboardControlSystem::OnKeyPressed>();
-    Game::dispatcher.sink<KeyPressedEvent>().disconnect<&ProjectileEmitSystem::OnKeyPressed>();
-    Game::dispatcher.sink<KeyPressedEvent>().disconnect<&Stardew::ToggleDebugMode>(this);
-    Game::dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
-    Game::dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();
-    //    Game::dispatcher.sink<SceneSwitchEvent>().disconnect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
+    Event::dispatcher.sink<KeyPressedEvent>().disconnect<&KeyboardControlSystem::OnKeyPressed>();
+    Event::dispatcher.sink<KeyPressedEvent>().disconnect<&ProjectileEmitSystem::OnKeyPressed>();
+    Event::dispatcher.sink<KeyPressedEvent>().disconnect<&Stardew::ToggleDebugMode>(this);
+    Event::dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
+    Event::dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();
     Logger::Info("[Stardew] Disconnecting eventlisteners");
 
     auto projectiles = m_registry->view<Projectile_Tag>();

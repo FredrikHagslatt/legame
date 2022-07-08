@@ -17,7 +17,7 @@ class TriggerSystem
 public:
     static void SwitchScene(std::string scene)
     {
-        Game::dispatcher.trigger(SceneSwitchEvent{scene});
+        Event::dispatcher.trigger(SceneSwitchEvent{scene});
     }
 
     static void OnCollision(const CollisionEvent &event)

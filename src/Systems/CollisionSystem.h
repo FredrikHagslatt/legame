@@ -4,6 +4,8 @@
 #include "entt/entt.hpp"
 #include "Components/Transform.h"
 #include "Components/BoxCollider.h"
+
+#include "Events/EventDispatcher.h"
 #include "Events/CollisionEvent.h"
 
 class CollisionSystem
@@ -61,7 +63,7 @@ public:
 
                 if (collisionHappened)
                 {
-                    Game::dispatcher.trigger(CollisionEvent{registry, a, b});
+                    Event::dispatcher.trigger(CollisionEvent{registry, a, b});
                 }
             }
         }

@@ -34,6 +34,7 @@
 #include "SceneManager/Scene.h"
 #include "AssetStore/AssetStore.h"
 
+#include "Events/EventDispatcher.h"
 #include "Events/KeyPressedEvent.h"
 
 class Stardew : public Scene

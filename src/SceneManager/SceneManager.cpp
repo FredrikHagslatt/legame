@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "Game/Game.h"
 
 void SceneManager::OnSceneSwitchEvent(const SceneSwitchEvent event)
 {

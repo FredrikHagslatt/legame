@@ -28,6 +28,7 @@ void Hub::LoadScene()
     m_assetStore->AddFont("pico8-font-10", "assets/fonts/pico8.ttf", 10);
 
     const auto chopper = m_registry->create();
+    m_registry->emplace<Enemy_Tag>(chopper);
     m_registry->emplace<StayOnMap_Tag>(chopper);
     m_registry->emplace<Transform>(chopper, vec2f(100.0, 100.0), vec2f(1.0, 1.0), 0.0);
     m_registry->emplace<Velocity>(chopper, 50.0, 0.0);
@@ -85,10 +86,10 @@ void Hub::LoadScene()
     m_registry->emplace<BoxCollider>(trigger, 30, 30);
     m_registry->emplace<SceneSwitcher>(trigger, "GARDEN");
 
-    Game::dispatcher.sink<CollisionEvent>().connect<&TriggerSystem::OnCollision>();
+    Event::dispatcher.sink<CollisionEvent>().connect<&TriggerSystem::OnCollision>();
 }
 
 void Hub::UnloadScene()
 {
-    Game::dispatcher.sink<CollisionEvent>().disconnect<&TriggerSystem::OnCollision>();
+    Event::dispatcher.sink<CollisionEvent>().disconnect<&TriggerSystem::OnCollision>();
 }

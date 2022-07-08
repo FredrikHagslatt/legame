@@ -10,13 +10,14 @@
 #include "Scenes/Hub.h"
 #include "Scenes/Garden.h"
 
+#include "Events/EventDispatcher.h"
 #include "Events/KeyPressedEvent.h"
 #include "Systems/KeyboardControlSystem.h"
 
 int Game::mapWidth;
 int Game::mapHeight;
 std::list<entt::entity> Game::entitiesToKill;
-entt::dispatcher Game::dispatcher;
+entt::dispatcher Event::dispatcher;
 
 Game::Game()
 {
@@ -67,7 +68,7 @@ void Game::Initialize()
 
     // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     isRunning = true;
-    Game::dispatcher = entt::dispatcher{};
+    Event::dispatcher = entt::dispatcher{};
     Logger::Info("SDL Initialized.");
 }
 
@@ -86,7 +87,7 @@ void Game::ProcessInput()
             {
                 isRunning = false;
             }
-            Game::dispatcher.trigger(KeyPressedEvent{m_registry, sdlEvent.key.keysym.sym});
+            Event::dispatcher.trigger(KeyPressedEvent{m_registry, sdlEvent.key.keysym.sym});
             break;
         }
     }
@@ -104,7 +105,7 @@ void Game::Setup()
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
     m_sceneManager.ChangeScene("HUB");
 
-    Game::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
+    Event::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
     Logger::Info("Game Setup.");
 }
 

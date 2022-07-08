@@ -11,11 +11,7 @@ class SceneManager
 {
 private:
 	std::shared_ptr<Scene> m_currentScene;
-	// Scene *m_currentScene;
-
 	std::unordered_map<std::string, std::shared_ptr<Scene>> m_scenes;
-	// std::unordered_map<std::string, Scene *> m_scenes;
-
 	std::string m_queuedScene = "";
 
 public:
