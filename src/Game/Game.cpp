@@ -9,10 +9,10 @@
 
 #include "Scenes/Hub.h"
 #include "Scenes/Garden.h"
+#include "Scenes/Menu/MenuRoot.h"
 
 #include "Events/EventDispatcher.h"
 #include "Events/KeyPressedEvent.h"
-#include "Systems/KeyboardControlSystem.h"
 
 int Game::mapWidth;
 int Game::mapHeight;
@@ -20,12 +20,13 @@ std::list<entt::entity> Game::entitiesToKill;
 entt::dispatcher Event::dispatcher;
 
 Game::Game()
+    : m_sceneManager(SceneManager("Game")),
+      m_registry(std::make_shared<entt::registry>()),
+      m_assetStore(std::make_shared<AssetStore>())
 {
     mapWidth = 0;
     mapHeight = 0;
     isRunning = false;
-    m_registry = std::make_shared<entt::registry>();
-    m_assetStore = std::make_shared<AssetStore>();
     Logger::Info("[Game] Game Created.");
 }
 
@@ -97,13 +98,14 @@ void Game::Setup()
 {
     // m_sceneManager.AddScene("MENU", new MenuRoot(m_sceneManager));
 
-    m_sceneManager.AddScene("HUB", std::make_shared<Hub>(m_renderer, m_registry, m_assetStore));
-    m_sceneManager.AddScene("GARDEN", std::make_shared<Garden>(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("Hub", std::make_shared<Hub>(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("Garden", std::make_shared<Garden>(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("MenuRoot", std::make_shared<MenuRoot>(m_renderer, m_registry, m_assetStore));
 
     // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
-    m_sceneManager.ChangeScene("HUB");
+    m_sceneManager.QueueSceneChange("MenuRoot");
 
     Event::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
     Logger::Info("[Game] Game Setup.");

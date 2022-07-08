@@ -5,6 +5,7 @@
 
 struct SceneSwitchEvent
 {
+    std::string managerId;
     std::string sceneName;
 };
 

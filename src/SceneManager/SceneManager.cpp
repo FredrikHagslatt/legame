@@ -3,16 +3,23 @@
 
 void SceneManager::OnSceneSwitchEvent(const SceneSwitchEvent event)
 {
-	Logger::Info("[Scenemanager] Received SceneSwitchEvent: " + event.sceneName);
-	QueueSceneChange(event.sceneName);
+	if (event.managerId == id)
+	{
+		Logger::Info("[Scenemanager] Manager with id: " + id + ", Received SceneSwitchEvent: " + event.sceneName);
+		QueueSceneChange(event.sceneName);
+	}
+	else
+	{
+		Logger::Info(id + " - " + event.managerId);
+	}
 }
 
-void SceneManager::QueueSceneChange(std::string sceneName)
+void SceneManager::QueueSceneChange(const std::string sceneName)
 {
 	m_queuedScene = sceneName;
 }
 
-void SceneManager::ChangeScene(std::string sceneName)
+void SceneManager::ChangeScene(const std::string sceneName)
 {
 	if (m_scenes.count(sceneName) != 1)
 	{
@@ -29,24 +36,31 @@ void SceneManager::ChangeScene(std::string sceneName)
 	m_currentScene->Load();
 }
 
-void SceneManager::AddScene(std::string sceneName, std::shared_ptr<Scene> scene)
+void SceneManager::AddScene(const std::string sceneName, const std::shared_ptr<Scene> scene)
 {
 	m_scenes.insert(std::pair<std::string, std::shared_ptr<Scene>>(sceneName, scene));
 }
 
-bool SceneManager::Cycle(double elapsedTime)
+bool SceneManager::Cycle(const double elapsedTime)
 {
-	m_currentScene->Cycle(elapsedTime);
-
 	if (!m_queuedScene.empty())
 	{
 		ChangeScene(m_queuedScene);
 		m_queuedScene = "";
 	}
+	m_currentScene->Cycle(elapsedTime);
+
 	return true;
 }
 
-SceneManager::SceneManager()
+void SceneManager::ClearScenes()
+{
+	m_currentScene = nullptr;
+	m_scenes.clear(); // I fukkin hope this removes the scenes. It probably does..
+}
+
+SceneManager::SceneManager(const std::string id)
+	: id(id)
 {
 	m_currentScene = nullptr;
 }

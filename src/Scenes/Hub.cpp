@@ -84,7 +84,7 @@ void Hub::LoadScene()
     const auto trigger = m_registry->create();
     m_registry->emplace<Transform>(trigger, vec2f(0.0, 0.0), vec2f(1.0, 1.0), 0.0);
     m_registry->emplace<BoxCollider>(trigger, 30, 30);
-    m_registry->emplace<SceneSwitcher>(trigger, "GARDEN");
+    m_registry->emplace<SceneSwitcher>(trigger, "MenuRoot");
 
     Event::dispatcher.sink<CollisionEvent>().connect<&TriggerSystem::OnCollision>();
 }

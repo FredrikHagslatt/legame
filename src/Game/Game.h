@@ -6,8 +6,6 @@
 #include "SceneManager/SceneManager.h"
 #include <SDL2/SDL.h>
 #include <list>
-#include "Events/CollisionEvent.h"
-#include "Events/KeyPressedEvent.h"
 
 class Game
 {
