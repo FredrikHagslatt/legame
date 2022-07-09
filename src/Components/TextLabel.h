@@ -1,8 +1,8 @@
 #ifndef TEXTLABEL_H
 #define TEXTLABEL_H
 
-#include <string>
 #include "Types.h"
+#include <string>
 #include <SDL2/SDL.h>
 
 struct TextLabel
