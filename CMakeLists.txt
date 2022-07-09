@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(gameengine)
 
+
+message(STATUS)
 if(UNIX)
     message(STATUS "|   BUILDING UNIX   | --")
 elseif(WIN32)
     message(STATUS "|   BUILDING WIN32   | --")
 endif()
+message(STATUS "Generator: " ${CMAKE_GENERATOR})
+message(STATUS)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 

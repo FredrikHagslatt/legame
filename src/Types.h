@@ -4,6 +4,9 @@
 #include <math.h>
 #include <iostream>
 
+// Helper class for simple 2d vector calculations.
+// Letting for example positions and velocities be vector makes it easier to work with movement and collision
+
 template <class T>
 struct vec2
 {

@@ -1,6 +1,8 @@
 #include "MenuRoot.h"
 #include "MainMenu.h"
 //#include "Scenes/Options.h"
+#include "Systems/MenuNavigationSystem.h"
+#include "Events/EventDispatcher.h"
 
 void MenuRoot::Update(double elapsedTime)
 {
@@ -17,6 +19,7 @@ void MenuRoot::Load()
 	// m_sceneManager.AddScene("OPTIONS", new OptionsScene(m_sceneManager, m_local_sceneManager));
 
 	m_sceneManager.QueueSceneChange("MainMenu");
+	Event::dispatcher.sink<KeyPressedEvent>().connect<&MenuNavigationSystem::OnKeyPressedEvent>();
 
 	// g_sfx.LoadMusic("ambient", "assets/sound/music/chill/ambient_loop.wav");
 	// g_sfx.PlayMusic("ambient");
@@ -24,6 +27,7 @@ void MenuRoot::Load()
 
 void MenuRoot::Unload()
 {
+	Event::dispatcher.sink<KeyPressedEvent>().disconnect<&MenuNavigationSystem::OnKeyPressedEvent>();
 	m_sceneManager.ClearScenes();
 	// g_sfx.StopMusic();
 	// g_sfx.FreeAll();
