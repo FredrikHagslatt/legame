@@ -11,6 +11,19 @@
 #include "Systems/RenderSystem.h"
 #include "Systems/RenderTextSystem.h"
 
+#include "Events/EventDispatcher.h"
+
+void MainMenu::OnKeyPressedEvent(const KeyPressedEvent event)
+{
+	auto key = event.key;
+	switch (key)
+	{
+	case SDLK_RETURN:
+		Logger::Info("MainMenu Enter");
+		break;
+	}
+}
+
 void MainMenu::Update(double elapsedTime)
 {
 }
@@ -27,6 +40,7 @@ void MainMenu::RenderGraphics(double elapsedTime)
 void MainMenu::Load()
 {
 	Logger::Info("[MainMenu] Loading Scene");
+	Event::dispatcher.sink<KeyPressedEvent>().connect<&MainMenu::OnKeyPressedEvent>(this);
 
 	m_assetStore->AddFont("charriot-font-40", "assets/fonts/charriot.ttf", 40);
 	m_assetStore->AddTexture(m_renderer, "bullet-image", "assets/images/bullet.png");
@@ -58,18 +72,8 @@ void MainMenu::Load()
 
 void MainMenu::Unload()
 {
+	Event::dispatcher.sink<KeyPressedEvent>().connect<&MainMenu::OnKeyPressedEvent>(this);
 
-	/*
-		m_hubPixel.x = (SCREENWIDTH - m_hubTexture->width()) / 2;
-		m_hubPixel.y = SCREENHEIGHT / 2 - m_hubTexture->height();
-
-		m_mapEditorPixel.x = (SCREENWIDTH - m_hubTexture->width()) / 2; // Aligned to Hub on purpose
-		m_mapEditorPixel.y = SCREENHEIGHT / 2;
-
-		m_optionsPixel.x = (SCREENWIDTH - m_hubTexture->width()) / 2; // Aligned to Hub on purpose
-		m_optionsPixel.y = SCREENHEIGHT / 2 + m_hubTexture->height();
-
-		m_pointerTexture->Scale(2.0f);
-		m_pointerPixel.x = (SCREENWIDTH - m_hubTexture->width()) / 2 - 2 * m_pointerTexture->width();
-	*/
+	auto UIs = m_registry->view<UI_Tag>();
+	m_registry->destroy(UIs.begin(), UIs.end());
 }
