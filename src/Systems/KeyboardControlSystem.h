@@ -11,14 +11,6 @@
 class KeyboardControlSystem
 {
 public:
-    enum Direction
-    {
-        DIR_RIGHT,
-        DIR_DOWN,
-        DIR_LEFT,
-        DIR_UP,
-    };
-
     static void OnKeyPressed(const KeyPressedEvent &event)
     {
         auto registry = event.registry;
@@ -30,21 +22,21 @@ public:
 
             switch (event.keycode)
             {
-            case SDLK_UP:
-                velocity.direction.y = -1;
-                sprite.srcRect.y = sprite.height * DIR_UP;
+            case SDLK_LEFT:
+                velocity.direction.x = -1;
+                //                sprite.srcRect.y = sprite.height * DIR_LEFT;
                 break;
             case SDLK_RIGHT:
                 velocity.direction.x = 1;
-                sprite.srcRect.y = sprite.height * DIR_RIGHT;
+                //                sprite.srcRect.y = sprite.height * DIR_RIGHT;
+                break;
+            case SDLK_UP:
+                velocity.direction.y = -1;
+                //                sprite.srcRect.y = sprite.height * DIR_UP;
                 break;
             case SDLK_DOWN:
                 velocity.direction.y = 1;
-                sprite.srcRect.y = sprite.height * DIR_DOWN;
-                break;
-            case SDLK_LEFT:
-                velocity.direction.x = -1;
-                sprite.srcRect.y = sprite.height * DIR_LEFT;
+                //                sprite.srcRect.y = sprite.height * DIR_DOWN;
                 break;
             }
         }
@@ -62,16 +54,28 @@ public:
             switch (event.keycode)
             {
             case SDLK_UP:
-                velocity.direction.y = 0.0;
+                if (velocity.direction.y < 0)
+                {
+                    velocity.direction.y = 0.0;
+                }
                 break;
             case SDLK_RIGHT:
-                velocity.direction.x = 0.0;
+                if (velocity.direction.x > 0)
+                {
+                    velocity.direction.x = 0.0;
+                }
                 break;
             case SDLK_DOWN:
-                velocity.direction.y = 0.0;
+                if (velocity.direction.y > 0)
+                {
+                    velocity.direction.y = 0.0;
+                }
                 break;
             case SDLK_LEFT:
-                velocity.direction.x = 0.0;
+                if (velocity.direction.x < 0)
+                {
+                    velocity.direction.x = 0.0;
+                }
                 break;
             }
         }

@@ -145,7 +145,7 @@ void Stardew::Load()
         m_registry->emplace<Transform>(player, vec2f(200.0, 400.0), vec2f(SCALE, SCALE), 0.0);
         m_registry->emplace<Velocity>(player, 300.0, vec2f(0));
         m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 10);
-        m_registry->emplace<Animation>(player, 5, 5, true);
+        m_registry->emplace<Animation>(player, 5, 5, true, true);
         m_registry->emplace<ProjectileEmitter>(player, 600.0, vec2f(1.0, 1.0), 0, 10000, 10, true, true);
         m_registry->emplace<Health>(player, 100);
         m_registry->emplace<BoxCollider>(player, 16, 32);
