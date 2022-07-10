@@ -15,6 +15,7 @@
 #include "Components/ProjectileEmitter.h"
 #include "Components/Health.h"
 #include "Components/TextLabel.h"
+#include "Components/SceneSwitcher.h"
 
 #include "Systems/AnimationSystem.h"
 #include "Systems/MovementSystem.h"
@@ -24,6 +25,7 @@
 #include "Systems/CameraMovementSystem.h"
 #include "Systems/DamageSystem.h"
 #include "Systems/CollisionSystem.h"
+#include "Systems/TriggerSystem.h"
 
 #include "Systems/RenderSystem.h"
 #include "Systems/RenderHealthSystem.h"

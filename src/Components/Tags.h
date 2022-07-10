@@ -25,5 +25,8 @@ struct StayOnMap_Tag
 struct Tile_Tag
 {
 };
+struct Trigger_Tag
+{
+};
 
 #endif

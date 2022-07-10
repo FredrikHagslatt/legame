@@ -1,6 +1,4 @@
 #include "Hub.h"
-#include "Components/SceneSwitcher.h"
-#include "Systems/TriggerSystem.h"
 #include "Constants.h"
 
 void Hub::UpdateScene(double elapsedTime)
@@ -15,7 +13,6 @@ void Hub::LoadScene()
 
     LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/hub.map");
 
-    m_assetStore->AddTexture(m_renderer, "spike-image", "assets/images/Spike.png");
     m_assetStore->AddTexture(m_renderer, "tank-image", "assets/images/tank-panther-right.png");
     m_assetStore->AddTexture(m_renderer, "truck-image", "assets/images/truck-ford-right.png");
     m_assetStore->AddTexture(m_renderer, "tree-image", "assets/images/tree.png");
@@ -85,11 +82,8 @@ void Hub::LoadScene()
     m_registry->emplace<Transform>(trigger, vec2f(0.0, 0.0), vec2f(1.0, 1.0), 0.0);
     m_registry->emplace<BoxCollider>(trigger, 30, 30);
     m_registry->emplace<SceneSwitcher>(trigger, "Game", "Garden");
-
-    Event::dispatcher.sink<CollisionEvent>().connect<&TriggerSystem::OnCollision>();
 }
 
 void Hub::UnloadScene()
 {
-    Event::dispatcher.sink<CollisionEvent>().disconnect<&TriggerSystem::OnCollision>();
 }

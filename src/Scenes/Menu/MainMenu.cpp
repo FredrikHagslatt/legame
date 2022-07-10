@@ -25,7 +25,7 @@ void MainMenu::OnKeyPressedEvent(const KeyPressedEvent event)
 		{
 		case 0:
 			Logger::Info("[MainMenu] Pressed 'Play Game'");
-			Event::dispatcher.trigger(SceneSwitchEvent{"Game", "Hub"});
+			Event::dispatcher.trigger(SceneSwitchEvent{"Game", "Garden"});
 			break;
 		case 1:
 			Logger::Info("[MainMenu] Pressed 'Settings'");
