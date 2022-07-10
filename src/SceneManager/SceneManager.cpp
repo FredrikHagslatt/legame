@@ -55,6 +55,7 @@ bool SceneManager::Cycle(const double elapsedTime)
 
 void SceneManager::ClearScenes()
 {
+	m_currentScene->Unload();
 	m_currentScene = nullptr;
 	m_scenes.clear(); // I fukkin hope this removes the scenes. It probably does..
 }

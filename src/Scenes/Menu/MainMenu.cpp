@@ -12,14 +12,25 @@
 #include "Systems/RenderTextSystem.h"
 
 #include "Events/EventDispatcher.h"
+#include "Events/SceneSwitchEvent.h"
 
 void MainMenu::OnKeyPressedEvent(const KeyPressedEvent event)
 {
+	const auto menuNavigator = m_registry->get<MenuNavigator>(m_menuNavigator);
 	auto key = event.key;
 	switch (key)
 	{
 	case SDLK_RETURN:
-		Logger::Info("MainMenu Enter");
+		switch (menuNavigator.atRow)
+		{
+		case 0:
+			Logger::Info("[MainMenu] Pressed 'Play Game'");
+			Event::dispatcher.trigger(SceneSwitchEvent{"Game", "Hub"});
+			break;
+		case 1:
+			Logger::Info("[MainMenu] Pressed 'Settings'");
+			break;
+		}
 		break;
 	}
 }
@@ -32,8 +43,8 @@ void MainMenu::RenderGraphics(double elapsedTime)
 {
 	SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
 	SDL_RenderClear(m_renderer);
-	RenderSystem::Update(m_registry, m_renderer, m_assetStore, camera);
-	RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, camera);
+	RenderSystem::Update(m_registry, m_renderer, m_assetStore, m_camera);
+	RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, m_camera);
 	SDL_RenderPresent(m_renderer);
 }
 
@@ -45,7 +56,7 @@ void MainMenu::Load()
 	m_assetStore->AddFont("charriot-font-40", "assets/fonts/charriot.ttf", 40);
 	m_assetStore->AddTexture(m_renderer, "bullet-image", "assets/images/bullet.png");
 
-	camera = {0, 0, 0, 0}; // Not used in this Scene. Just here to feed the Systems
+	m_camera = {0, 0, 0, 0}; // Not used in this Scene. Just here to feed the Systems
 	SDL_Color green = {30, 200, 30};
 
 	const auto title = m_registry->create();
@@ -63,17 +74,16 @@ void MainMenu::Load()
 	textDimension = RenderTextSystem::GetTextDimensions(m_renderer, "Settings", m_assetStore->GetFont("charriot-font-40"));
 	m_registry->emplace<TextLabel>(settings, vec2f((WINDOWWIDTH - textDimension.x) / 2, 300.0), "Settings", "charriot-font-40", green, true);
 
-	const auto menuNavigator = m_registry->create();
-	m_registry->emplace<UI_Tag>(menuNavigator);
-	m_registry->emplace<Transform>(menuNavigator, vec2f((WINDOWWIDTH - textDimension.x) / 2 - 70, 240.0 + textDimension.y / 2 - 8.0), 4.0);
-	m_registry->emplace<MenuNavigator>(menuNavigator, 2);
-	m_registry->emplace<Sprite>(menuNavigator, "bullet-image", 4, 4, 4, true);
+	m_menuNavigator = m_registry->create();
+	m_registry->emplace<UI_Tag>(m_menuNavigator);
+	m_registry->emplace<Transform>(m_menuNavigator, vec2f((WINDOWWIDTH - textDimension.x) / 2 - 70, 240.0 + textDimension.y / 2 - 8.0), 4.0);
+	m_registry->emplace<MenuNavigator>(m_menuNavigator, 2);
+	m_registry->emplace<Sprite>(m_menuNavigator, "bullet-image", 4, 4, 4, true);
 }
 
 void MainMenu::Unload()
 {
-	Event::dispatcher.sink<KeyPressedEvent>().connect<&MainMenu::OnKeyPressedEvent>(this);
-
+	Event::dispatcher.sink<KeyPressedEvent>().disconnect<&MainMenu::OnKeyPressedEvent>(this);
 	auto UIs = m_registry->view<UI_Tag>();
 	m_registry->destroy(UIs.begin(), UIs.end());
 }

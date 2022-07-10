@@ -29,6 +29,7 @@ void MenuRoot::Unload()
 {
 	Event::dispatcher.sink<KeyPressedEvent>().disconnect<&MenuNavigationSystem::OnKeyPressedEvent>();
 	m_sceneManager.ClearScenes();
+
 	// g_sfx.StopMusic();
 	// g_sfx.FreeAll();
 }
