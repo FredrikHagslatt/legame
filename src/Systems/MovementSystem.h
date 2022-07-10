@@ -20,8 +20,8 @@ public:
             auto &transform = view.get<Transform>(entity);
             const auto &velocity = view.get<Velocity>(entity);
 
-            transform.position.x += velocity.x * deltaTime;
-            transform.position.y += velocity.y * deltaTime;
+            transform.position.x += velocity.speed * velocity.direction.x * deltaTime;
+            transform.position.y += velocity.speed * velocity.direction.y * deltaTime;
 
             if (registry->all_of<StayOnMap_Tag>(entity))
             {
@@ -56,15 +56,15 @@ public:
             auto &velocity = registry->get<Velocity>(enemy);
             auto &sprite = registry->get<Sprite>(enemy);
 
-            if (velocity.x != 0)
+            if (velocity.direction.x != 0)
             {
-                velocity.x *= -1;
+                velocity.direction.x *= -1;
                 sprite.flip = (sprite.flip == SDL_FLIP_NONE) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
             }
 
-            if (velocity.y != 0)
+            if (velocity.direction.y != 0)
             {
-                velocity.y *= -1;
+                velocity.direction.y *= -1;
                 sprite.flip = (sprite.flip == SDL_FLIP_NONE) ? SDL_FLIP_VERTICAL : SDL_FLIP_NONE;
             }
         }

@@ -14,6 +14,10 @@
 class ProjectileEmitSystem
 {
 public:
+    //    static void EmitProjectile()
+    //    {
+    //    }
+
     static void OnKeyPressed(KeyPressedEvent event)
     {
         if (event.keycode == SDLK_SPACE)
@@ -25,7 +29,7 @@ public:
             {
                 const auto transform = view.get<Transform>(entity);
                 const auto velocity = view.get<Velocity>(entity);
-                const auto projectileEmitter = view.get<ProjectileEmitter>(entity);
+                auto &projectileEmitter = view.get<ProjectileEmitter>(entity);
 
                 vec2f projectilePosition = transform.position;
 
@@ -36,27 +40,18 @@ public:
                     projectilePosition.y += (transform.scale.y * sprite.height / 2);
                 }
 
-                vec2f projectileVelocity = projectileEmitter.projectileVelocity;
-                int directionX = 0;
-                int directionY = 0;
-                if (velocity.x > 0)
-                    directionX = 1;
-                if (velocity.x < 0)
-                    directionX = -1;
-                if (velocity.y > 0)
-                    directionY = 1;
-                if (velocity.y < 0)
-                    directionY = -1;
-                projectileVelocity.x = projectileEmitter.projectileVelocity.x * directionX;
-                projectileVelocity.y = projectileEmitter.projectileVelocity.y * directionY;
+                if (projectileEmitter.inheritDirection)
+                {
+                    projectileEmitter.direction = velocity.direction;
+                }
 
                 auto projectile = registry->create();
                 registry->emplace<Projectile_Tag>(projectile);
                 registry->emplace<Transform>(projectile, projectilePosition, vec2f(1.0, 1.0), 0.0);
-                registry->emplace<Velocity>(projectile, projectileVelocity);
+                registry->emplace<Velocity>(projectile, projectileEmitter.speed, projectileEmitter.direction);
                 registry->emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);
                 registry->emplace<BoxCollider>(projectile, 4, 4);
-                registry->emplace<Projectile>(projectile, projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.projectileDuration);
+                registry->emplace<Projectile>(projectile, projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.duration);
             }
         }
     }
@@ -86,13 +81,19 @@ public:
                     projectilePosition.y += (transform.scale.y * sprite.height / 2);
                 }
 
+                if (projectileEmitter.inheritDirection && registry->all_of<Velocity>(entity))
+                {
+                    const auto velocity = registry->get<Velocity>(entity);
+                    projectileEmitter.direction = velocity.direction;
+                }
+
                 auto projectile = registry->create();
                 registry->emplace<Projectile_Tag>(projectile);
                 registry->emplace<Transform>(projectile, projectilePosition, vec2f(1.0, 1.0), 0.0);
-                registry->emplace<Velocity>(projectile, projectileEmitter.projectileVelocity);
+                registry->emplace<Velocity>(projectile, projectileEmitter.speed, projectileEmitter.direction);
                 registry->emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);
                 registry->emplace<BoxCollider>(projectile, 4, 4);
-                registry->emplace<Projectile>(projectile, projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.projectileDuration);
+                registry->emplace<Projectile>(projectile, projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.duration);
 
                 // Update the projectile emitter component last emission to the current milliseconds
                 projectileEmitter.lastEmissionTime = SDL_GetTicks();

@@ -5,15 +5,15 @@
 
 struct Velocity
 {
-    double x;
-    double y;
+    double speed;
+    vec2f direction;
 
-    Velocity(double x = 0, double y = 0)
-        : x(x), y(y)
+    Velocity(double speed = 0)
+        : speed(speed), direction(vec2f(0))
     {
     }
-    Velocity(vec2f velocity = vec2f(0))
-        : x(velocity.x), y(velocity.y)
+    Velocity(double speed = 0, vec2f direction = vec2f(0))
+        : speed(speed), direction(direction)
     {
     }
 };

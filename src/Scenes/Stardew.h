@@ -12,7 +12,6 @@
 #include "Components/Sprite.h"
 #include "Components/Animation.h"
 #include "Components/BoxCollider.h"
-#include "Components/KeyboardControlled.h"
 #include "Components/ProjectileEmitter.h"
 #include "Components/Health.h"
 #include "Components/TextLabel.h"

@@ -85,8 +85,6 @@ void Game::ProcessInput()
         case SDL_QUIT:
             isRunning = false;
             break;
-        case SDL_KEYUP:
-            Event::dispatcher.trigger(KeyReleasedEvent{m_registry, keycode});
         case SDL_KEYDOWN:
             if (keycode == SDLK_ESCAPE)
             {
@@ -94,6 +92,8 @@ void Game::ProcessInput()
             }
             Event::dispatcher.trigger(KeyPressedEvent{m_registry, keycode});
             break;
+        case SDL_KEYUP:
+            Event::dispatcher.trigger(KeyReleasedEvent{m_registry, keycode});
         }
     }
 }

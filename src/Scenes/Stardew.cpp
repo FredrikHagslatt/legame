@@ -140,13 +140,13 @@ void Stardew::Load()
         Logger::Info("[Stardew] Creating player");
         const auto player = m_registry->create();
         m_registry->emplace<Player_Tag>(player);
+        m_registry->emplace<KeyboardControlled_Tag>(player);
         m_registry->emplace<StayOnMap_Tag>(player);
         m_registry->emplace<Transform>(player, vec2f(200.0, 400.0), vec2f(SCALE, SCALE), 0.0);
-        m_registry->emplace<Velocity>(player, 0.0, 0.0);
+        m_registry->emplace<Velocity>(player, 300.0, vec2f(0));
         m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 10);
         m_registry->emplace<Animation>(player, 5, 5, true);
-        m_registry->emplace<KeyboardControlled>(player, vec2f(0, -300), vec2f(300, 0), vec2f(0, 300), vec2f(-300, 0));
-        m_registry->emplace<ProjectileEmitter>(player, vec2f(600.0, 600.0), 0, 10000, 10, true);
+        m_registry->emplace<ProjectileEmitter>(player, 600.0, vec2f(1.0, 1.0), 0, 10000, 10, true, true);
         m_registry->emplace<Health>(player, 100);
         m_registry->emplace<BoxCollider>(player, 16, 32);
     }
@@ -156,6 +156,7 @@ void Stardew::Load()
     }
 
     Event::dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
+    Event::dispatcher.sink<KeyReleasedEvent>().connect<&KeyboardControlSystem::OnKeyReleased>();
     Event::dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
     Event::dispatcher.sink<KeyPressedEvent>().connect<&Stardew::ToggleDebugMode>(this);
     Event::dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
@@ -169,6 +170,7 @@ void Stardew::Load()
 void Stardew::Unload()
 {
     Event::dispatcher.sink<KeyPressedEvent>().disconnect<&KeyboardControlSystem::OnKeyPressed>();
+    Event::dispatcher.sink<KeyReleasedEvent>().disconnect<&KeyboardControlSystem::OnKeyReleased>();
     Event::dispatcher.sink<KeyPressedEvent>().disconnect<&ProjectileEmitSystem::OnKeyPressed>();
     Event::dispatcher.sink<KeyPressedEvent>().disconnect<&Stardew::ToggleDebugMode>(this);
     Event::dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
