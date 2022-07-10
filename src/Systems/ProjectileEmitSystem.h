@@ -16,7 +16,7 @@ class ProjectileEmitSystem
 public:
     static void OnKeyPressed(KeyPressedEvent event)
     {
-        if (event.key == SDLK_SPACE)
+        if (event.keycode == SDLK_SPACE)
         {
             auto registry = event.registry;
             auto view = registry->view<Player_Tag, Transform, Velocity, ProjectileEmitter>();

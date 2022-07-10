@@ -28,7 +28,7 @@ public:
             auto &sprite = view.get<Sprite>(entity);
             auto &velocity = view.get<Velocity>(entity);
 
-            switch (event.key)
+            switch (event.keycode)
             {
             case SDLK_UP:
                 velocity.x = keyboardControl.upVelocity.x;

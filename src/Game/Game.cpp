@@ -13,6 +13,7 @@
 
 #include "Events/EventDispatcher.h"
 #include "Events/KeyPressedEvent.h"
+#include "Events/KeyReleasedEvent.h"
 
 int Game::mapWidth;
 int Game::mapHeight;
@@ -78,17 +79,20 @@ void Game::ProcessInput()
     SDL_Event sdlEvent;
     while (SDL_PollEvent(&sdlEvent))
     {
+        SDL_Keycode keycode = sdlEvent.key.keysym.sym;
         switch (sdlEvent.type)
         {
         case SDL_QUIT:
             isRunning = false;
             break;
+        case SDL_KEYUP:
+            Event::dispatcher.trigger(KeyReleasedEvent{m_registry, keycode});
         case SDL_KEYDOWN:
-            if (sdlEvent.key.keysym.sym == SDLK_ESCAPE)
+            if (keycode == SDLK_ESCAPE)
             {
                 isRunning = false;
             }
-            Event::dispatcher.trigger(KeyPressedEvent{m_registry, sdlEvent.key.keysym.sym});
+            Event::dispatcher.trigger(KeyPressedEvent{m_registry, keycode});
             break;
         }
     }

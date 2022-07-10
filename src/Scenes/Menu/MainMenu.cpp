@@ -17,8 +17,8 @@
 void MainMenu::OnKeyPressedEvent(const KeyPressedEvent event)
 {
 	const auto menuNavigator = m_registry->get<MenuNavigator>(m_menuNavigator);
-	auto key = event.key;
-	switch (key)
+
+	switch (event.keycode)
 	{
 	case SDLK_RETURN:
 		switch (menuNavigator.atRow)

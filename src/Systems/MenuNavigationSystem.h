@@ -24,9 +24,7 @@ public:
             auto &transform = view.get<Transform>(entity);
             auto &menuNavigator = view.get<MenuNavigator>(entity);
 
-            const auto key = event.key;
-
-            switch (key)
+            switch (event.keycode)
             {
             case SDLK_UP:
                 if (menuNavigator.atRow > 0)

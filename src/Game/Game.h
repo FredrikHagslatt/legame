@@ -6,6 +6,7 @@
 #include "SceneManager/SceneManager.h"
 #include <SDL2/SDL.h>
 #include <list>
+#include <unordered_set>
 
 class Game
 {
@@ -19,7 +20,8 @@ private:
     std::shared_ptr<entt::registry> m_registry;
     std::shared_ptr<AssetStore> m_assetStore;
 
-    double ElapsedTime();
+    double
+    ElapsedTime();
     void Setup();
     void Update();
     void ProcessInput();

@@ -5,7 +5,7 @@
 
 void Stardew::ToggleDebugMode(const KeyPressedEvent &event)
 {
-    if (event.key == SDLK_d)
+    if (event.keycode == SDLK_d)
     {
         debugMode = !debugMode;
         if (debugMode)
