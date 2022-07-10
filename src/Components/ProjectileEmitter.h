@@ -5,24 +5,30 @@
 
 struct ProjectileEmitter
 {
-    vec2f projectileVelocity;
+    double speed;
+    vec2f direction; // Set vec2f(0) to fire in direction of owners velocity component
     int repeatFrequency;
-    int projectileDuration;
+    int duration;
     int hitPercentDamage;
     bool isFriendly;
+    bool inheritDirection;
     int lastEmissionTime;
 
     ProjectileEmitter(
-        vec2f projectileVelocity = vec2f(0),
+        double speed = 0,
+        vec2f direction = vec2f(0),
         int repeatFrequency = 0,
-        int projectileDuration = 10000,
+        int duration = 10000,
         int hitPercentDamage = 10,
-        bool isFriendly = false)
-        : projectileVelocity(projectileVelocity),
+        bool isFriendly = false,
+        bool inheritDirection = false)
+        : speed(speed),
+          direction(direction),
           repeatFrequency(repeatFrequency),
-          projectileDuration(projectileDuration),
+          duration(duration),
           hitPercentDamage(hitPercentDamage),
-          isFriendly(isFriendly)
+          isFriendly(isFriendly),
+          inheritDirection(inheritDirection)
     {
         lastEmissionTime = SDL_GetTicks();
     }

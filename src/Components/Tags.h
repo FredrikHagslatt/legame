@@ -1,6 +1,9 @@
 #ifndef TAGS_H
 #define TAGS_H
 
+struct KeyboardControlled_Tag
+{
+};
 struct Player_Tag
 {
 };
@@ -20,6 +23,9 @@ struct StayOnMap_Tag
 {
 };
 struct Tile_Tag
+{
+};
+struct Trigger_Tag
 {
 };
 
