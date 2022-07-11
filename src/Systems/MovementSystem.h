@@ -70,6 +70,51 @@ public:
         }
     }
 
+    static void OnPlayerHitsObstacle(std::shared_ptr<entt::registry> registry, entt::entity player, entt::entity obstacle)
+    {
+        Logger::Info("Player hit obstacle");
+        auto &playerTransform = registry->get<Transform>(player);
+        const auto playerBoxCollider = registry->get<BoxCollider>(player);
+
+        auto &obstacleTransform = registry->get<Transform>(obstacle);
+        const auto obstacleBoxCollider = registry->get<BoxCollider>(obstacle);
+
+        vec2f maxDisplacement;
+        if (playerTransform.position.x < obstacleTransform.position.x)
+        {
+            maxDisplacement.x = obstacleTransform.position.x - playerTransform.position.x - playerBoxCollider.width;
+        }
+        else
+        {
+            maxDisplacement.x = playerTransform.position.x - obstacleTransform.position.x - obstacleBoxCollider.width;
+        }
+
+        if (playerTransform.position.y < obstacleTransform.position.y)
+        {
+            maxDisplacement.y = obstacleTransform.position.y - playerTransform.position.y - playerBoxCollider.height;
+        }
+        else
+        {
+            maxDisplacement.y = playerTransform.position.y - obstacleTransform.position.y - obstacleBoxCollider.height;
+        }
+
+        vec2f diff = obstacleTransform.position - playerTransform.position;
+        double displacementAngle = diff.arg();
+
+        vec2f displacement;
+        if (maxDisplacement.y < maxDisplacement.x * tan(displacementAngle))
+        {
+            displacement = vec2f(maxDisplacement.y / tan(displacementAngle), maxDisplacement.y);
+        }
+        else
+        {
+            displacement = vec2f(maxDisplacement.x, maxDisplacement.x * tan(displacementAngle));
+        }
+
+        playerTransform.position = playerTransform.position + displacement;
+
+    }
+
     static void OnCollision(CollisionEvent event)
     {
         auto registry = event.registry;
@@ -84,6 +129,16 @@ public:
         else if (registry->all_of<Enemy_Tag>(b) && registry->all_of<Obstacle_Tag>(a))
         {
             OnEnemyHitsObstacle(registry, b);
+        }
+
+        else if (registry->all_of<Player_Tag>(a) && registry->all_of<Obstacle_Tag>(b))
+        {
+            OnPlayerHitsObstacle(registry, a, b);
+        }
+
+        else if (registry->all_of<Player_Tag>(b) && registry->all_of<Obstacle_Tag>(a))
+        {
+            OnPlayerHitsObstacle(registry, b, a);
         }
     }
 };

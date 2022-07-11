@@ -150,7 +150,8 @@ void Stardew::Load()
         m_registry->emplace<Animation>(player, 5, 5, true, true);
         m_registry->emplace<ProjectileEmitter>(player, 600.0, vec2f(1.0, 1.0), 0, 10000, 10, true, true);
         m_registry->emplace<Health>(player, 100);
-        m_registry->emplace<BoxCollider>(player, 16, 16, vec2f(0, -16 * SCALE));
+        m_registry->emplace<BoxCollider>(player, 16, 32);
+        //m_registry->emplace<BoxCollider>(player, 16, 16, vec2f(0, -16 * SCALE));
     }
     else
     {
