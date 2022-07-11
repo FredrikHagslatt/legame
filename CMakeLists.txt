@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(leGame)
 
+set(CMAKE_GENERATOR "Ninja")
 
 message(STATUS)
 if(UNIX)
