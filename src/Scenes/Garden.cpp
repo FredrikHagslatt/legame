@@ -32,7 +32,7 @@ void Garden::LoadScene()
 
     const auto radar = m_registry->create();
     m_registry->emplace<UI_Tag>(radar);
-    m_registry->emplace<Transform>(radar, vec2f(WINDOWWIDTH - 74, 10.0));
+    m_registry->emplace<Transform>(radar, vec2f(WINDOWWIDTH - 74, 10.0), 0.25);
     m_registry->emplace<Sprite>(radar, "radar-image", 64, 64, 100, true);
     m_registry->emplace<Animation>(radar, 8, 5, true);
 

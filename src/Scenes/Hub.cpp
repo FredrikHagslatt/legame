@@ -37,7 +37,7 @@ void Hub::LoadScene()
 
     const auto radar = m_registry->create();
     m_registry->emplace<UI_Tag>(radar);
-    m_registry->emplace<Transform>(radar, vec2f(WINDOWWIDTH - 74, 10.0), vec2f(1.0, 1.0), 0.0);
+    m_registry->emplace<Transform>(radar, vec2f(WINDOWWIDTH - 74, 10.0), 0.25);
     m_registry->emplace<Sprite>(radar, "radar-image", 64, 64, 100, true);
     m_registry->emplace<Animation>(radar, 8, 5, true);
 
@@ -79,6 +79,7 @@ void Hub::LoadScene()
     m_registry->emplace<TextLabel>(label, vec2f(WINDOWWIDTH / 2 - 40, 10), "- Hub Scene- ", "charriot-font", green, true);
 
     const auto trigger = m_registry->create();
+    m_registry->emplace<Trigger_Tag>(trigger);
     m_registry->emplace<Transform>(trigger, vec2f(0.0, 0.0), vec2f(1.0, 1.0), 0.0);
     m_registry->emplace<BoxCollider>(trigger, 30, 30);
     m_registry->emplace<SceneSwitcher>(trigger, "Game", "Garden");

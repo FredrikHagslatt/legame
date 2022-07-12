@@ -150,8 +150,8 @@ void Stardew::Load()
         m_registry->emplace<Animation>(player, 5, 5, true, true);
         m_registry->emplace<ProjectileEmitter>(player, 600.0, vec2f(1.0, 1.0), 0, 10000, 10, true, true);
         m_registry->emplace<Health>(player, 100);
-        m_registry->emplace<BoxCollider>(player, 16, 32);
-        // m_registry->emplace<BoxCollider>(player, 16, 16, vec2f(0, -16));
+        // m_registry->emplace<BoxCollider>(player, 16, 32);
+        m_registry->emplace<CircleCollider>(player, 6, vec2f(8, 32 - 6));
     }
     else
     {
@@ -198,6 +198,9 @@ void Stardew::Unload()
 
     auto labels = m_registry->view<TextLabel>();
     m_registry->destroy(labels.begin(), labels.end());
+
+    auto UIs = m_registry->view<UI_Tag>();
+    m_registry->destroy(UIs.begin(), UIs.end());
 
     Logger::Info("[Stardew] Destroying entities");
 

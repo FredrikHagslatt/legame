@@ -4,6 +4,7 @@
 #include "entt/entt.hpp"
 #include "Components/Transform.h"
 #include "Components/BoxCollider.h"
+#include "Components/CircleCollider.h"
 
 #include "Events/EventDispatcher.h"
 #include "Events/CollisionEvent.h"
@@ -28,7 +29,7 @@ public:
             aY + aH > bY);
     }
 
-    static void Update(std::shared_ptr<entt::registry> registry)
+    static void UpdateRectangleVsRectangle(std::shared_ptr<entt::registry> registry)
     {
         auto view = registry->view<Transform, BoxCollider>();
 
@@ -67,6 +68,51 @@ public:
                 }
             }
         }
+    }
+
+    static void UpdateCircleVsRectangle(std::shared_ptr<entt::registry> registry)
+    {
+        auto circleView = registry->view<Transform, CircleCollider>();
+        auto boxView = registry->view<Transform, BoxCollider>();
+
+        for (auto circle : circleView)
+        {
+            auto &circleTransform = circleView.get<Transform>(circle);
+            const auto circleCollider = circleView.get<CircleCollider>(circle);
+
+            vec2f circleColliderPos = circleTransform.position + circleCollider.offset;
+
+            for (auto box : boxView)
+            {
+                const auto boxTransform = boxView.get<Transform>(box);
+                const auto boxCollider = boxView.get<BoxCollider>(box);
+
+                float boxLeftEdge = boxTransform.position.x;
+                float boxRightEdge = boxLeftEdge + boxCollider.width;
+                float boxTopEdge = boxTransform.position.y;
+                float boxBotEdge = boxTopEdge + boxCollider.height;
+
+                vec2f circleToBox;
+                circleToBox.x = std::max(boxLeftEdge, std::min(boxRightEdge, circleColliderPos.x)) - circleColliderPos.x;
+                circleToBox.y = std::max(boxTopEdge, std::min(boxBotEdge, circleColliderPos.y)) - circleColliderPos.y;
+
+                if (circleToBox.magnitudePow2() < circleCollider.radius * circleCollider.radius)
+                {
+                    Event::dispatcher.trigger(CollisionEvent{registry, circle, box});
+                }
+            }
+        }
+    }
+
+    static void UpdateCircleVsCircle(std::shared_ptr<entt::registry> registry)
+    {
+    }
+
+    static void Update(std::shared_ptr<entt::registry> registry)
+    {
+        UpdateRectangleVsRectangle(registry);
+        UpdateCircleVsRectangle(registry);
+        UpdateCircleVsCircle(registry);
     }
 };
 

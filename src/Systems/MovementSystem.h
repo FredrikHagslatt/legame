@@ -5,6 +5,8 @@
 #include "Components/Tags.h"
 #include "Components/Transform.h"
 #include "Components/Velocity.h"
+#include "Components/BoxCollider.h"
+#include "Components/CircleCollider.h"
 #include "Events/CollisionEvent.h"
 #include "Logger/Logger.h"
 #include "Game/Game.h"
@@ -73,45 +75,27 @@ public:
     static void OnPlayerHitsObstacle(std::shared_ptr<entt::registry> registry, entt::entity player, entt::entity obstacle)
     {
         Logger::Info("Player hit obstacle");
-        auto &playerTransform = registry->get<Transform>(player);
-        const auto playerBoxCollider = registry->get<BoxCollider>(player);
+        auto &circleTransform = registry->get<Transform>(player);
+        const auto circleCollider = registry->get<CircleCollider>(player);
+        vec2f circleColliderPos = circleTransform.position + circleCollider.offset;
 
-        auto &obstacleTransform = registry->get<Transform>(obstacle);
-        const auto obstacleBoxCollider = registry->get<BoxCollider>(obstacle);
+        const auto boxTransform = registry->get<Transform>(obstacle);
+        const auto boxCollider = registry->get<BoxCollider>(obstacle);
 
-        vec2f maxDisplacement;
-        if (playerTransform.position.x < obstacleTransform.position.x)
-        {
-            maxDisplacement.x = obstacleTransform.position.x - playerTransform.position.x - playerBoxCollider.width;
-        }
-        else
-        {
-            maxDisplacement.x = playerTransform.position.x - obstacleTransform.position.x - obstacleBoxCollider.width;
-        }
+        float boxLeftEdge = boxTransform.position.x;
+        float boxRightEdge = boxLeftEdge + boxCollider.width;
+        float boxTopEdge = boxTransform.position.y;
+        float boxBotEdge = boxTopEdge + boxCollider.height;
 
-        if (playerTransform.position.y < obstacleTransform.position.y)
-        {
-            maxDisplacement.y = obstacleTransform.position.y - playerTransform.position.y - playerBoxCollider.height;
-        }
-        else
-        {
-            maxDisplacement.y = playerTransform.position.y - obstacleTransform.position.y - obstacleBoxCollider.height;
-        }
+        vec2f circleToBox;
+        circleToBox.x = std::max(boxLeftEdge, std::min(boxRightEdge, circleColliderPos.x)) - circleColliderPos.x;
+        circleToBox.y = std::max(boxTopEdge, std::min(boxBotEdge, circleColliderPos.y)) - circleColliderPos.y;
 
-        vec2f diff = obstacleTransform.position - playerTransform.position;
-        double displacementAngle = diff.arg();
+        float distCircleToBox = circleToBox.magnitude();
+        float overlap = circleCollider.radius - distCircleToBox;
 
-        vec2f displacement;
-        if (maxDisplacement.x * cos(displacementAngle) < maxDisplacement.y / sin(displacementAngle))
-        {
-            displacement = vec2f(maxDisplacement.x, maxDisplacement.x * tan(displacementAngle));
-        }
-        else
-        {
-            displacement = vec2f(maxDisplacement.y / tan(displacementAngle), maxDisplacement.y);
-        }
-
-        playerTransform.position = playerTransform.position + displacement;
+        circleTransform.position.x -= circleToBox.x * overlap / distCircleToBox;
+        circleTransform.position.y -= circleToBox.y * overlap / distCircleToBox;
     }
 
     static void OnCollision(CollisionEvent event)
