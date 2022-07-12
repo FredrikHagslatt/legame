@@ -22,7 +22,7 @@ void Garden::LoadScene()
     m_registry->emplace<Obstacle_Tag>(cabin);
     m_registry->emplace<Transform>(cabin, vec2f(400, 150.0));
     m_registry->emplace<Sprite>(cabin, "cabin-image", 122, 96, 5);
-    m_registry->emplace<BoxCollider>(cabin, 122, 96);
+    m_registry->emplace<BoxCollider>(cabin, 122, 80, vec2f(0, 16));
 
     const auto cabinEntry = m_registry->create();
     m_registry->emplace<Trigger_Tag>(cabinEntry);

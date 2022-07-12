@@ -82,9 +82,9 @@ public:
         const auto boxTransform = registry->get<Transform>(obstacle);
         const auto boxCollider = registry->get<BoxCollider>(obstacle);
 
-        float boxLeftEdge = boxTransform.position.x;
+        float boxLeftEdge = boxTransform.position.x + boxCollider.offset.x;
         float boxRightEdge = boxLeftEdge + boxCollider.width;
-        float boxTopEdge = boxTransform.position.y;
+        float boxTopEdge = boxTransform.position.y + boxCollider.offset.y;
         float boxBotEdge = boxTopEdge + boxCollider.height;
 
         vec2f circleToBox;

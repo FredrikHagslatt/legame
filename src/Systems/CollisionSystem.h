@@ -58,7 +58,7 @@ public:
                     aCollider.width,
                     aCollider.height,
                     bTransform.position.x + bCollider.offset.x,
-                    bTransform.position.y + bCollider.offset.x,
+                    bTransform.position.y + bCollider.offset.y,
                     bCollider.width,
                     bCollider.height);
 
@@ -87,9 +87,9 @@ public:
                 const auto boxTransform = boxView.get<Transform>(box);
                 const auto boxCollider = boxView.get<BoxCollider>(box);
 
-                float boxLeftEdge = boxTransform.position.x;
+                float boxLeftEdge = boxTransform.position.x + boxCollider.offset.x;
                 float boxRightEdge = boxLeftEdge + boxCollider.width;
-                float boxTopEdge = boxTransform.position.y;
+                float boxTopEdge = boxTransform.position.y + boxCollider.offset.y;
                 float boxBotEdge = boxTopEdge + boxCollider.height;
 
                 vec2f circleToBox;
