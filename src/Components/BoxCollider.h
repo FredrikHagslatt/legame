@@ -1,7 +1,8 @@
 #ifndef BOXCOLLIDER_H
 #define BOXCOLLIDER_H
 
-#include <Types.h>
+#include "Types.h"
+#include "Constants.h"
 
 struct BoxCollider
 {
@@ -13,9 +14,9 @@ struct BoxCollider
         int width = 0,
         int height = 0,
         vec2f offset = vec2f(0))
-        : width(width),
-          height(height),
-          offset(offset)
+        : width(width * SCALE),
+          height(height * SCALE),
+          offset(offset * SCALE)
     {
     }
 };

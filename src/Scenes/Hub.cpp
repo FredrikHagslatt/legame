@@ -37,14 +37,14 @@ void Hub::LoadScene()
 
     const auto radar = m_registry->create();
     m_registry->emplace<UI_Tag>(radar);
-    m_registry->emplace<Transform>(radar, vec2f(WINDOWWIDTH - 74, 10.0), vec2f(1.0, 1.0), 0.0);
+    m_registry->emplace<Transform>(radar, vec2f(WINDOWWIDTH - 74, 10.0), 0.25);
     m_registry->emplace<Sprite>(radar, "radar-image", 64, 64, 100, true);
     m_registry->emplace<Animation>(radar, 8, 5, true);
 
     const auto tank = m_registry->create();
     m_registry->emplace<Enemy_Tag>(tank);
     m_registry->emplace<StayOnMap_Tag>(tank);
-    m_registry->emplace<Transform>(tank, vec2f(120.0, 300.0), vec2f(1.0, 1.0), 0.0);
+    m_registry->emplace<Transform>(tank, vec2f(120.0, 200.0), vec2f(1.0, 1.0), 0.0);
     m_registry->emplace<Velocity>(tank, 30.0, vec2f(1.0, 0.0));
     m_registry->emplace<Sprite>(tank, "tank-image", 32, 32, 2);
     m_registry->emplace<ProjectileEmitter>(tank, 100.0, vec2f(1.0, 0.0), 1000, 10000, 10);
@@ -79,6 +79,7 @@ void Hub::LoadScene()
     m_registry->emplace<TextLabel>(label, vec2f(WINDOWWIDTH / 2 - 40, 10), "- Hub Scene- ", "charriot-font", green, true);
 
     const auto trigger = m_registry->create();
+    m_registry->emplace<Trigger_Tag>(trigger);
     m_registry->emplace<Transform>(trigger, vec2f(0.0, 0.0), vec2f(1.0, 1.0), 0.0);
     m_registry->emplace<BoxCollider>(trigger, 30, 30);
     m_registry->emplace<SceneSwitcher>(trigger, "Game", "Garden");

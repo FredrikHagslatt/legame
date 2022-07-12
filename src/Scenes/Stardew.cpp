@@ -120,7 +120,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
 
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
-            m_registry->emplace<Transform>(tile, vec2f(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y), vec2f(SCALE, SCALE), 0.0);
+            m_registry->emplace<Transform>(tile, vec2f(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y));
             m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
         }
     }
@@ -144,13 +144,14 @@ void Stardew::Load()
         m_registry->emplace<Player_Tag>(player);
         m_registry->emplace<KeyboardControlled_Tag>(player);
         m_registry->emplace<StayOnMap_Tag>(player);
-        m_registry->emplace<Transform>(player, vec2f(200.0, 500.0), vec2f(SCALE, SCALE), 0.0);
+        m_registry->emplace<Transform>(player, vec2f(200.0, 500.0));
         m_registry->emplace<Velocity>(player, 300.0, vec2f(0));
         m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 10);
         m_registry->emplace<Animation>(player, 5, 5, true, true);
         m_registry->emplace<ProjectileEmitter>(player, 600.0, vec2f(1.0, 1.0), 0, 10000, 10, true, true);
         m_registry->emplace<Health>(player, 100);
-        m_registry->emplace<BoxCollider>(player, 16, 16, vec2f(0, -16 * SCALE));
+        // m_registry->emplace<BoxCollider>(player, 16, 32);
+        m_registry->emplace<CircleCollider>(player, 6, vec2f(8, 32 - 6));
     }
     else
     {
@@ -197,6 +198,9 @@ void Stardew::Unload()
 
     auto labels = m_registry->view<TextLabel>();
     m_registry->destroy(labels.begin(), labels.end());
+
+    auto UIs = m_registry->view<UI_Tag>();
+    m_registry->destroy(UIs.begin(), UIs.end());
 
     Logger::Info("[Stardew] Destroying entities");
 

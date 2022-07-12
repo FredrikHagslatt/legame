@@ -5,6 +5,8 @@
 #include "Components/Tags.h"
 #include "Components/Transform.h"
 #include "Components/Velocity.h"
+#include "Components/BoxCollider.h"
+#include "Components/CircleCollider.h"
 #include "Events/CollisionEvent.h"
 #include "Logger/Logger.h"
 #include "Game/Game.h"
@@ -70,6 +72,32 @@ public:
         }
     }
 
+    static void OnPlayerHitsObstacle(std::shared_ptr<entt::registry> registry, entt::entity player, entt::entity obstacle)
+    {
+        Logger::Info("Player hit obstacle");
+        auto &circleTransform = registry->get<Transform>(player);
+        const auto circleCollider = registry->get<CircleCollider>(player);
+        vec2f circleColliderPos = circleTransform.position + circleCollider.offset;
+
+        const auto boxTransform = registry->get<Transform>(obstacle);
+        const auto boxCollider = registry->get<BoxCollider>(obstacle);
+
+        float boxLeftEdge = boxTransform.position.x + boxCollider.offset.x;
+        float boxRightEdge = boxLeftEdge + boxCollider.width;
+        float boxTopEdge = boxTransform.position.y + boxCollider.offset.y;
+        float boxBotEdge = boxTopEdge + boxCollider.height;
+
+        vec2f circleToBox;
+        circleToBox.x = std::max(boxLeftEdge, std::min(boxRightEdge, circleColliderPos.x)) - circleColliderPos.x;
+        circleToBox.y = std::max(boxTopEdge, std::min(boxBotEdge, circleColliderPos.y)) - circleColliderPos.y;
+
+        float distCircleToBox = circleToBox.magnitude();
+        float overlap = circleCollider.radius - distCircleToBox;
+
+        circleTransform.position.x -= circleToBox.x * overlap / distCircleToBox;
+        circleTransform.position.y -= circleToBox.y * overlap / distCircleToBox;
+    }
+
     static void OnCollision(CollisionEvent event)
     {
         auto registry = event.registry;
@@ -84,6 +112,16 @@ public:
         else if (registry->all_of<Enemy_Tag>(b) && registry->all_of<Obstacle_Tag>(a))
         {
             OnEnemyHitsObstacle(registry, b);
+        }
+
+        else if (registry->all_of<Player_Tag>(a) && registry->all_of<Obstacle_Tag>(b))
+        {
+            OnPlayerHitsObstacle(registry, a, b);
+        }
+
+        else if (registry->all_of<Player_Tag>(b) && registry->all_of<Obstacle_Tag>(a))
+        {
+            OnPlayerHitsObstacle(registry, b, a);
         }
     }
 };
