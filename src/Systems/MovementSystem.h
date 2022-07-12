@@ -102,17 +102,16 @@ public:
         double displacementAngle = diff.arg();
 
         vec2f displacement;
-        if (maxDisplacement.y < maxDisplacement.x * tan(displacementAngle))
-        {
-            displacement = vec2f(maxDisplacement.y / tan(displacementAngle), maxDisplacement.y);
-        }
-        else
+        if (maxDisplacement.x * cos(displacementAngle) < maxDisplacement.y / sin(displacementAngle))
         {
             displacement = vec2f(maxDisplacement.x, maxDisplacement.x * tan(displacementAngle));
         }
+        else
+        {
+            displacement = vec2f(maxDisplacement.y / tan(displacementAngle), maxDisplacement.y);
+        }
 
         playerTransform.position = playerTransform.position + displacement;
-
     }
 
     static void OnCollision(CollisionEvent event)

@@ -2,6 +2,7 @@
 #define TRANSFORM_H
 
 #include "Types.h"
+#include "Constants.h"
 
 struct Transform
 {
@@ -14,7 +15,7 @@ struct Transform
         vec2f scale = vec2f(1, 1),
         double rotation = 0.0)
         : position(position),
-          scale(scale),
+          scale(scale * SCALE),
           rotation(rotation)
     {
     }

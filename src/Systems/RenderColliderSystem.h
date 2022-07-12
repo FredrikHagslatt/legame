@@ -17,12 +17,20 @@ public:
             const auto transform = view.get<Transform>(entity);
             const auto collider = view.get<BoxCollider>(entity);
 
+            /*
+                        SDL_Rect colliderRect =
+                            {
+                                static_cast<int>(transform.position.x - collider.offset.x - camera.x),
+                                static_cast<int>(transform.position.y - collider.offset.y - camera.y),
+                                static_cast<int>(collider.width * transform.scale.x),
+                                static_cast<int>(collider.height * transform.scale.y)};
+            */
             SDL_Rect colliderRect =
                 {
                     static_cast<int>(transform.position.x - collider.offset.x - camera.x),
                     static_cast<int>(transform.position.y - collider.offset.y - camera.y),
-                    static_cast<int>(collider.width * transform.scale.x),
-                    static_cast<int>(collider.height * transform.scale.y)};
+                    static_cast<int>(collider.width),
+                    static_cast<int>(collider.height)};
 
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
             SDL_RenderDrawRect(renderer, &colliderRect);

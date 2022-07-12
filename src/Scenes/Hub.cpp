@@ -44,7 +44,7 @@ void Hub::LoadScene()
     const auto tank = m_registry->create();
     m_registry->emplace<Enemy_Tag>(tank);
     m_registry->emplace<StayOnMap_Tag>(tank);
-    m_registry->emplace<Transform>(tank, vec2f(120.0, 300.0), vec2f(1.0, 1.0), 0.0);
+    m_registry->emplace<Transform>(tank, vec2f(120.0, 200.0), vec2f(1.0, 1.0), 0.0);
     m_registry->emplace<Velocity>(tank, 30.0, vec2f(1.0, 0.0));
     m_registry->emplace<Sprite>(tank, "tank-image", 32, 32, 2);
     m_registry->emplace<ProjectileEmitter>(tank, 100.0, vec2f(1.0, 0.0), 1000, 10000, 10);
