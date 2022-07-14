@@ -6,7 +6,7 @@
 struct ProjectileEmitter
 {
     double speed;
-    vec2f direction; // Set vec2f(0) to fire in direction of owners velocity component
+    vec2f direction;
     int repeatFrequency;
     int duration;
     int hitPercentDamage;
