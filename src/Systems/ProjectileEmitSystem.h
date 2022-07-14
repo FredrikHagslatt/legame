@@ -21,11 +21,12 @@ public:
 
         vec2f projectilePosition = transform.position;
 
+        // Adjust projectile spawn pos. (Instead of shooters top left corner)
         if (registry->all_of<Sprite>(entity))
         {
             const auto sprite = registry->get<Sprite>(entity);
-            projectilePosition.x += (transform.scale.x * sprite.width / 2);
-            projectilePosition.y += (transform.scale.y * sprite.height / 2);
+            projectilePosition.x += (transform.scale.x * (sprite.width - 4) / 2); // 4 is projectile width. Make dynamic if necessary
+            projectilePosition.y += (transform.scale.y * (sprite.height) / 2);
         }
 
         if (projectileEmitter.inheritDirection && registry->all_of<Velocity>(entity))

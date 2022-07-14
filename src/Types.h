@@ -22,6 +22,18 @@ struct vec2
     vec2 operator-(const vec2 &rhs) const { return vec2(this->x - rhs.x, this->y - rhs.y); }
     vec2 operator*(const T &rhs) const { return vec2(T(this->x * rhs), T(this->y * rhs)); } // Non-commutative implementation so far
     vec2 operator/(const T &rhs) const { return vec2(T(this->x / rhs), T(this->y / rhs)); } // Non-commutative implementation so far
+    vec2 &operator+=(const vec2 &rhs)
+    {
+        this->x += rhs.x;
+        this->y += rhs.y;
+        return *this;
+    }
+    vec2 &operator-=(const vec2 &rhs)
+    {
+        this->x -= rhs.x;
+        this->y -= rhs.y;
+        return *this;
+    }
     T magnitude() const { return T(std::sqrt(x * x + y * y)); }
     T magnitudePow2() const { return T(x * x + y * y); }
     double arg() const { return atan(double(y) / double(x)); }

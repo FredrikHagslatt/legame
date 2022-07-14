@@ -22,8 +22,14 @@ public:
             auto &transform = view.get<Transform>(entity);
             const auto &velocity = view.get<Velocity>(entity);
 
-            transform.position.x += velocity.speed * velocity.direction.x * deltaTime;
-            transform.position.y += velocity.speed * velocity.direction.y * deltaTime;
+            if (velocity.direction.x != 0 && velocity.direction.y != 0)
+            { // Reduce diagonal speed to match hor/vert speed
+                transform.position += velocity.direction * velocity.speed * deltaTime * 0.707;
+            }
+            else
+            {
+                transform.position += velocity.direction * velocity.speed * deltaTime;
+            }
 
             if (registry->all_of<StayOnMap_Tag>(entity))
             {
