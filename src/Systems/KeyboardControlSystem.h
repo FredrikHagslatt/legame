@@ -24,20 +24,20 @@ public:
             {
             case SDLK_LEFT:
                 velocity.direction.x = -1;
-                //                sprite.srcRect.y = sprite.height * DIR_LEFT;
                 break;
             case SDLK_RIGHT:
                 velocity.direction.x = 1;
-                //                sprite.srcRect.y = sprite.height * DIR_RIGHT;
                 break;
             case SDLK_UP:
                 velocity.direction.y = -1;
-                //                sprite.srcRect.y = sprite.height * DIR_UP;
                 break;
             case SDLK_DOWN:
                 velocity.direction.y = 1;
-                //                sprite.srcRect.y = sprite.height * DIR_DOWN;
                 break;
+            }
+            if (velocity.direction != vec2f(0))
+            {
+                velocity.lastNonZeroDirection = velocity.direction;
             }
         }
     }
@@ -77,6 +77,10 @@ public:
                     velocity.direction.x = 0.0;
                 }
                 break;
+            }
+            if (velocity.direction != vec2f(0))
+            {
+                velocity.lastNonZeroDirection = velocity.direction;
             }
         }
     }

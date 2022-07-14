@@ -46,9 +46,9 @@ public:
 
                 if (animation.hasDirections)
                 {
-                    if (velocity.direction.x != 0.0)
-                    {
-                        if (velocity.direction.x < 0)
+                    if (velocity.lastNonZeroDirection.x != 0.0)
+                    { // Prio X direction over Y direction
+                        if (velocity.lastNonZeroDirection.x < 0)
                         {
                             sprite.srcRect.y = sprite.height * DIR_LEFT;
                         }
@@ -59,11 +59,11 @@ public:
                     }
                     else
                     {
-                        if (velocity.direction.y < 0)
+                        if (velocity.lastNonZeroDirection.y < 0)
                         {
                             sprite.srcRect.y = sprite.height * DIR_UP;
                         }
-                        else if (velocity.direction.y > 0)
+                        else if (velocity.lastNonZeroDirection.y > 0)
                         {
                             sprite.srcRect.y = sprite.height * DIR_DOWN;
                         }
