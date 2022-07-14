@@ -31,7 +31,7 @@ public:
         if (projectileEmitter.inheritDirection && registry->all_of<Velocity>(entity))
         {
             const auto velocity = registry->get<Velocity>(entity);
-            projectileEmitter.direction = velocity.direction;
+            projectileEmitter.direction = velocity.lastNonZeroDirection;
         }
 
         auto projectile = registry->create();

@@ -7,13 +7,10 @@ struct Velocity
 {
     double speed;
     vec2f direction;
+    vec2f lastNonZeroDirection;
 
-    Velocity(double speed = 0)
-        : speed(speed), direction(vec2f(0))
-    {
-    }
-    Velocity(double speed = 0, vec2f direction = vec2f(0))
-        : speed(speed), direction(direction)
+    Velocity(double speed = 0, vec2f direction = vec2f(0), vec2f lastNonZeroDirection = vec2f(0))
+        : speed(speed), direction(direction), lastNonZeroDirection(lastNonZeroDirection)
     {
     }
 };
