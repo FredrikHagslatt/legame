@@ -17,6 +17,11 @@ public:
     static bool showDemoWindow;
     static bool showLogWindow;
     static bool renderHitboxes;
+
+    static bool logToStdCout;
+    static bool logToImGuiWindow;
+    static bool logToFile;
+
     static void Render();
     static void ToggleShowDevTools(const KeyPressedEvent &event);
     static void ShowDevTools();

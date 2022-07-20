@@ -8,6 +8,10 @@ bool DevTools::showLogWindow = false;
 bool DevTools::renderHitboxes = false;
 ExampleAppLog DevTools::log;
 
+bool DevTools::logToStdCout = true;
+bool DevTools::logToImGuiWindow = true;
+bool DevTools::logToFile = false;
+
 void DevTools::Render()
 {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -49,10 +53,18 @@ void DevTools::ShowDevTools()
     if (ImGui::Begin("Dev Tools", NULL, window_flags))
     {
         ImGui::Checkbox("Show ImGui Demo Window", &showDemoWindow);
-        ImGui::Checkbox("Show Log Window", &showLogWindow);
         ImGui::Checkbox("Render Hitboxes", &renderHitboxes);
+
+        if (ImGui::CollapsingHeader("Logger Settings"))
+        {
+            ImGui::Checkbox("Show log window", &showLogWindow);
+            ImGui::Checkbox("Log to std::cout", &logToStdCout);
+            ImGui::Checkbox("Log to ImGui Log Window", &logToImGuiWindow);
+            ImGui::Checkbox("Log to file", &logToFile);
+        }
+
+        ImGui::End();
     }
-    ImGui::End();
 }
 
 void DevTools::ShowLogWindow()
