@@ -18,6 +18,7 @@ enum LogType
 struct LogEntry
 {
     LogType type;
+    std::string timestamp;
     std::string message;
 };
 
@@ -27,7 +28,7 @@ private:
     static const std::string Red() { return "\033[0;31m"; };
     static const std::string Green() { return "\033[1;32m"; };
     static const std::string Yellow() { return "\033[1;33m"; };
-    static const std::string Reset() { return "\033[0m"; };
+    static const std::string Reset() { return "\033[0m\n"; };
     static std::string Timestamp();
 
 public:
@@ -36,6 +37,7 @@ public:
     static void Warning(const std::string &message);
     static void Error(const std::string &message);
     static void Fatal(const std::string &message);
+    static void SaveLogEntry(LogEntry logEntry);
 };
 
 #endif

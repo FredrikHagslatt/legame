@@ -2,22 +2,7 @@
 #include <fstream>
 #include "Events/EventDispatcher.h"
 #include "Logger/Logger.h"
-
-void Stardew::ToggleDebugMode(const KeyPressedEvent &event)
-{
-    if (event.keycode == SDLK_d)
-    {
-        debugMode = !debugMode;
-        if (debugMode)
-        {
-            Logger::Info("Debugmode activated");
-        }
-        else
-        {
-            Logger::Info("Debugmode deactivated");
-        }
-    }
-}
+#include "DevTools/DevTools.h"
 
 void Stardew::Update(double elapsedTime)
 {
@@ -50,9 +35,14 @@ void Stardew::RenderGraphics(double elapsedTime)
     RenderHealthSystem::Update(m_registry, m_renderer, m_assetStore, camera);
     RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, camera);
 
-    if (debugMode)
+    if (DevTools::renderHitboxes)
     {
         RenderColliderSystem::Update(m_registry, m_renderer, camera);
+    }
+
+    if (DevTools::showDevTools)
+    {
+        DevTools::Render();
     }
 
     RenderScene(elapsedTime);
@@ -160,7 +150,6 @@ void Stardew::Load()
     Event::dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
     Event::dispatcher.sink<KeyReleasedEvent>().connect<&KeyboardControlSystem::OnKeyReleased>();
     Event::dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
-    Event::dispatcher.sink<KeyPressedEvent>().connect<&Stardew::ToggleDebugMode>(this);
     Event::dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().connect<&TriggerSystem::OnCollision>();
@@ -174,7 +163,6 @@ void Stardew::Unload()
     Event::dispatcher.sink<KeyPressedEvent>().disconnect<&KeyboardControlSystem::OnKeyPressed>();
     Event::dispatcher.sink<KeyReleasedEvent>().disconnect<&KeyboardControlSystem::OnKeyReleased>();
     Event::dispatcher.sink<KeyPressedEvent>().disconnect<&ProjectileEmitSystem::OnKeyPressed>();
-    Event::dispatcher.sink<KeyPressedEvent>().disconnect<&Stardew::ToggleDebugMode>(this);
     Event::dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().disconnect<&TriggerSystem::OnCollision>();

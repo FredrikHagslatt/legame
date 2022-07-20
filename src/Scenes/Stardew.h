@@ -45,12 +45,8 @@ protected:
 	SDL_Rect camera;
 	void LoadLevel();
 	void LoadMap(std::string spritesheet, std::string map);
-	bool debugMode = false;
 
 public:
-	// Misc
-	void ToggleDebugMode(const KeyPressedEvent &event);
-
 	// Funcs for children
 	virtual void UpdateScene(double elapsedTime) = 0;
 	virtual void RenderScene(double elapsedTime) = 0;
