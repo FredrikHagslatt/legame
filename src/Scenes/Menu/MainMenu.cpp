@@ -35,17 +35,14 @@ void MainMenu::OnKeyPressedEvent(const KeyPressedEvent event)
 	}
 }
 
-void MainMenu::Update(double elapsedTime)
+void MainMenu::Update(const double elapsedTime)
 {
 }
 
-void MainMenu::RenderGraphics(double elapsedTime)
+void MainMenu::RenderGraphics(const double elapsedTime)
 {
-	SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
-	SDL_RenderClear(m_renderer);
 	RenderSystem::Update(m_registry, m_renderer, m_assetStore, m_camera);
 	RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, m_camera);
-	SDL_RenderPresent(m_renderer);
 }
 
 void MainMenu::Load()

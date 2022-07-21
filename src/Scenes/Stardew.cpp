@@ -4,7 +4,7 @@
 #include "Logger/Logger.h"
 #include "DevTools/DevTools.h"
 
-void Stardew::Update(double elapsedTime)
+void Stardew::Update(const double elapsedTime)
 {
     // Update systems
     MovementSystem::Update(m_registry, elapsedTime);
@@ -26,11 +26,8 @@ void Stardew::Update(double elapsedTime)
     }
 }
 
-void Stardew::RenderGraphics(double elapsedTime)
+void Stardew::RenderGraphics(const double elapsedTime)
 {
-    SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
-    SDL_RenderClear(m_renderer);
-
     RenderSystem::Update(m_registry, m_renderer, m_assetStore, camera);
     RenderHealthSystem::Update(m_registry, m_renderer, m_assetStore, camera);
     RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, camera);
@@ -40,13 +37,7 @@ void Stardew::RenderGraphics(double elapsedTime)
         RenderColliderSystem::Update(m_registry, m_renderer, camera);
     }
 
-    if (DevTools::showDevTools)
-    {
-        DevTools::Render();
-    }
-
     RenderScene(elapsedTime);
-    SDL_RenderPresent(m_renderer);
 }
 
 void Stardew::LoadMap(std::string spritesheet, std::string map)

@@ -70,11 +70,6 @@ endif()
 include_directories(${SDL2_INCLUDE_DIRS} ${THIRD_PARTY})
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-message("--------------------------------------")
-message(${SOURCES})
-message("--------------------------------------")
-
-
 target_link_libraries(${PROJECT_NAME} 
     ${SDL2_LIBRARIES} 
     ${SDL2_IMAGE_LIBRARIES} 

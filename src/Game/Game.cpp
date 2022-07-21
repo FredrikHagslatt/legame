@@ -158,7 +158,19 @@ double Game::ElapsedTime()
 
 void Game::Update()
 {
-    m_sceneManager.Cycle(ElapsedTime());
+    double elapsedTime = ElapsedTime();
+    m_sceneManager.Update(elapsedTime);
+
+    SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
+    SDL_RenderClear(m_renderer);
+    m_sceneManager.RenderGraphics(elapsedTime);
+
+    if (DevTools::showDevTools)
+    {
+        DevTools::Render();
+    }
+
+    SDL_RenderPresent(m_renderer);
 }
 
 void Game::Run()

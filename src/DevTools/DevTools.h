@@ -12,15 +12,14 @@ class DevTools
 {
 public:
     static ExampleAppLog log;
+    static bool renderHitboxes;
+    static bool logToStdCout;
+    static bool logToImGuiWindow;
+    static bool logToFile;
 
     static bool showDevTools;
     static bool showDemoWindow;
     static bool showLogWindow;
-    static bool renderHitboxes;
-
-    static bool logToStdCout;
-    static bool logToImGuiWindow;
-    static bool logToFile;
 
     static void Render();
     static void ToggleShowDevTools(const KeyPressedEvent &event);

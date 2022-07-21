@@ -6,6 +6,7 @@ bool DevTools::showDevTools = false;
 bool DevTools::showDemoWindow = false;
 bool DevTools::showLogWindow = false;
 bool DevTools::renderHitboxes = false;
+
 ExampleAppLog DevTools::log;
 
 bool DevTools::logToStdCout = true;
@@ -62,9 +63,8 @@ void DevTools::ShowDevTools()
             ImGui::Checkbox("Log to ImGui Log Window", &logToImGuiWindow);
             ImGui::Checkbox("Log to file", &logToFile);
         }
-
-        ImGui::End();
     }
+    ImGui::End();
 }
 
 void DevTools::ShowLogWindow()

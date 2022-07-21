@@ -19,7 +19,8 @@ private:
 public:
 	void OnSceneSwitchEvent(const SceneSwitchEvent event);
 	void QueueSceneChange(const std::string sceneName);
-	bool Cycle(const double elapsedTime);
+	void Update(const double elapsedTime);
+	void RenderGraphics(const double elapsedTime);
 	void AddScene(const std::string sceneName, const std::shared_ptr<Scene> scene);
 	void ClearScenes();
 	SceneManager(const std::string id);

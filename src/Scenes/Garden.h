@@ -6,8 +6,8 @@
 class Garden : public Stardew
 {
 public:
-    void UpdateScene(double elapsedTime) override;
-    void RenderScene(double elapsedTime) override;
+    void UpdateScene(const double elapsedTime) override;
+    void RenderScene(const double elapsedTime) override;
     void LoadScene() override;
     void UnloadScene() override;
     using Stardew::Stardew;

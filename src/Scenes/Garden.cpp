@@ -1,9 +1,9 @@
 #include "Garden.h"
 
-void Garden::UpdateScene(double elapsedTime)
+void Garden::UpdateScene(const double elapsedTime)
 {
 }
-void Garden::RenderScene(double elapsedTime)
+void Garden::RenderScene(const double elapsedTime)
 {
 }
 
