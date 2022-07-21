@@ -1,4 +1,6 @@
 #include "Logger.h"
+#include "DevTools/LogWindow.h"
+#include "DevTools/DevTools.h"
 
 std::vector<LogEntry> Logger::messages;
 
@@ -12,37 +14,68 @@ std::string Logger::Timestamp()
 
 void Logger::Info(const std::string &message)
 {
+    std::string timestamp = Timestamp();
     LogEntry logEntry = {
         LOG_INFO,
-        Green() + "Log  [" + Timestamp() + "] : " + message + Reset()};
-    std::cout << logEntry.message << std::endl;
-    messages.push_back(logEntry);
+        timestamp,
+        message};
+
+    if (DevTools::logToStdCout)
+    {
+        std::cout << Green() << "Log  [" << timestamp << "] : " << message << Reset();
+    }
+    SaveLogEntry(logEntry);
 }
 
 void Logger::Warning(const std::string &message)
 {
+    std::string timestamp = Timestamp();
     LogEntry logEntry = {
         LOG_WARNING,
-        Yellow() + "Warn [" + Timestamp() + "] : " + message + Reset()};
-    std::cout << logEntry.message << std::endl;
-    messages.push_back(logEntry);
+        timestamp,
+        message};
+    if (DevTools::logToStdCout)
+    {
+        std::cout << Yellow() << "Warn [" << timestamp << "] : " << message << Reset();
+    }
+    SaveLogEntry(logEntry);
 }
 
 void Logger::Error(const std::string &message)
 {
+    std::string timestamp = Timestamp();
     LogEntry logEntry = {
         LOG_ERROR,
-        Red() + "Err  [" + Timestamp() + "] : " + message + Reset()};
-    std::cout << logEntry.message << std::endl;
-    messages.push_back(logEntry);
+        timestamp,
+        message};
+    if (DevTools::logToStdCout)
+    {
+        std::cout << Red() << "Err  [" << timestamp << "] : " << message << Reset();
+    }
+    SaveLogEntry(logEntry);
 }
 
 void Logger::Fatal(const std::string &message)
 {
+    std::string timestamp = Timestamp();
     LogEntry logEntry = {
         LOG_FATAL,
-        Red() + "FATAL [" + Timestamp() + "] : " + message + Reset()};
-    std::cout << logEntry.message << std::endl;
-    messages.push_back(logEntry);
+        timestamp,
+        message};
+    if (DevTools::logToStdCout)
+    {
+        std::cout << Red() << "FATAL [" << timestamp << "] : " << message << Reset();
+    }
+    SaveLogEntry(logEntry);
     exit(EXIT_FAILURE);
+}
+
+void Logger::SaveLogEntry(LogEntry logEntry)
+{
+    messages.push_back(logEntry);
+    if (DevTools::logToImGuiWindow)
+    {
+        DevTools::log.AddLog(logEntry.message.c_str());
+        DevTools::log.AddLog("\n");
+    }
 }

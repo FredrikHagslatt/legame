@@ -1,10 +1,10 @@
 #include "Hub.h"
 #include "Constants.h"
 
-void Hub::UpdateScene(double elapsedTime)
+void Hub::UpdateScene(const double elapsedTime)
 {
 }
-void Hub::RenderScene(double elapsedTime)
+void Hub::RenderScene(const double elapsedTime)
 {
 }
 

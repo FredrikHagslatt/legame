@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 #include <list>
 #include <unordered_set>
+#include "DevTools/DevTools.h"
 
 class Game
 {

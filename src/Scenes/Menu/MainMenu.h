@@ -14,8 +14,8 @@ public:
 	void OnKeyPressedEvent(const KeyPressedEvent event);
 
 	// Scene
-	void Update(double elapsedTime) override;
-	void RenderGraphics(double elapsedTime) override;
+	void Update(const double elapsedTime) override;
+	void RenderGraphics(const double elapsedTime) override;
 	void Load() override;
 	void Unload() override;
 	using Scene::Scene;

@@ -41,16 +41,19 @@ void SceneManager::AddScene(const std::string sceneName, const std::shared_ptr<S
 	m_scenes.insert(std::pair<std::string, std::shared_ptr<Scene>>(sceneName, scene));
 }
 
-bool SceneManager::Cycle(const double elapsedTime)
+void SceneManager::Update(const double elapsedTime)
 {
 	if (!m_queuedScene.empty())
 	{
 		ChangeScene(m_queuedScene);
 		m_queuedScene = "";
 	}
-	m_currentScene->Cycle(elapsedTime);
+	m_currentScene->Update(elapsedTime);
+}
 
-	return true;
+void SceneManager::RenderGraphics(const double elapsedTime)
+{
+	m_currentScene->RenderGraphics(elapsedTime);
 }
 
 void SceneManager::ClearScenes()

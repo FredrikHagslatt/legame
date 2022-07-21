@@ -20,6 +20,9 @@ include_directories("${CMAKE_SOURCE_DIR}/src")
 set(THIRD_PARTY "${CMAKE_SOURCE_DIR}/3rdparty")
 include_directories(${THIRD_PARTY})
 
+file(GLOB_RECURSE IMGUI_SOURCES ${THIRD_PARTY}/imgui/*.cpp)
+set(SOURCES ${SOURCES} ${IMGUI_SOURCES})
+
 if(MINGW)
     set(SDL2_DIR "${THIRD_PARTY}/SDL_Bundle_Mingw")
     set(SDL2_INCLUDE_DIRS ${SDL2_DIR}/include) # Same as SDL2_IMAGE_INCLUDE_DIR and SDL2_MIXER_INCLUDE_DIR

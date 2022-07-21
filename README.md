@@ -3,6 +3,8 @@
 # Setup & Build
 
 ## Linux (debian based)
+We are using SDL 2.0.20.
+You get it automatically if using Ubuntu 22 or later.
 ```
 sudo apt update
 sudo apt install -y build-essential

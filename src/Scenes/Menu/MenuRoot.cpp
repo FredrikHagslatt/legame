@@ -4,13 +4,14 @@
 #include "Systems/MenuNavigationSystem.h"
 #include "Events/EventDispatcher.h"
 
-void MenuRoot::Update(double elapsedTime)
+void MenuRoot::Update(const double elapsedTime)
 {
-	m_sceneManager.Cycle(elapsedTime);
+	m_sceneManager.Update(elapsedTime);
 }
 
-void MenuRoot::RenderGraphics(double elapsedTime)
+void MenuRoot::RenderGraphics(const double elapsedTime)
 {
+	m_sceneManager.RenderGraphics(elapsedTime);
 }
 
 void MenuRoot::Load()

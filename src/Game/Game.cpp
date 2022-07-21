@@ -5,6 +5,7 @@
 
 #include "entt/entt.hpp"
 #include "Logger/Logger.h"
+#include "DevTools/DevTools.h"
 #include "Types.h"
 
 #include "Scenes/Hub.h"
@@ -14,6 +15,10 @@
 #include "Events/EventDispatcher.h"
 #include "Events/KeyPressedEvent.h"
 #include "Events/KeyReleasedEvent.h"
+
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_sdl.h>
+#include <imgui/imgui_impl_sdlrenderer.h>
 
 int Game::mapWidth;
 int Game::mapHeight;
@@ -38,6 +43,11 @@ Game::~Game()
 
 void Game::Initialize()
 {
+
+    SDL_version linked;
+    SDL_GetVersion(&linked);
+    Logger::Info("[Game] Linking against SDL version: " + std::to_string(linked.major) + "." + std::to_string(linked.minor) + "." + std::to_string(linked.patch));
+
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         Logger::Fatal("[Game] Error initializing SDL.");
@@ -69,9 +79,18 @@ void Game::Initialize()
     }
 
     // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-    isRunning = true;
     Event::dispatcher = entt::dispatcher{};
     Logger::Info("[Game] SDL Initialized.");
+
+    // Initialize ImGui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    ImGui_ImplSDL2_InitForSDLRenderer(m_window, m_renderer);
+    ImGui_ImplSDLRenderer_Init(m_renderer);
+    Logger::Info("[Game] ImGui Initialized.");
+
+    isRunning = true;
 }
 
 void Game::ProcessInput()
@@ -79,6 +98,16 @@ void Game::ProcessInput()
     SDL_Event sdlEvent;
     while (SDL_PollEvent(&sdlEvent))
     {
+        // Handle ImGui SDL input
+        ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
+        ImGuiIO &io = ImGui::GetIO();
+        int mouseX, mouseY;
+        const int buttons = SDL_GetMouseState(&mouseX, &mouseY);
+        io.MousePos = ImVec2(mouseX, mouseY);
+        io.MouseDown[0] = buttons & SDL_BUTTON(SDL_BUTTON_LEFT);
+        io.MouseDown[1] = buttons & SDL_BUTTON(SDL_BUTTON_RIGHT);
+
+        // Handle Game SDL input
         SDL_Keycode keycode = sdlEvent.key.keysym.sym;
         switch (sdlEvent.type)
         {
@@ -94,6 +123,7 @@ void Game::ProcessInput()
             break;
         case SDL_KEYUP:
             Event::dispatcher.trigger(KeyReleasedEvent{m_registry, keycode});
+            break;
         }
     }
 }
@@ -110,6 +140,7 @@ void Game::Setup()
     m_sceneManager.QueueSceneChange("MenuRoot");
 
     Event::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
+    Event::dispatcher.sink<KeyPressedEvent>().connect<&DevTools::ToggleShowDevTools>();
     Logger::Info("[Game] Game Setup.");
 }
 
@@ -127,7 +158,19 @@ double Game::ElapsedTime()
 
 void Game::Update()
 {
-    m_sceneManager.Cycle(ElapsedTime());
+    double elapsedTime = ElapsedTime();
+    m_sceneManager.Update(elapsedTime);
+
+    SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
+    SDL_RenderClear(m_renderer);
+    m_sceneManager.RenderGraphics(elapsedTime);
+
+    if (DevTools::showDevTools)
+    {
+        DevTools::Render();
+    }
+
+    SDL_RenderPresent(m_renderer);
 }
 
 void Game::Run()
@@ -142,6 +185,12 @@ void Game::Run()
 
 void Game::Destroy()
 {
+    // Destroy ImGui
+    ImGui_ImplSDLRenderer_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
+    // Destroy SDL
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();

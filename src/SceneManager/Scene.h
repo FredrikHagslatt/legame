@@ -11,11 +11,12 @@ public:
 	std::shared_ptr<AssetStore> m_assetStore;
 	SDL_Renderer *m_renderer;
 
-	virtual void Update(double elapsedTime) = 0;
-	virtual void RenderGraphics(double elapsedTime) = 0;
+	virtual void Update(const double elapsedTime) = 0;
+	virtual void RenderGraphics(const double elapsedTime) = 0;
 	virtual void Load() = 0;   // Load sprites and audio needed for the scene
 	virtual void Unload() = 0; // Unload sprites and audio to avoid memory leaks
-	void Cycle(double elapsedTime);
+
+	// void Cycle(const double elapsedTime);
 	Scene(SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore);
 };
 #endif // SCENE_H
