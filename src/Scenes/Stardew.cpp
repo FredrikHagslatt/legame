@@ -76,16 +76,6 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
     Game::mapWidth = mapNumCols * TILESIZE * SCALE;
     Game::mapHeight = mapNumRows * TILESIZE * SCALE;
 
-    vec2f offset(0.0);
-    if (Game::mapWidth < WINDOWWIDTH)
-    {
-        offset.x = (WINDOWWIDTH - Game::mapWidth) / 2;
-    }
-    if (Game::mapHeight < WINDOWHEIGHT)
-    {
-        offset.y = (WINDOWHEIGHT - Game::mapHeight) / 2;
-    }
-
     // Read map, create tiles.
     for (int y = 0; y < mapNumRows; y++)
     {
@@ -101,7 +91,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
 
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
-            m_registry->emplace<Transform>(tile, vec2f(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y));
+            m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
             m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
         }
     }
