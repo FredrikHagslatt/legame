@@ -42,6 +42,8 @@ class Stardew : public Scene
 {
 protected:
 	// Stardew
+	int mapWidth = 0;
+	int mapHeight = 0;
 	SDL_Rect camera;
 	void LoadLevel();
 	void LoadMap(std::string spritesheet, std::string map);

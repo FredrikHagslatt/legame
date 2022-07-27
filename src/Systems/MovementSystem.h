@@ -9,12 +9,11 @@
 #include "Components/CircleCollider.h"
 #include "Events/CollisionEvent.h"
 #include "Logger/Logger.h"
-#include "Game/Game.h"
 
 class MovementSystem
 {
 public:
-    static void Update(std::shared_ptr<entt::registry> registry, double deltaTime)
+    static void Update(std::shared_ptr<entt::registry> registry, double deltaTime, int mapWidth, int mapHeight)
     {
         auto view = registry->view<Transform, Velocity>();
         for (auto entity : view)
@@ -38,15 +37,15 @@ public:
                 int paddingRight = 50;
                 int paddingBottom = 50;
                 transform.position.x = transform.position.x < paddingLeft ? paddingLeft : transform.position.x;
-                transform.position.x = transform.position.x > Game::mapWidth - paddingRight ? Game::mapWidth - paddingRight : transform.position.x;
+                transform.position.x = transform.position.x > mapWidth - paddingRight ? mapWidth - paddingRight : transform.position.x;
                 transform.position.y = transform.position.y < paddingTop ? paddingTop : transform.position.y;
-                transform.position.y = transform.position.y > Game::mapHeight - paddingBottom ? Game::mapHeight - paddingBottom : transform.position.y;
+                transform.position.y = transform.position.y > mapHeight - paddingBottom ? mapHeight - paddingBottom : transform.position.y;
             }
 
             bool isEntityOutsideMap = (transform.position.x < 0 ||
-                                       transform.position.x > Game::mapWidth ||
+                                       transform.position.x > mapWidth ||
                                        transform.position.y < 0 ||
-                                       transform.position.y > Game::mapHeight);
+                                       transform.position.y > mapHeight);
 
             if (isEntityOutsideMap && !registry->all_of<Player_Tag>(entity))
             {

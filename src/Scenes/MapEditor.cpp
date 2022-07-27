@@ -3,69 +3,92 @@
 
 void MapEditor::UpdateMapSize()
 {
-    if (queuedMapWidth > Game::mapWidth)
+    if (queuedMapNumCols > mapNumCols)
     {
-        IncreaseMapWidth(Game::mapWidth, queuedMapWidth);
+        IncreaseMapWidth(queuedMapNumCols);
     }
-    else if (queuedMapWidth < Game::mapWidth)
+    else if (queuedMapNumCols < mapNumCols)
     {
-        DecreaseMapWidth(queuedMapWidth);
+        DecreaseMapWidth(queuedMapNumCols);
     }
 
-    if (queuedMapHeight > Game::mapHeight)
+    if (queuedMapNumRows > mapNumRows)
     {
-        IncreaseMapHeight(Game::mapHeight, queuedMapHeight);
+        IncreaseMapHeight(queuedMapNumRows);
     }
-    else if (queuedMapHeight < Game::mapHeight)
+    else if (queuedMapNumRows < mapNumRows)
     {
-        DecreaseMapHeight(queuedMapHeight);
+        DecreaseMapHeight(queuedMapNumRows);
     }
+
+    mapWidth = mapNumCols * TILESIZE * SCALE;
+    mapHeight = mapNumRows * TILESIZE * SCALE;
 }
 
-void MapEditor::IncreaseMapWidth(int oldWidth, int newWidth)
+void MapEditor::IncreaseMapWidth(int newNumCols)
 {
+    for (int y = 0; y < mapNumRows; y++)
+    {
+        for (int x = mapNumCols; x < newNumCols; x++)
+        {
+            const auto tile = m_registry->create();
+            m_registry->emplace<Tile_Tag>(tile);
+            m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
+            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, 0, 0);
+        }
+    }
+    mapNumCols = newNumCols;
 }
 
-void MapEditor::DecreaseMapWidth(int newWidth)
+void MapEditor::DecreaseMapWidth(int newNumCols)
 {
     auto view = m_registry->view<Tile_Tag, Transform>();
     for (auto tile : view)
     {
         auto transform = view.get<Transform>(tile);
 
-        if (transform.position.x >= newWidth * TILESIZE * SCALE)
+        if (transform.position.x >= newNumCols * TILESIZE * SCALE)
         {
             Game::entitiesToKill.push_back(tile);
         }
     }
-    Game::mapWidth = newWidth;
+    mapNumCols = newNumCols;
 }
 
-void MapEditor::IncreaseMapHeight(int oldHeight, int newHeight)
+void MapEditor::IncreaseMapHeight(int newNumRows)
 {
+    for (int x = 0; x < mapNumCols; x++)
+    {
+        for (int y = mapNumRows; y < newNumRows; y++)
+        {
+            const auto tile = m_registry->create();
+            m_registry->emplace<Tile_Tag>(tile);
+            m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
+            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, 0, 0);
+        }
+    }
+    mapNumRows = newNumRows;
 }
 
-void MapEditor::DecreaseMapHeight(int newHeight)
+void MapEditor::DecreaseMapHeight(int newNumRows)
 {
-
     auto view = m_registry->view<Tile_Tag, Transform>();
     for (auto tile : view)
     {
         auto transform = view.get<Transform>(tile);
 
-        if (transform.position.y >= newHeight * TILESIZE * SCALE)
+        if (transform.position.y >= newNumRows * TILESIZE * SCALE)
         {
             Game::entitiesToKill.push_back(tile);
         }
     }
-
-    Game::mapHeight = newHeight;
+    mapNumRows = newNumRows;
 }
 
 void MapEditor::UpdateScene(const double elapsedTime)
 {
-    queuedMapWidth = std::max(1, queuedMapWidth);
-    queuedMapHeight = std::max(1, queuedMapHeight);
+    queuedMapNumCols = std::max(1, queuedMapNumCols);
+    queuedMapNumRows = std::max(1, queuedMapNumRows);
 
     UpdateMapSize();
 }
@@ -82,9 +105,8 @@ void MapEditor::RenderScene(const double elapsedTime)
     window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
     if (ImGui::Begin("Map Editor", NULL, window_flags))
     {
-
-        ImGui::InputInt("Map Width", &queuedMapWidth);
-        ImGui::InputInt("Map Height", &queuedMapHeight);
+        ImGui::InputInt("Map number of columns", &queuedMapNumCols);
+        ImGui::InputInt("Map number of rows", &queuedMapNumRows);
     }
     ImGui::End();
 
@@ -95,6 +117,11 @@ void MapEditor::RenderScene(const double elapsedTime)
 void MapEditor::LoadScene()
 {
     LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/map_editor.map");
+
+    queuedMapNumCols = mapWidth / TILESIZE / SCALE;
+    queuedMapNumRows = mapHeight / TILESIZE / SCALE;
+    mapNumCols = queuedMapNumCols;
+    mapNumRows = queuedMapNumRows;
 
     m_assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20);
     m_assetStore->AddFont("pico8-font-5", "assets/fonts/pico8.ttf", 5);

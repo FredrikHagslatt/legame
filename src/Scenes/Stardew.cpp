@@ -7,9 +7,9 @@
 void Stardew::Update(const double elapsedTime)
 {
     // Update systems
-    MovementSystem::Update(m_registry, elapsedTime);
+    MovementSystem::Update(m_registry, elapsedTime, mapWidth, mapHeight);
     AnimationSystem::Update(m_registry);
-    CameraMovementSystem::Update(m_registry, camera);
+    CameraMovementSystem::Update(m_registry, camera, mapWidth, mapHeight);
     ProjectileEmitSystem::Update(m_registry);
     ProjectileLifeCycleSystem::Update(m_registry);
     CollisionSystem::Update(m_registry);
@@ -73,8 +73,8 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
 
     Logger::Info("[Stardew] Mapsize: " + std::to_string(mapNumCols) + " x " + std::to_string(mapNumRows));
 
-    Game::mapWidth = mapNumCols * TILESIZE * SCALE;
-    Game::mapHeight = mapNumRows * TILESIZE * SCALE;
+    mapWidth = mapNumCols * TILESIZE * SCALE;
+    mapHeight = mapNumRows * TILESIZE * SCALE;
 
     // Read map, create tiles.
     for (int y = 0; y < mapNumRows; y++)

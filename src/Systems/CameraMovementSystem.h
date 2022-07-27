@@ -12,14 +12,14 @@
 class CameraMovementSystem
 {
 public:
-    static void Update(std::shared_ptr<entt::registry> registry, SDL_Rect &camera)
+    static void Update(std::shared_ptr<entt::registry> registry, SDL_Rect &camera, int mapWidth, int mapHeight)
     {
         auto view = registry->view<Player_Tag, Transform>();
         for (auto entity : view)
         {
             auto const transform = view.get<Transform>(entity);
 
-            if (transform.position.x + (camera.w / 2) < Game::mapWidth)
+            if (transform.position.x + (camera.w / 2) < mapWidth)
             {
                 camera.x = transform.position.x - (WINDOWWIDTH / 2);
             }
@@ -27,12 +27,12 @@ public:
             camera.x = camera.x < 0 ? 0 : camera.x;
             camera.x = camera.x > camera.w ? camera.w : camera.x;
 
-            if (Game::mapWidth < camera.w)
+            if (mapWidth < camera.w)
             {
-                camera.x = -(WINDOWWIDTH - Game::mapWidth) / 2;
+                camera.x = -(WINDOWWIDTH - mapWidth) / 2;
             }
 
-            if (transform.position.y + (camera.h / 2) < Game::mapHeight)
+            if (transform.position.y + (camera.h / 2) < mapHeight)
             {
                 camera.y = transform.position.y - (WINDOWHEIGHT / 2);
             }
@@ -40,9 +40,9 @@ public:
             camera.y = camera.y < 0 ? 0 : camera.y;
             camera.y = camera.y > camera.h ? camera.h : camera.y;
 
-            if (Game::mapHeight < camera.h)
+            if (mapHeight < camera.h)
             {
-                camera.y = -(WINDOWHEIGHT - Game::mapHeight) / 2;
+                camera.y = -(WINDOWHEIGHT - mapHeight) / 2;
             }
         }
     }

@@ -21,8 +21,6 @@
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_sdlrenderer.h>
 
-int Game::mapWidth;
-int Game::mapHeight;
 std::list<entt::entity> Game::entitiesToKill;
 entt::dispatcher Event::dispatcher;
 
@@ -31,8 +29,6 @@ Game::Game()
       m_registry(std::make_shared<entt::registry>()),
       m_assetStore(std::make_shared<AssetStore>())
 {
-    mapWidth = 0;
-    mapHeight = 0;
     isRunning = false;
     Logger::Info("[Game] Game Created.");
 }
