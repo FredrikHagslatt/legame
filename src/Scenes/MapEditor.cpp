@@ -1,11 +1,95 @@
 #include "MapEditor.h"
 #include "Constants.h"
 
+void MapEditor::UpdateMapSize()
+{
+    if (queuedMapWidth > Game::mapWidth)
+    {
+        IncreaseMapWidth(Game::mapWidth, queuedMapWidth);
+    }
+    else if (queuedMapWidth < Game::mapWidth)
+    {
+        DecreaseMapWidth(queuedMapWidth);
+    }
+
+    if (queuedMapHeight > Game::mapHeight)
+    {
+        IncreaseMapHeight(Game::mapHeight, queuedMapHeight);
+    }
+    else if (queuedMapHeight < Game::mapHeight)
+    {
+        DecreaseMapHeight(queuedMapHeight);
+    }
+}
+
+void MapEditor::IncreaseMapWidth(int oldWidth, int newWidth)
+{
+}
+
+void MapEditor::DecreaseMapWidth(int newWidth)
+{
+    auto view = m_registry->view<Tile_Tag, Transform>();
+    for (auto tile : view)
+    {
+        auto transform = view.get<Transform>(tile);
+
+        if (transform.position.x >= newWidth * TILESIZE * SCALE)
+        {
+            Game::entitiesToKill.push_back(tile);
+        }
+    }
+    Game::mapWidth = newWidth;
+}
+
+void MapEditor::IncreaseMapHeight(int oldHeight, int newHeight)
+{
+}
+
+void MapEditor::DecreaseMapHeight(int newHeight)
+{
+
+    auto view = m_registry->view<Tile_Tag, Transform>();
+    for (auto tile : view)
+    {
+        auto transform = view.get<Transform>(tile);
+
+        if (transform.position.y >= newHeight * TILESIZE * SCALE)
+        {
+            Game::entitiesToKill.push_back(tile);
+        }
+    }
+
+    Game::mapHeight = newHeight;
+}
+
 void MapEditor::UpdateScene(const double elapsedTime)
 {
+    queuedMapWidth = std::max(1, queuedMapWidth);
+    queuedMapHeight = std::max(1, queuedMapHeight);
+
+    UpdateMapSize();
 }
 void MapEditor::RenderScene(const double elapsedTime)
 {
+
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImGui_ImplSDLRenderer_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+    ImGuiWindowFlags window_flags = 0;
+    window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
+    if (ImGui::Begin("Map Editor", NULL, window_flags))
+    {
+
+        ImGui::InputInt("Map Width", &queuedMapWidth);
+        ImGui::InputInt("Map Height", &queuedMapHeight);
+    }
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 }
 
 void MapEditor::LoadScene()
