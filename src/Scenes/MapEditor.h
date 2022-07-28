@@ -9,6 +9,8 @@ private:
 	//    LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/hub.map");
 	std::string spritesheet = "assets/tilemaps/ground_tiles.png";
 
+	bool showTileSelector = false;
+
 	int mapNumCols = 1;
 	int mapNumRows = 1;
 	int queuedMapNumCols = 1;

@@ -93,6 +93,7 @@ void MapEditor::UpdateScene(const double elapsedTime)
 
     UpdateMapSize();
 }
+
 void MapEditor::RenderScene(const double elapsedTime)
 {
 
@@ -109,10 +110,20 @@ void MapEditor::RenderScene(const double elapsedTime)
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
+
     if (ImGui::Begin("Map Editor", NULL, window_flags))
     {
-        ImGui::InputInt("Map number of columns", &queuedMapNumCols);
-        ImGui::InputInt("Map number of rows", &queuedMapNumRows);
+
+        if (ImGui::CollapsingHeader("Mapsize"))
+        {
+            ImGui::InputInt("Number of columns", &queuedMapNumCols);
+            ImGui::InputInt("Number of rows", &queuedMapNumRows);
+        }
+
+        if (ImGui::CollapsingHeader("Show tileselector"))
+        {
+            ImGui::Button("Placeholder for tileselector");
+        }
     }
     ImGui::End();
 
