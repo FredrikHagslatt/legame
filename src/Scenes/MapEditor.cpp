@@ -1,5 +1,6 @@
 #include "MapEditor.h"
 #include "Constants.h"
+#include "DevTools/DevTools.h"
 
 void MapEditor::UpdateMapSize()
 {
@@ -94,6 +95,11 @@ void MapEditor::UpdateScene(const double elapsedTime)
 }
 void MapEditor::RenderScene(const double elapsedTime)
 {
+
+    if (DevTools::showDevTools)
+    { // To prevent the different ImGui windows from fighting over inputs
+        return;
+    }
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     ImGui_ImplSDLRenderer_NewFrame();
