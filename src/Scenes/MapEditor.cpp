@@ -120,9 +120,33 @@ void MapEditor::RenderScene(const double elapsedTime)
             ImGui::InputInt("Number of rows", &queuedMapNumRows);
         }
 
-        if (ImGui::CollapsingHeader("Show tileselector"))
+        if (ImGui::CollapsingHeader("Tileselector"))
         {
-            ImGui::Button("Placeholder for tileselector");
+            SDL_Texture *texture = m_assetStore->GetTexture("assets/tilemaps/ground_tiles.png");
+            int textureWidth, textureHeight;
+            SDL_QueryTexture(texture, NULL, NULL, &textureWidth, &textureHeight);
+
+            for (int y = 0; y < textureHeight / TILESIZE; y++)
+            {
+                for (int x = 0; x < textureWidth / TILESIZE; x++)
+                {
+                    ImGui::PushID(10 * y + x);
+                    int padding = 0;
+                    ImVec2 size = ImVec2(TILESIZE * SCALE, TILESIZE * SCALE);
+                    ImVec2 subSpriteTopLeftCorner = ImVec2(float(TILESIZE) * x / textureWidth, float(TILESIZE) * y / textureHeight);
+                    ImVec2 subSpriteBotRightCorner = ImVec2(float(TILESIZE) * (x + 1) / textureWidth, float(TILESIZE) * (y + 1) / textureHeight);
+                    ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);   // Black background
+                    ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // No tint
+                    if (ImGui::ImageButton(texture, size, subSpriteTopLeftCorner, subSpriteBotRightCorner, padding, bg_col, tint_col))
+                    {
+                        selectedTile = vec2i(x, y);
+                        Logger::Info("Selecting tile " + selectedTile.string());
+                    }
+                    ImGui::PopID();
+                    ImGui::SameLine();
+                }
+                ImGui::NewLine();
+            }
         }
     }
     ImGui::End();

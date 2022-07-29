@@ -37,11 +37,7 @@ struct vec2
     T magnitude() const { return T(std::sqrt(x * x + y * y)); }
     T magnitudePow2() const { return T(x * x + y * y); }
     double arg() const { return atan(double(y) / double(x)); }
-    friend std::ostream &operator<<(std::ostream &os, const vec2 &rhs)
-    {
-        os << "{ x: " + std::to_string(rhs.x) + ", y: " + std::to_string(rhs.y) + " }\n";
-        return os;
-    }
+    std::string string() const { return "{ x: " + std::to_string(x) + ", y: " + std::to_string(y) + " }"; }
 };
 
 typedef vec2<int> vec2i;

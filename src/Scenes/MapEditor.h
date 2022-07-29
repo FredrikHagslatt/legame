@@ -2,12 +2,14 @@
 #define MAPEDITOR_H
 
 #include "Scenes/Stardew.h"
+#include "Types.h"
 
 class MapEditor : public Stardew
 {
 private:
 	//    LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/hub.map");
 	std::string spritesheet = "assets/tilemaps/ground_tiles.png";
+	vec2i selectedTile = vec2i(0);
 
 	bool showTileSelector = false;
 
