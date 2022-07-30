@@ -9,7 +9,8 @@ class MapEditor : public Stardew
 private:
 	//    LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/hub.map");
 	std::string spritesheet = "assets/tilemaps/ground_tiles.png";
-	vec2i selectedTile = vec2i(0);
+	vec2i selectedSubSprite = vec2i(0);
+	std::unique_ptr<entt::entity> selectedTile;
 
 	bool showTileSelector = false;
 
@@ -23,6 +24,7 @@ private:
 	void DecreaseMapWidth(int newWidth);
 	void IncreaseMapHeight(int newHeight);
 	void DecreaseMapHeight(int newHeight);
+	void SelectTile();
 
 public:
 	void UpdateScene(const double elapsedTime) override;

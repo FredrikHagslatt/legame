@@ -86,12 +86,30 @@ void MapEditor::DecreaseMapHeight(int newNumRows)
     mapNumRows = newNumRows;
 }
 
+void MapEditor::SelectTile()
+{
+    int mouseX, mouseY;
+    Uint32 buttons = SDL_GetMouseState(&mouseX, &mouseY);
+
+    auto view = m_registry->view<Tile_Tag, Transform>();
+
+    for (auto entity : view)
+    {
+        const auto transform = view.get<Transform>(entity);
+        if (mouseX >= transform.position.x - camera.x && mouseX <= transform.position.x - camera.x + TILESIZE * SCALE && mouseY >= transform.position.y - camera.y && mouseY <= transform.position.y - camera.y + TILESIZE * SCALE)
+        {
+            Logger::Info("One tile");
+        }
+    }
+}
+
 void MapEditor::UpdateScene(const double elapsedTime)
 {
     queuedMapNumCols = std::max(1, queuedMapNumCols);
     queuedMapNumRows = std::max(1, queuedMapNumRows);
 
     UpdateMapSize();
+    SelectTile();
 }
 
 void MapEditor::RenderScene(const double elapsedTime)
@@ -139,8 +157,8 @@ void MapEditor::RenderScene(const double elapsedTime)
                     ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // No tint
                     if (ImGui::ImageButton(texture, size, subSpriteTopLeftCorner, subSpriteBotRightCorner, padding, bg_col, tint_col))
                     {
-                        selectedTile = vec2i(x, y);
-                        Logger::Info("Selecting tile " + selectedTile.string());
+                        selectedSubSprite = vec2i(x, y);
+                        Logger::Info("Selecting sub sprite " + selectedSubSprite.string());
                     }
                     ImGui::PopID();
                     ImGui::SameLine();
@@ -164,6 +182,7 @@ void MapEditor::LoadScene()
     mapNumCols = queuedMapNumCols;
     mapNumRows = queuedMapNumRows;
 
+    m_assetStore->AddTexture(m_renderer, "bullet-image", "assets/images/bullet.png");
     m_assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20);
     m_assetStore->AddFont("pico8-font-5", "assets/fonts/pico8.ttf", 5);
 
