@@ -22,8 +22,7 @@ struct Sprite
         bool fixedPosition = false,
         int srcRectX = 0,
         int srcRectY = 0,
-        SDL_RendererFlip flip = SDL_FLIP_NONE
-        )
+        SDL_RendererFlip flip = SDL_FLIP_NONE)
         : assetId(assetId),
           width(width),
           height(height),

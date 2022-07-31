@@ -1,44 +1,45 @@
 #include "MapEditor.h"
 #include "Constants.h"
+#include "Events/EventDispatcher.h"
 #include "DevTools/DevTools.h"
 
 void MapEditor::UpdateMapSize()
 {
-    if (queuedMapNumCols > mapNumCols)
+    if (m_queuedMapNumCols > m_mapNumCols)
     {
-        IncreaseMapWidth(queuedMapNumCols);
+        IncreaseMapWidth(m_queuedMapNumCols);
     }
-    else if (queuedMapNumCols < mapNumCols)
+    else if (m_queuedMapNumCols < m_mapNumCols)
     {
-        DecreaseMapWidth(queuedMapNumCols);
-    }
-
-    if (queuedMapNumRows > mapNumRows)
-    {
-        IncreaseMapHeight(queuedMapNumRows);
-    }
-    else if (queuedMapNumRows < mapNumRows)
-    {
-        DecreaseMapHeight(queuedMapNumRows);
+        DecreaseMapWidth(m_queuedMapNumCols);
     }
 
-    mapWidth = mapNumCols * TILESIZE * SCALE;
-    mapHeight = mapNumRows * TILESIZE * SCALE;
+    if (m_queuedMapNumRows > m_mapNumRows)
+    {
+        IncreaseMapHeight(m_queuedMapNumRows);
+    }
+    else if (m_queuedMapNumRows < m_mapNumRows)
+    {
+        DecreaseMapHeight(m_queuedMapNumRows);
+    }
+
+    mapWidth = m_mapNumCols * TILESIZE * SCALE;
+    mapHeight = m_mapNumRows * TILESIZE * SCALE;
 }
 
 void MapEditor::IncreaseMapWidth(int newNumCols)
 {
-    for (int y = 0; y < mapNumRows; y++)
+    for (int y = 0; y < m_mapNumRows; y++)
     {
-        for (int x = mapNumCols; x < newNumCols; x++)
+        for (int x = m_mapNumCols; x < newNumCols; x++)
         {
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
             m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, 0, 0);
+            m_registry->emplace<Sprite>(tile, m_spritesheet, TILESIZE, TILESIZE, 0, false, 0, 0);
         }
     }
-    mapNumCols = newNumCols;
+    m_mapNumCols = newNumCols;
 }
 
 void MapEditor::DecreaseMapWidth(int newNumCols)
@@ -53,22 +54,22 @@ void MapEditor::DecreaseMapWidth(int newNumCols)
             Game::entitiesToKill.push_back(tile);
         }
     }
-    mapNumCols = newNumCols;
+    m_mapNumCols = newNumCols;
 }
 
 void MapEditor::IncreaseMapHeight(int newNumRows)
 {
-    for (int x = 0; x < mapNumCols; x++)
+    for (int x = 0; x < m_mapNumCols; x++)
     {
-        for (int y = mapNumRows; y < newNumRows; y++)
+        for (int y = m_mapNumRows; y < newNumRows; y++)
         {
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
             m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, 0, 0);
+            m_registry->emplace<Sprite>(tile, m_spritesheet, TILESIZE, TILESIZE, 0, false, 0, 0);
         }
     }
-    mapNumRows = newNumRows;
+    m_mapNumRows = newNumRows;
 }
 
 void MapEditor::DecreaseMapHeight(int newNumRows)
@@ -83,7 +84,7 @@ void MapEditor::DecreaseMapHeight(int newNumRows)
             Game::entitiesToKill.push_back(tile);
         }
     }
-    mapNumRows = newNumRows;
+    m_mapNumRows = newNumRows;
 }
 
 void MapEditor::SelectTile()
@@ -93,23 +94,57 @@ void MapEditor::SelectTile()
 
     auto view = m_registry->view<Tile_Tag, Transform>();
 
-    for (auto entity : view)
+    for (auto &entity : view)
     {
         const auto transform = view.get<Transform>(entity);
+        auto &m_tileBrushTransform = m_registry->get<Transform>(m_tileBrush);
+
         if (mouseX >= transform.position.x - camera.x && mouseX <= transform.position.x - camera.x + TILESIZE * SCALE && mouseY >= transform.position.y - camera.y && mouseY <= transform.position.y - camera.y + TILESIZE * SCALE)
         {
-            Logger::Info("One tile");
+            m_selectedTile = std::make_unique<entt::entity>(entity);
+            m_tileBrushTransform.position = transform.position;
+            return;
         }
+        m_selectedTile = nullptr;
+        m_tileBrushTransform.position = vec2f(1000000, 1000000); // Far outside the visible area
     }
+}
+
+void MapEditor::PlaceTile()
+{
+    if (m_selectedTile)
+    {
+        auto &sprite = m_registry->get<Sprite>(*m_selectedTile);
+        const auto brushSprite = m_registry->get<Sprite>(m_tileBrush);
+        sprite.srcRect = brushSprite.srcRect;
+    }
+}
+
+void MapEditor::OnMouseMotionEvent(const MouseMotionEvent &event)
+{
+    SelectTile();
+}
+void MapEditor::OnMouseButtonPressedEvent(const MouseButtonPressedEvent &event)
+{
+    m_leftMouseHeld = true;
+    Logger::Info("Map editor mouse pressed");
+}
+void MapEditor::OnMouseButtonReleasedEvent(const MouseButtonReleasedEvent &event)
+{
+    m_leftMouseHeld = false;
+    Logger::Info("Map editor mouse released");
 }
 
 void MapEditor::UpdateScene(const double elapsedTime)
 {
-    queuedMapNumCols = std::max(1, queuedMapNumCols);
-    queuedMapNumRows = std::max(1, queuedMapNumRows);
-
+    m_queuedMapNumCols = std::max(1, m_queuedMapNumCols);
+    m_queuedMapNumRows = std::max(1, m_queuedMapNumRows);
     UpdateMapSize();
-    SelectTile();
+
+    if (m_leftMouseHeld)
+    {
+        PlaceTile();
+    }
 }
 
 void MapEditor::RenderScene(const double elapsedTime)
@@ -134,8 +169,8 @@ void MapEditor::RenderScene(const double elapsedTime)
 
         if (ImGui::CollapsingHeader("Mapsize"))
         {
-            ImGui::InputInt("Number of columns", &queuedMapNumCols);
-            ImGui::InputInt("Number of rows", &queuedMapNumRows);
+            ImGui::InputInt("Number of columns", &m_queuedMapNumCols);
+            ImGui::InputInt("Number of rows", &m_queuedMapNumRows);
         }
 
         if (ImGui::CollapsingHeader("Tileselector"))
@@ -157,8 +192,15 @@ void MapEditor::RenderScene(const double elapsedTime)
                     ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // No tint
                     if (ImGui::ImageButton(texture, size, subSpriteTopLeftCorner, subSpriteBotRightCorner, padding, bg_col, tint_col))
                     {
-                        selectedSubSprite = vec2i(x, y);
-                        Logger::Info("Selecting sub sprite " + selectedSubSprite.string());
+                        Logger::Info("Selecting sub sprite { x: " + std::to_string(x) + ", y: " + std::to_string(y) + " }");
+
+                        auto &sprite = m_registry->get<Sprite>(m_tileBrush);
+                        sprite.srcRect =
+                            {
+                                x * TILESIZE,
+                                y * TILESIZE,
+                                TILESIZE,
+                                TILESIZE};
                     }
                     ImGui::PopID();
                     ImGui::SameLine();
@@ -176,11 +218,14 @@ void MapEditor::RenderScene(const double elapsedTime)
 void MapEditor::LoadScene()
 {
     LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/map_editor.map");
+    m_tileBrush = m_registry->create();
+    m_registry->emplace<Transform>(m_tileBrush, vec2f(0));
+    m_registry->emplace<Sprite>(m_tileBrush, m_spritesheet, TILESIZE, TILESIZE, 1, false, 0, 0);
 
-    queuedMapNumCols = mapWidth / TILESIZE / SCALE;
-    queuedMapNumRows = mapHeight / TILESIZE / SCALE;
-    mapNumCols = queuedMapNumCols;
-    mapNumRows = queuedMapNumRows;
+    m_queuedMapNumCols = mapWidth / TILESIZE / SCALE;
+    m_queuedMapNumRows = mapHeight / TILESIZE / SCALE;
+    m_mapNumCols = m_queuedMapNumCols;
+    m_mapNumRows = m_queuedMapNumRows;
 
     m_assetStore->AddTexture(m_renderer, "bullet-image", "assets/images/bullet.png");
     m_assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20);
@@ -197,8 +242,15 @@ void MapEditor::LoadScene()
         auto &transform = view.get<Transform>(player);
         transform.position = vec2f(0.0, 0.0);
     }
+
+    Event::dispatcher.sink<MouseMotionEvent>().connect<&MapEditor::OnMouseMotionEvent>(this);
+    Event::dispatcher.sink<MouseButtonPressedEvent>().connect<&MapEditor::OnMouseButtonPressedEvent>(this);
+    Event::dispatcher.sink<MouseButtonReleasedEvent>().connect<&MapEditor::OnMouseButtonReleasedEvent>(this);
 }
 
 void MapEditor::UnloadScene()
 {
+    Event::dispatcher.sink<MouseMotionEvent>().disconnect<&MapEditor::OnMouseMotionEvent>(this);
+    Event::dispatcher.sink<MouseButtonPressedEvent>().disconnect<&MapEditor::OnMouseButtonPressedEvent>(this);
+    Event::dispatcher.sink<MouseButtonReleasedEvent>().disconnect<&MapEditor::OnMouseButtonReleasedEvent>(this);
 }
