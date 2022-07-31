@@ -87,10 +87,10 @@ void MapEditor::DecreaseMapHeight(int newNumRows)
     m_mapNumRows = newNumRows;
 }
 
-void MapEditor::SelectTile()
+void MapEditor::SelectTile(const MouseMotionEvent &event)
 {
-    int mouseX, mouseY;
-    Uint32 buttons = SDL_GetMouseState(&mouseX, &mouseY);
+    int mouseX = event.motion.x;
+    int mouseY = event.motion.y;
 
     auto view = m_registry->view<Tile_Tag, Transform>();
 
@@ -120,19 +120,23 @@ void MapEditor::PlaceTile()
     }
 }
 
+void MapEditor::SaveMap()
+{
+}
+
 void MapEditor::OnMouseMotionEvent(const MouseMotionEvent &event)
 {
-    SelectTile();
+    SelectTile(event);
 }
 void MapEditor::OnMouseButtonPressedEvent(const MouseButtonPressedEvent &event)
 {
     m_leftMouseHeld = true;
-    Logger::Info("Map editor mouse pressed");
+    // Contitional entity creation here
 }
+
 void MapEditor::OnMouseButtonReleasedEvent(const MouseButtonReleasedEvent &event)
 {
     m_leftMouseHeld = false;
-    Logger::Info("Map editor mouse released");
 }
 
 void MapEditor::UpdateScene(const double elapsedTime)

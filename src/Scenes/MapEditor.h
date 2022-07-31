@@ -29,8 +29,9 @@ private:
 	void DecreaseMapWidth(int newWidth);
 	void IncreaseMapHeight(int newHeight);
 	void DecreaseMapHeight(int newHeight);
-	void SelectTile();
+	void SelectTile(const MouseMotionEvent &event);
 	void PlaceTile();
+	void SaveMap();
 
 	void OnMouseMotionEvent(const MouseMotionEvent &event);
 	void OnMouseButtonPressedEvent(const MouseButtonPressedEvent &event);
