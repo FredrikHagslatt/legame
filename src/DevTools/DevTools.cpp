@@ -2,6 +2,9 @@
 #include "LogWindow.h"
 #include "Logger/Logger.h"
 
+#include "Events/EventDispatcher.h"
+#include "Events/SceneSwitchEvent.h"
+
 bool DevTools::showDevTools = false;
 bool DevTools::showDemoWindow = false;
 bool DevTools::showLogWindow = false;
@@ -53,6 +56,11 @@ void DevTools::ShowDevTools()
     window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
     if (ImGui::Begin("Dev Tools", NULL, window_flags))
     {
+        if (ImGui::Button("Open Map Editor"))
+        {
+            Event::dispatcher.trigger(SceneSwitchEvent{"Game", "MapEditor"});
+        }
+
         ImGui::Checkbox("Show ImGui Demo Window", &showDemoWindow);
         ImGui::Checkbox("Render Hitboxes", &renderHitboxes);
 

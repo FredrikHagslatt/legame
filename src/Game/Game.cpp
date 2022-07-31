@@ -11,17 +11,20 @@
 #include "Scenes/Hub.h"
 #include "Scenes/Garden.h"
 #include "Scenes/Menu/MenuRoot.h"
+#include "Scenes/MapEditor.h"
 
 #include "Events/EventDispatcher.h"
 #include "Events/KeyPressedEvent.h"
 #include "Events/KeyReleasedEvent.h"
 
+#include "Events/MouseMotionEvent.h"
+#include "Events/MouseButtonPressedEvent.h"
+#include "Events/MouseButtonReleasedEvent.h"
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_sdlrenderer.h>
 
-int Game::mapWidth;
-int Game::mapHeight;
 std::list<entt::entity> Game::entitiesToKill;
 entt::dispatcher Event::dispatcher;
 
@@ -30,8 +33,6 @@ Game::Game()
       m_registry(std::make_shared<entt::registry>()),
       m_assetStore(std::make_shared<AssetStore>())
 {
-    mapWidth = 0;
-    mapHeight = 0;
     isRunning = false;
     Logger::Info("[Game] Game Created.");
 }
@@ -100,15 +101,9 @@ void Game::ProcessInput()
     {
         // Handle ImGui SDL input
         ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
-        ImGuiIO &io = ImGui::GetIO();
-        int mouseX, mouseY;
-        const int buttons = SDL_GetMouseState(&mouseX, &mouseY);
-        io.MousePos = ImVec2(mouseX, mouseY);
-        io.MouseDown[0] = buttons & SDL_BUTTON(SDL_BUTTON_LEFT);
-        io.MouseDown[1] = buttons & SDL_BUTTON(SDL_BUTTON_RIGHT);
 
-        // Handle Game SDL input
         SDL_Keycode keycode = sdlEvent.key.keysym.sym;
+        // Handle Game SDL input
         switch (sdlEvent.type)
         {
         case SDL_QUIT:
@@ -124,6 +119,15 @@ void Game::ProcessInput()
         case SDL_KEYUP:
             Event::dispatcher.trigger(KeyReleasedEvent{m_registry, keycode});
             break;
+        case SDL_MOUSEMOTION:
+            Event::dispatcher.trigger(MouseMotionEvent{sdlEvent.motion});
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            Event::dispatcher.trigger(MouseButtonPressedEvent{sdlEvent.button});
+            break;
+        case SDL_MOUSEBUTTONUP:
+            Event::dispatcher.trigger(MouseButtonReleasedEvent{sdlEvent.button});
+            break;
         }
     }
 }
@@ -138,6 +142,9 @@ void Game::Setup()
     // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
     // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
     m_sceneManager.QueueSceneChange("MenuRoot");
+
+    m_sceneManager.AddScene("MapEditor", std::make_shared<MapEditor>(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.QueueSceneChange("MapEditor");
 
     Event::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
     Event::dispatcher.sink<KeyPressedEvent>().connect<&DevTools::ToggleShowDevTools>();

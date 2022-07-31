@@ -34,8 +34,6 @@ public:
     void Run();
     void Destroy();
 
-    static int mapWidth;
-    static int mapHeight;
     static std::list<entt::entity> entitiesToKill;
 };
 

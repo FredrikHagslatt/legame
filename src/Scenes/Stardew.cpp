@@ -7,9 +7,9 @@
 void Stardew::Update(const double elapsedTime)
 {
     // Update systems
-    MovementSystem::Update(m_registry, elapsedTime);
+    MovementSystem::Update(m_registry, elapsedTime, mapWidth, mapHeight);
     AnimationSystem::Update(m_registry);
-    CameraMovementSystem::Update(m_registry, camera);
+    CameraMovementSystem::Update(m_registry, camera, mapWidth, mapHeight);
     ProjectileEmitSystem::Update(m_registry);
     ProjectileLifeCycleSystem::Update(m_registry);
     CollisionSystem::Update(m_registry);
@@ -73,18 +73,8 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
 
     Logger::Info("[Stardew] Mapsize: " + std::to_string(mapNumCols) + " x " + std::to_string(mapNumRows));
 
-    Game::mapWidth = mapNumCols * TILESIZE * SCALE;
-    Game::mapHeight = mapNumRows * TILESIZE * SCALE;
-
-    vec2f offset(0.0);
-    if (Game::mapWidth < WINDOWWIDTH)
-    {
-        offset.x = (WINDOWWIDTH - Game::mapWidth) / 2;
-    }
-    if (Game::mapHeight < WINDOWHEIGHT)
-    {
-        offset.y = (WINDOWHEIGHT - Game::mapHeight) / 2;
-    }
+    mapWidth = mapNumCols * TILESIZE * SCALE;
+    mapHeight = mapNumRows * TILESIZE * SCALE;
 
     // Read map, create tiles.
     for (int y = 0; y < mapNumRows; y++)
@@ -101,7 +91,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
 
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
-            m_registry->emplace<Transform>(tile, vec2f(x * (SCALE * TILESIZE) + offset.x, y * (SCALE * TILESIZE) + offset.y));
+            m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
             m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
         }
     }

@@ -59,7 +59,7 @@ TTF_Font *AssetStore::GetFont(const std::string assetId) const
 {
     if (!fonts.count(assetId))
     {
-        Logger::Fatal("[AssetStore] MIssing font with ID: '" + assetId + "'");
+        Logger::Fatal("[AssetStore] Missing font with ID: '" + assetId + "'");
     }
     return fonts.at(assetId);
 }
