@@ -123,42 +123,34 @@ void MapEditor::PlaceTile()
 
 void MapEditor::SaveMap(const std::string filename)
 {
-    Logger::Info("Saving map: " + filename);
+    Logger::Info("Saving map: " + filename + "  |  Map should be found in project root or build dir");
+
     std::ofstream mapFile;
     mapFile.open(filename);
 
-    struct Tile
-    {
-        Transform transform;
-        Sprite sprite;
-    };
-    std::vector<Tile> tiles;
+    std::vector<std::vector<entt::entity>> tiles(
+        m_mapNumRows,
+        std::vector<entt::entity>(m_mapNumCols));
 
+    // Arranging tiles in grid to be saved
     auto view = m_registry->view<Tile_Tag, Transform, Sprite>();
     for (auto entity : view)
     {
-        Tile tile;
-        tile.transform = view.get<Transform>(entity);
-        tile.sprite = view.get<Sprite>(entity);
-
-        tiles.emplace_back(tile);
+        const auto transform = view.get<Transform>(entity);
+        tiles[transform.position.y / (TILESIZE * SCALE)][transform.position.x / (TILESIZE * SCALE)] = entity;
     }
 
-    std::sort(tiles.begin(), tiles.end(), [](const Tile &a, const Tile &b)
-              { return a.transform.position.y < b.transform.position.y; });
-
-    // Save grid
-    /*
-        for (auto &row : m_map)
+    // Save map
+    for (const auto row : tiles)
+    {
+        for (const auto entity : row)
         {
-            for (auto &element : row)
-            {
-                mapFile << tilesIndexes.at(element) << ',';
-            }
-            mapFile << '\n';
+            const auto sprite = view.get<Sprite>(entity);
+            std::string subSpriteCoordinate = std::to_string(sprite.srcRect.x / TILESIZE) + std::to_string(sprite.srcRect.y / TILESIZE);
+            mapFile << subSpriteCoordinate << ',';
         }
-    */
-
+        mapFile << '\n';
+    }
     mapFile.close();
 }
 
@@ -209,13 +201,13 @@ void MapEditor::RenderScene(const double elapsedTime)
     if (ImGui::Begin("Map Editor", NULL, window_flags))
     {
 
-        if (ImGui::CollapsingHeader("Mapsize"))
+        if (ImGui::CollapsingHeader("Map size"))
         {
-            ImGui::InputInt("Number of columns", &m_queuedMapNumCols);
-            ImGui::InputInt("Number of rows", &m_queuedMapNumRows);
+            ImGui::InputInt("Width in tiles", &m_queuedMapNumCols);
+            ImGui::InputInt("Height in tiles", &m_queuedMapNumRows);
         }
 
-        if (ImGui::CollapsingHeader("Tileselector"))
+        if (ImGui::CollapsingHeader("Tile selector"))
         {
             SDL_Texture *texture = m_assetStore->GetTexture("assets/tilemaps/ground_tiles.png");
             int textureWidth, textureHeight;
@@ -251,16 +243,12 @@ void MapEditor::RenderScene(const double elapsedTime)
             }
         }
 
-        if (ImGui::CollapsingHeader("Save map"))
+        static char filename[64] = "generated.map";
+        ImGui::InputText("##emptyID", filename, IM_ARRAYSIZE(filename));
+        ImGui::SameLine();
+        if (ImGui::Button("Save map##Button"))
         {
-            static char filename[64] = "generated.map";
-            ImGui::InputText("Filename", filename, IM_ARRAYSIZE(filename));
-
-            if (ImGui::Button("Save map"))
-            {
-                Logger::Info("Save map");
-                // SaveMap(std::string(filename));
-            }
+            SaveMap(std::string(filename));
         }
     }
     ImGui::End();
