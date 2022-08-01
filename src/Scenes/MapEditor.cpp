@@ -1,3 +1,4 @@
+#include <fstream>
 #include "MapEditor.h"
 #include "Constants.h"
 #include "Events/EventDispatcher.h"
@@ -120,8 +121,45 @@ void MapEditor::PlaceTile()
     }
 }
 
-void MapEditor::SaveMap()
+void MapEditor::SaveMap(const std::string filename)
 {
+    Logger::Info("Saving map: " + filename);
+    std::ofstream mapFile;
+    mapFile.open(filename);
+
+    struct Tile
+    {
+        Transform transform;
+        Sprite sprite;
+    };
+    std::vector<Tile> tiles;
+
+    auto view = m_registry->view<Tile_Tag, Transform, Sprite>();
+    for (auto entity : view)
+    {
+        Tile tile;
+        tile.transform = view.get<Transform>(entity);
+        tile.sprite = view.get<Sprite>(entity);
+
+        tiles.emplace_back(tile);
+    }
+
+    std::sort(tiles.begin(), tiles.end(), [](const Tile &a, const Tile &b)
+              { return a.transform.position.y < b.transform.position.y; });
+
+    // Save grid
+    /*
+        for (auto &row : m_map)
+        {
+            for (auto &element : row)
+            {
+                mapFile << tilesIndexes.at(element) << ',';
+            }
+            mapFile << '\n';
+        }
+    */
+
+    mapFile.close();
 }
 
 void MapEditor::OnMouseMotionEvent(const MouseMotionEvent &event)
@@ -210,6 +248,18 @@ void MapEditor::RenderScene(const double elapsedTime)
                     ImGui::SameLine();
                 }
                 ImGui::NewLine();
+            }
+        }
+
+        if (ImGui::CollapsingHeader("Save map"))
+        {
+            static char filename[64] = "generated.map";
+            ImGui::InputText("Filename", filename, IM_ARRAYSIZE(filename));
+
+            if (ImGui::Button("Save map"))
+            {
+                Logger::Info("Save map");
+                // SaveMap(std::string(filename));
             }
         }
     }

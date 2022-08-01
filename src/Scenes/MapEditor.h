@@ -31,7 +31,7 @@ private:
 	void DecreaseMapHeight(int newHeight);
 	void SelectTile(const MouseMotionEvent &event);
 	void PlaceTile();
-	void SaveMap();
+	void SaveMap(const std::string filename);
 
 	void OnMouseMotionEvent(const MouseMotionEvent &event);
 	void OnMouseButtonPressedEvent(const MouseButtonPressedEvent &event);
