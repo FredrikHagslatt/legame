@@ -146,7 +146,7 @@ void MapEditor::SaveMap(const std::string filename)
         for (const auto entity : row)
         {
             const auto sprite = view.get<Sprite>(entity);
-            std::string subSpriteCoordinate = std::to_string(sprite.srcRect.x / TILESIZE) + std::to_string(sprite.srcRect.y / TILESIZE);
+            std::string subSpriteCoordinate = std::to_string(sprite.srcRect.y / TILESIZE) + std::to_string(sprite.srcRect.x / TILESIZE);
             mapFile << subSpriteCoordinate << ',';
         }
         mapFile << '\n';
