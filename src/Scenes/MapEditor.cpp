@@ -1,4 +1,5 @@
 #include <fstream>
+#include <filesystem>
 #include "MapEditor.h"
 #include "Constants.h"
 #include "Events/EventDispatcher.h"
@@ -37,7 +38,7 @@ void MapEditor::IncreaseMapWidth(int newNumCols)
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
             m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, m_spritesheet, TILESIZE, TILESIZE, 0, false, 0, 0);
+            m_registry->emplace<Sprite>(tile, m_theme, TILESIZE, TILESIZE, 0, false, 0, 0);
         }
     }
     m_mapNumCols = newNumCols;
@@ -67,7 +68,7 @@ void MapEditor::IncreaseMapHeight(int newNumRows)
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
             m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, m_spritesheet, TILESIZE, TILESIZE, 0, false, 0, 0);
+            m_registry->emplace<Sprite>(tile, m_theme, TILESIZE, TILESIZE, 0, false, 0, 0);
         }
     }
     m_mapNumRows = newNumRows;
@@ -154,6 +155,29 @@ void MapEditor::SaveMap(const std::string filename)
     mapFile.close();
 }
 
+std::vector<std::string> MapEditor::GetThemes()
+{
+    std::string path = "assets/tilemaps/themes/";
+    std::vector<std::string> themes;
+    for (const auto &entry : std::filesystem::directory_iterator(path))
+    {
+        themes.push_back(entry.path().string());
+    }
+    return themes;
+}
+
+void MapEditor::SelectTheme(std::string themeAssetId)
+{
+    Logger::Info("Selecting theme: " + themeAssetId);
+    m_theme = themeAssetId;
+    const auto view = m_registry->view<Tile_Tag, Sprite>();
+    for (auto entity : view)
+    {
+        auto &sprite = view.get<Sprite>(entity);
+        sprite.assetId = themeAssetId;
+    }
+}
+
 void MapEditor::OnMouseMotionEvent(const MouseMotionEvent &event)
 {
     SelectTile(event);
@@ -207,9 +231,25 @@ void MapEditor::RenderScene(const double elapsedTime)
             ImGui::InputInt("Height in tiles", &m_queuedMapNumRows);
         }
 
+        if (ImGui::CollapsingHeader("Theme selector"))
+        {
+            std::vector<std::string> themes = GetThemes();
+            static int selected = -1;
+            for (int n = 0; n < themes.size(); n++)
+            {
+                char buf[64];
+                sprintf(buf, themes.at(n).c_str());
+                if (ImGui::Selectable(buf, selected == n))
+                {
+                    SelectTheme(themes.at(n));
+                    selected = n;
+                }
+            }
+        }
+
         if (ImGui::CollapsingHeader("Tile selector"))
         {
-            SDL_Texture *texture = m_assetStore->GetTexture("assets/tilemaps/ground_tiles.png");
+            SDL_Texture *texture = m_assetStore->GetTexture(m_theme);
             int textureWidth, textureHeight;
             SDL_QueryTexture(texture, NULL, NULL, &textureWidth, &textureHeight);
 
@@ -259,10 +299,19 @@ void MapEditor::RenderScene(const double elapsedTime)
 
 void MapEditor::LoadScene()
 {
-    LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/map_editor.map");
+
+    std::vector<std::string> themes = GetThemes();
+    for (std::string theme : themes)
+    {
+        m_assetStore->AddTexture(m_renderer, theme, theme);
+    }
+
+    LoadMap(m_theme, "assets/tilemaps/maps/map_editor.map");
+
     m_tileBrush = m_registry->create();
+    m_registry->emplace<Tile_Tag>(m_tileBrush);
     m_registry->emplace<Transform>(m_tileBrush, vec2f(0));
-    m_registry->emplace<Sprite>(m_tileBrush, m_spritesheet, TILESIZE, TILESIZE, 1, false, 0, 0);
+    m_registry->emplace<Sprite>(m_tileBrush, m_theme, TILESIZE, TILESIZE, 1, false, 0, 0);
 
     m_queuedMapNumCols = mapWidth / TILESIZE / SCALE;
     m_queuedMapNumRows = mapHeight / TILESIZE / SCALE;

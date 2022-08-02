@@ -11,7 +11,7 @@ void Hub::RenderScene(const double elapsedTime)
 void Hub::LoadScene()
 {
 
-    LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/hub.map");
+    LoadMap("assets/tilemaps/themes/ground_tiles.png", "assets/tilemaps/maps/hub.map");
 
     m_assetStore->AddTexture(m_renderer, "tank-image", "assets/images/tank-panther-right.png");
     m_assetStore->AddTexture(m_renderer, "truck-image", "assets/images/truck-ford-right.png");
