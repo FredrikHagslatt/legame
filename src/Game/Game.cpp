@@ -100,7 +100,7 @@ void Game::ProcessInput()
     while (SDL_PollEvent(&sdlEvent))
     {
         // Handle ImGui SDL input
-        // ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
+        ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 
         SDL_Keycode keycode = sdlEvent.key.keysym.sym;
         // Handle Game SDL input
@@ -120,15 +120,12 @@ void Game::ProcessInput()
             Event::dispatcher.trigger(KeyReleasedEvent{m_registry, keycode});
             break;
         case SDL_MOUSEMOTION:
-            ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
             Event::dispatcher.trigger(MouseMotionEvent{sdlEvent.motion});
             break;
         case SDL_MOUSEBUTTONDOWN:
-            ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
             Event::dispatcher.trigger(MouseButtonPressedEvent{sdlEvent.button});
             break;
         case SDL_MOUSEBUTTONUP:
-            ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
             Event::dispatcher.trigger(MouseButtonReleasedEvent{sdlEvent.button});
             break;
         }

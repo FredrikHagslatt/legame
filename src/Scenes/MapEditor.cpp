@@ -299,6 +299,7 @@ void MapEditor::RenderScene(const double elapsedTime)
 
 void MapEditor::LoadScene()
 {
+    DevTools::showDevTools = false;
 
     std::vector<std::string> themes = GetThemes();
     for (std::string theme : themes)
