@@ -10,8 +10,7 @@
 class MapEditor : public Stardew
 {
 private:
-	//    LoadMap("assets/tilemaps/ground_tiles.png", "assets/tilemaps/hub.map");
-	std::string m_spritesheet = "assets/tilemaps/ground_tiles.png";
+	std::string m_theme = "assets/tilemaps/themes/ground_tiles.png";
 	vec2i m_selectedSubSprite = vec2i(0);
 	std::unique_ptr<entt::entity> m_selectedTile;
 	entt::entity m_tileBrush;
@@ -29,8 +28,11 @@ private:
 	void DecreaseMapWidth(int newWidth);
 	void IncreaseMapHeight(int newHeight);
 	void DecreaseMapHeight(int newHeight);
-	void SelectTile();
+	void SelectTile(const MouseMotionEvent &event);
 	void PlaceTile();
+	void SaveMap(const std::string filename);
+	std::vector<std::string> GetThemes();
+	void SelectTheme(std::string themePath);
 
 	void OnMouseMotionEvent(const MouseMotionEvent &event);
 	void OnMouseButtonPressedEvent(const MouseButtonPressedEvent &event);
