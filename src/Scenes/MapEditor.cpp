@@ -25,8 +25,8 @@ void MapEditor::UpdateMapSize()
         DecreaseMapHeight(m_queuedMapNumRows);
     }
 
-    mapWidth = m_mapNumCols * TILESIZE * SCALE;
-    mapHeight = m_mapNumRows * TILESIZE * SCALE;
+    m_mapWidth = m_mapNumCols * TILESIZE * SCALE;
+    m_mapHeight = m_mapNumRows * TILESIZE * SCALE;
 }
 
 void MapEditor::IncreaseMapWidth(int newNumCols)
@@ -319,8 +319,8 @@ void MapEditor::LoadScene()
     m_registry->emplace<Transform>(m_tileBrush, vec2f(0));
     m_registry->emplace<Sprite>(m_tileBrush, m_theme, TILESIZE, TILESIZE, 1, false, 0, 0);
 
-    m_queuedMapNumCols = mapWidth / TILESIZE / SCALE;
-    m_queuedMapNumRows = mapHeight / TILESIZE / SCALE;
+    m_queuedMapNumCols = m_mapWidth / TILESIZE / SCALE;
+    m_queuedMapNumRows = m_mapHeight / TILESIZE / SCALE;
     m_mapNumCols = m_queuedMapNumCols;
     m_mapNumRows = m_queuedMapNumRows;
 

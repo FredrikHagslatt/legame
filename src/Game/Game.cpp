@@ -161,6 +161,24 @@ double Game::ElapsedTime()
     return elapsedTime;
 }
 
+void Game::KillQueuedEntities()
+{
+    if (!entitiesToKill.empty())
+    {
+        Logger::Info("Killing entities that are queued for death ");
+    }
+
+    while (!entitiesToKill.empty())
+    {
+        entt::entity entity = entitiesToKill.front();
+        entitiesToKill.pop_front();
+        if (m_registry->valid(entity))
+        {
+            m_registry->destroy(entity);
+        }
+    }
+}
+
 void Game::Update()
 {
     double elapsedTime = ElapsedTime();
@@ -176,6 +194,8 @@ void Game::Update()
     }
 
     SDL_RenderPresent(m_renderer);
+
+    KillQueuedEntities();
 }
 
 void Game::Run()

@@ -7,29 +7,14 @@
 void Stardew::Update(const double elapsedTime)
 {
     // Update systems
-    MovementSystem::Update(m_registry, elapsedTime, mapWidth, mapHeight);
+    MovementSystem::Update(m_registry, elapsedTime, m_mapWidth, m_mapHeight);
     AnimationSystem::Update(m_registry);
-    CameraMovementSystem::Update(m_registry, camera, mapWidth, mapHeight);
+    CameraMovementSystem::Update(m_registry, camera, m_mapWidth, m_mapHeight);
     ProjectileEmitSystem::Update(m_registry);
     ProjectileLifeCycleSystem::Update(m_registry);
     CollisionSystem::Update(m_registry);
 
     UpdateScene(elapsedTime);
-
-    if (!Game::entitiesToKill.empty())
-    {
-        Logger::Info("Killing entities that are queued for death ");
-    }
-
-    while (!Game::entitiesToKill.empty())
-    {
-        entt::entity entity = Game::entitiesToKill.front();
-        Game::entitiesToKill.pop_front();
-        if (m_registry->valid(entity))
-        {
-            m_registry->destroy(entity);
-        }
-    }
 }
 
 void Stardew::RenderGraphics(const double elapsedTime)
@@ -79,8 +64,8 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
 
     Logger::Info("[Stardew] Mapsize: " + std::to_string(mapNumCols) + " x " + std::to_string(mapNumRows));
 
-    mapWidth = mapNumCols * TILESIZE * SCALE;
-    mapHeight = mapNumRows * TILESIZE * SCALE;
+    m_mapWidth = mapNumCols * TILESIZE * SCALE;
+    m_mapHeight = mapNumRows * TILESIZE * SCALE;
 
     // Read map, create tiles.
     for (int y = 0; y < mapNumRows; y++)

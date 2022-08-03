@@ -26,6 +26,7 @@ private:
     void Setup();
     void Update();
     void ProcessInput();
+    void KillQueuedEntities();
 
 public:
     Game();
