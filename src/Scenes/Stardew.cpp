@@ -16,13 +16,19 @@ void Stardew::Update(const double elapsedTime)
 
     UpdateScene(elapsedTime);
 
-    // Kill entities that are queued for death
+    if (!Game::entitiesToKill.empty())
+    {
+        Logger::Info("Killing entities that are queued for death ");
+    }
+
     while (!Game::entitiesToKill.empty())
     {
         entt::entity entity = Game::entitiesToKill.front();
         Game::entitiesToKill.pop_front();
-        m_registry->destroy(entity);
-        Logger::Info("[Stardew] Queued entity destroyed");
+        if (m_registry->valid(entity))
+        {
+            m_registry->destroy(entity);
+        }
     }
 }
 

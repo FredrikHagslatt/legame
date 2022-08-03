@@ -171,11 +171,17 @@ void MapEditor::SelectTheme(std::string themeAssetId)
     Logger::Info("Selecting theme: " + themeAssetId);
     m_theme = themeAssetId;
     const auto view = m_registry->view<Tile_Tag, Sprite>();
+
+    // Tilemap theme
     for (auto entity : view)
     {
         auto &sprite = view.get<Sprite>(entity);
         sprite.assetId = themeAssetId;
     }
+
+    // Brush theme
+    auto &sprite = m_registry->get<Sprite>(m_tileBrush);
+    sprite.assetId = themeAssetId;
 }
 
 void MapEditor::OnMouseMotionEvent(const MouseMotionEvent &event)
@@ -310,7 +316,6 @@ void MapEditor::LoadScene()
     LoadMap(m_theme, "assets/tilemaps/maps/map_editor.map");
 
     m_tileBrush = m_registry->create();
-    m_registry->emplace<Tile_Tag>(m_tileBrush);
     m_registry->emplace<Transform>(m_tileBrush, vec2f(0));
     m_registry->emplace<Sprite>(m_tileBrush, m_theme, TILESIZE, TILESIZE, 1, false, 0, 0);
 
