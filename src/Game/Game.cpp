@@ -190,7 +190,7 @@ void Game::Update()
 
     if (DevTools::showDevTools)
     {
-        DevTools::Render();
+        DevTools::Render(elapsedTime);
     }
 
     SDL_RenderPresent(m_renderer);

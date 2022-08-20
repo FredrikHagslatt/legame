@@ -21,9 +21,9 @@ public:
     static bool showDemoWindow;
     static bool showLogWindow;
 
-    static void Render();
+    static void Render(double elapsedTime);
     static void ToggleShowDevTools(const KeyPressedEvent &event);
-    static void ShowDevTools();
+    static void ShowDevTools(unsigned int fps);
     static void ShowLogWindow();
 };
 
