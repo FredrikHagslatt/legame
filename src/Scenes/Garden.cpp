@@ -10,6 +10,7 @@ void Garden::RenderScene(const double elapsedTime)
 void Garden::LoadScene()
 {
     LoadMap("assets/tilemaps/themes/ground_tiles.png", "assets/tilemaps/maps/garden.map");
+    // LoadMap("assets/tilemaps/themes/ground_tiles.png", "assets/tilemaps/maps/debug_large.map");
 
     m_assetStore->AddTexture(m_renderer, "cabin-image", "assets/images/buildings/log_cabin.png");
     m_assetStore->AddTexture(m_renderer, "radar-image", "assets/images/radar.png");
@@ -21,7 +22,7 @@ void Garden::LoadScene()
     const auto cabin = m_registry->create();
     m_registry->emplace<Obstacle_Tag>(cabin);
     m_registry->emplace<Transform>(cabin, vec2f(400, 150.0));
-    m_registry->emplace<Sprite>(cabin, "cabin-image", 122, 96, 5);
+    m_registry->emplace<Sprite>(cabin, "cabin-image", 122, 96);
     m_registry->emplace<BoxCollider>(cabin, 122, 80, vec2f(0, 16));
 
     const auto cabinEntry = m_registry->create();
@@ -33,7 +34,7 @@ void Garden::LoadScene()
     const auto radar = m_registry->create();
     m_registry->emplace<UI_Tag>(radar);
     m_registry->emplace<Transform>(radar, vec2f(WINDOWWIDTH - 74, 10.0), 0.25);
-    m_registry->emplace<Sprite>(radar, "radar-image", 64, 64, 100, true);
+    m_registry->emplace<Sprite>(radar, "radar-image", 64, 64, true);
     m_registry->emplace<Animation>(radar, 8, 5, true);
 
     const auto label = m_registry->create();

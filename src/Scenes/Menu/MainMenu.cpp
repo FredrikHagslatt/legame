@@ -75,7 +75,7 @@ void MainMenu::Load()
 	m_registry->emplace<UI_Tag>(m_menuNavigator);
 	m_registry->emplace<Transform>(m_menuNavigator, vec2f((WINDOWWIDTH - textDimension.x) / 2 - 70, 240.0 + textDimension.y / 2 - 8.0), 1.5);
 	m_registry->emplace<MenuNavigator>(m_menuNavigator, 2);
-	m_registry->emplace<Sprite>(m_menuNavigator, "bullet-image", 4, 4, 4, true);
+	m_registry->emplace<Sprite>(m_menuNavigator, "bullet-image", 4, 4, true);
 }
 
 void MainMenu::Unload()

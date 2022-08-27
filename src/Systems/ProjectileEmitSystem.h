@@ -39,7 +39,7 @@ public:
         registry->emplace<Projectile_Tag>(projectile);
         registry->emplace<Transform>(projectile, projectilePosition, vec2f(1.0, 1.0), 0.0);
         registry->emplace<Velocity>(projectile, projectileEmitter.speed, projectileEmitter.direction);
-        registry->emplace<Sprite>(projectile, "bullet-image", 4, 4, 4);
+        registry->emplace<Sprite>(projectile, "bullet-image", 4, 4);
         registry->emplace<BoxCollider>(projectile, 4, 4);
         registry->emplace<Projectile>(projectile, projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage, projectileEmitter.duration);
     }

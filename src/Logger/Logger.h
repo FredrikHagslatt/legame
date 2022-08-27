@@ -11,8 +11,7 @@ enum LogType
 {
     LOG_INFO,
     LOG_WARNING,
-    LOG_ERROR,
-    LOG_FATAL
+    LOG_ERROR
 };
 
 struct LogEntry
@@ -36,7 +35,6 @@ public:
     static void Info(const std::string &message);
     static void Warning(const std::string &message);
     static void Error(const std::string &message);
-    static void Fatal(const std::string &message);
     static void SaveLogEntry(LogEntry logEntry);
 };
 

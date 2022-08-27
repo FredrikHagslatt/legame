@@ -38,7 +38,7 @@ void MapEditor::IncreaseMapWidth(int newNumCols)
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
             m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, m_theme, TILESIZE, TILESIZE, 0, false, 0, 0);
+            m_registry->emplace<Sprite>(tile, m_theme, TILESIZE, TILESIZE, false, 0, 0);
         }
     }
     m_mapNumCols = newNumCols;
@@ -68,7 +68,7 @@ void MapEditor::IncreaseMapHeight(int newNumRows)
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
             m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, m_theme, TILESIZE, TILESIZE, 0, false, 0, 0);
+            m_registry->emplace<Sprite>(tile, m_theme, TILESIZE, TILESIZE, false, 0, 0);
         }
     }
     m_mapNumRows = newNumRows;
@@ -317,7 +317,7 @@ void MapEditor::LoadScene()
 
     m_tileBrush = m_registry->create();
     m_registry->emplace<Transform>(m_tileBrush, vec2f(0));
-    m_registry->emplace<Sprite>(m_tileBrush, m_theme, TILESIZE, TILESIZE, 1, false, 0, 0);
+    m_registry->emplace<Sprite>(m_tileBrush, m_theme, TILESIZE, TILESIZE, false, 0, 0);
 
     m_queuedMapNumCols = m_mapWidth / TILESIZE / SCALE;
     m_queuedMapNumRows = m_mapHeight / TILESIZE / SCALE;
