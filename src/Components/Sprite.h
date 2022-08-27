@@ -9,6 +9,7 @@ struct Sprite
     std::string assetId;
     int width;
     int height;
+    int pivotPoint;
     bool fixedPosition;
     SDL_Rect srcRect;
     SDL_RendererFlip flip;
@@ -17,6 +18,7 @@ struct Sprite
         std::string assetId = "",
         int width = 0,
         int height = 0,
+        int pivotPoint = 0,
         bool fixedPosition = false,
         int srcRectX = 0,
         int srcRectY = 0,
@@ -24,6 +26,7 @@ struct Sprite
         : assetId(assetId),
           width(width),
           height(height),
+          pivotPoint(pivotPoint),
           fixedPosition(fixedPosition),
           flip(flip),
           srcRect({srcRectX,

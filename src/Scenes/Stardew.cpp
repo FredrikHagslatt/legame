@@ -84,7 +84,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
             m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, false, srcRectX, srcRectY);
+            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
         }
     }
     mapFile.close();
