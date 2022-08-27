@@ -11,7 +11,7 @@
 #include "Scenes/Hub.h"
 #include "Scenes/Garden.h"
 #include "Scenes/Menu/MenuRoot.h"
-//#include "Scenes/MapEditor.h"
+#include "Scenes/MapEditor.h"
 
 #include "Events/EventDispatcher.h"
 #include "Events/KeyPressedEvent.h"
@@ -142,7 +142,8 @@ void Game::Setup()
     // m_sceneManager.AddScene("CREDITS", ...);
     m_sceneManager.QueueSceneChange("MenuRoot");
 
-    // m_sceneManager.AddScene("MapEditor", std::make_shared<MapEditor>(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("MapEditor", std::make_shared<MapEditor>(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.QueueSceneChange("MapEditor");
 
     Event::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
     Event::dispatcher.sink<KeyPressedEvent>().connect<&DevTools::ToggleShowDevTools>();

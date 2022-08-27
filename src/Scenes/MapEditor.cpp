@@ -1,5 +1,6 @@
 #include <fstream>
 #include <filesystem>
+#include <algorithm>
 #include "MapEditor.h"
 #include "Constants.h"
 #include "Events/EventDispatcher.h"
@@ -9,121 +10,100 @@ void MapEditor::UpdateMapSize()
 {
     if (m_queuedMapNumCols > m_mapNumCols)
     {
-        IncreaseMapWidth(m_queuedMapNumCols);
+        IncreaseMapWidth();
     }
     else if (m_queuedMapNumCols < m_mapNumCols)
     {
-        DecreaseMapWidth(m_queuedMapNumCols);
+        DecreaseMapWidth();
     }
 
     if (m_queuedMapNumRows > m_mapNumRows)
     {
-        IncreaseMapHeight(m_queuedMapNumRows);
+        IncreaseMapHeight();
     }
     else if (m_queuedMapNumRows < m_mapNumRows)
     {
-        DecreaseMapHeight(m_queuedMapNumRows);
+        DecreaseMapHeight();
     }
 
     m_mapWidth = m_mapNumCols * TILESIZE * SCALE;
     m_mapHeight = m_mapNumRows * TILESIZE * SCALE;
 }
 
-void MapEditor::IncreaseMapWidth(int newNumCols)
+void MapEditor::IncreaseMapWidth()
 {
-    for (int y = 0; y < m_mapNumRows; y++)
+    while (m_queuedMapNumCols > m_mapNumCols)
     {
-        for (int x = m_mapNumCols; x < newNumCols; x++)
+        for (int y = 0; y < m_tileMap.size(); y++)
         {
-            const auto tile = m_registry->create();
-            m_registry->emplace<Tile_Tag>(tile);
-            m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, m_theme, TILESIZE, TILESIZE, false, 0, 0);
+            Sprite neighborSprite = m_tileMap.at(y).back();
+            m_tileMap.at(y).push_back(neighborSprite);
         }
+        m_mapNumCols++;
     }
-    m_mapNumCols = newNumCols;
 }
 
-void MapEditor::DecreaseMapWidth(int newNumCols)
+void MapEditor::DecreaseMapWidth()
 {
-    auto view = m_registry->view<Tile_Tag, Transform>();
-    for (auto tile : view)
+    while (m_queuedMapNumCols < m_mapNumCols)
     {
-        auto transform = view.get<Transform>(tile);
-
-        if (transform.position.x >= newNumCols * TILESIZE * SCALE)
+        for (int y = 0; y < m_tileMap.size(); y++)
         {
-            Game::entitiesToKill.push_back(tile);
+            m_tileMap.at(y).pop_back();
         }
+        m_mapNumCols--;
     }
-    m_mapNumCols = newNumCols;
 }
 
-void MapEditor::IncreaseMapHeight(int newNumRows)
+void MapEditor::IncreaseMapHeight()
 {
-    for (int x = 0; x < m_mapNumCols; x++)
+    while (m_queuedMapNumRows > m_mapNumRows)
     {
-        for (int y = m_mapNumRows; y < newNumRows; y++)
+        m_tileMap.push_back(std::vector<Sprite>{});
+        for (int x = 0; x < m_tileMap.at(0).size(); x++)
         {
-            const auto tile = m_registry->create();
-            m_registry->emplace<Tile_Tag>(tile);
-            m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, m_theme, TILESIZE, TILESIZE, false, 0, 0);
+            Sprite neighborSprite = m_tileMap.at(m_mapNumRows - 1).at(x);
+            m_tileMap.back().push_back(neighborSprite);
         }
+        m_mapNumRows++;
     }
-    m_mapNumRows = newNumRows;
 }
 
-void MapEditor::DecreaseMapHeight(int newNumRows)
+void MapEditor::DecreaseMapHeight()
 {
-    auto view = m_registry->view<Tile_Tag, Transform>();
-    for (auto tile : view)
+    while (m_queuedMapNumRows < m_mapNumRows)
     {
-        auto transform = view.get<Transform>(tile);
-
-        if (transform.position.y >= newNumRows * TILESIZE * SCALE)
-        {
-            Game::entitiesToKill.push_back(tile);
-        }
+        m_tileMap.pop_back();
+        m_mapNumRows--;
     }
-    m_mapNumRows = newNumRows;
 }
 
 void MapEditor::SelectTile(const MouseMotionEvent &event)
 {
-    int mouseX = event.motion.x;
-    int mouseY = event.motion.y;
+    int mouseX = event.motion.x + m_camera.x;
+    int mouseY = event.motion.y + m_camera.y;
 
-    auto view = m_registry->view<Tile_Tag, Transform>();
+    mouseX = std::max(0, mouseX);
+    mouseX = std::min(mouseX, m_mapWidth - 1);
+    mouseY = std::max(0, mouseY);
+    mouseY = std::min(mouseY, m_mapHeight - 1);
 
-    for (auto &entity : view)
-    {
-        const auto transform = view.get<Transform>(entity);
-        auto &m_tileBrushTransform = m_registry->get<Transform>(m_tileBrush);
+    m_selectedTile = vec2i(static_cast<int>((mouseX) / (TILESIZE * SCALE)), static_cast<int>((mouseY) / (TILESIZE * SCALE)));
 
-        if (mouseX >= transform.position.x - camera.x && mouseX <= transform.position.x - camera.x + TILESIZE * SCALE && mouseY >= transform.position.y - camera.y && mouseY <= transform.position.y - camera.y + TILESIZE * SCALE)
-        {
-            m_selectedTile = std::make_unique<entt::entity>(entity);
-            m_tileBrushTransform.position = transform.position;
-            return;
-        }
-        m_selectedTile = nullptr;
-        m_tileBrushTransform.position = vec2f(1000000, 1000000); // Far outside the visible area
-    }
+    auto &m_tileBrushTransform = m_registry->get<Transform>(m_tileBrush);
+    m_tileBrushTransform.position = vec2f(m_selectedTile.x * TILESIZE * SCALE, m_selectedTile.y * TILESIZE * SCALE);
 }
 
 void MapEditor::PlaceTile()
 {
-    if (m_selectedTile)
-    {
-        auto &sprite = m_registry->get<Sprite>(*m_selectedTile);
-        const auto brushSprite = m_registry->get<Sprite>(m_tileBrush);
-        sprite.srcRect = brushSprite.srcRect;
-    }
+    Sprite &sprite = m_tileMap.at(m_selectedTile.y).at(m_selectedTile.x);
+    const auto brushSprite = m_registry->get<Sprite>(m_tileBrush);
+    sprite.srcRect = brushSprite.srcRect;
 }
 
 void MapEditor::SaveMap(const std::string filename)
 {
+    /*
     Logger::Info("Saving map: " + filename + "  |  Map should be found in project root or build dir");
 
     std::ofstream mapFile;
@@ -153,6 +133,7 @@ void MapEditor::SaveMap(const std::string filename)
         mapFile << '\n';
     }
     mapFile.close();
+    */
 }
 
 std::vector<std::string> MapEditor::GetThemes()
@@ -170,13 +151,13 @@ void MapEditor::SelectTheme(std::string themeAssetId)
 {
     Logger::Info("Selecting theme: " + themeAssetId);
     m_theme = themeAssetId;
-    const auto view = m_registry->view<Tile_Tag, Sprite>();
 
-    // Tilemap theme
-    for (auto entity : view)
+    for (int y = 0; y < m_tileMap.size(); y++)
     {
-        auto &sprite = view.get<Sprite>(entity);
-        sprite.assetId = themeAssetId;
+        for (int x = 0; x < m_tileMap.at(0).size(); x++)
+        {
+            m_tileMap.at(y).at(x).assetId = themeAssetId;
+        }
     }
 
     // Brush theme

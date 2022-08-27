@@ -12,7 +12,7 @@ class MapEditor : public Stardew
 private:
 	std::string m_theme = "assets/tilemaps/themes/ground_tiles.png";
 	vec2i m_selectedSubSprite = vec2i(0);
-	std::unique_ptr<entt::entity> m_selectedTile;
+	vec2i m_selectedTile = vec2i(0);
 	entt::entity m_tileBrush;
 
 	bool m_showTileSelector = false;
@@ -24,10 +24,11 @@ private:
 	int m_queuedMapNumRows = 1;
 
 	void UpdateMapSize();
-	void IncreaseMapWidth(int newWidth);
-	void DecreaseMapWidth(int newWidth);
-	void IncreaseMapHeight(int newHeight);
-	void DecreaseMapHeight(int newHeight);
+	void IncreaseMapWidth();
+	void DecreaseMapWidth();
+	void IncreaseMapHeight();
+	void DecreaseMapHeight();
+
 	void SelectTile(const MouseMotionEvent &event);
 	void PlaceTile();
 	void SaveMap(const std::string filename);
