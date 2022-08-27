@@ -19,6 +19,7 @@ void Stardew::Update(const double elapsedTime)
 
 void Stardew::RenderGraphics(const double elapsedTime)
 {
+
     RenderSystem::Update(m_registry, m_renderer, m_assetStore, camera);
     RenderHealthSystem::Update(m_registry, m_renderer, m_assetStore, camera);
     RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, camera);
@@ -53,7 +54,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
         {
             if (mapNumCols != (line.size() + 1) / 3)
             {
-                Logger::Fatal("[Stardew] Map is fucked! Row length not matching");
+                Logger::Error("[Stardew] Map is fucked! Row length not matching");
             }
         }
         mapNumRows++;
@@ -83,7 +84,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
             const auto tile = m_registry->create();
             m_registry->emplace<Tile_Tag>(tile);
             m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
+            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, false, srcRectX, srcRectY);
         }
     }
     mapFile.close();
@@ -104,11 +105,11 @@ void Stardew::Load()
         Logger::Info("[Stardew] Creating player");
         const auto player = m_registry->create();
         m_registry->emplace<Player_Tag>(player);
-        m_registry->emplace<KeyboardControlled_Tag>(player);
         m_registry->emplace<StayOnMap_Tag>(player);
+        m_registry->emplace<KeyboardControlled_Tag>(player);
         m_registry->emplace<Transform>(player, vec2f(200.0, 500.0));
         m_registry->emplace<Velocity>(player, 300.0, vec2f(0), vec2f(0.0, 1.0));
-        m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 10);
+        m_registry->emplace<Sprite>(player, "spike-image", 16, 32);
         m_registry->emplace<Animation>(player, 5, 5, true, true);
         m_registry->emplace<ProjectileEmitter>(player, 600.0, vec2f(1.0, 1.0), 0, 10000, 10, true, true);
         m_registry->emplace<Health>(player, 100);

@@ -51,13 +51,13 @@ void Game::Initialize()
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
-        Logger::Fatal("[Game] Error initializing SDL.");
+        Logger::Error("[Game] Error initializing SDL.");
         return;
     }
 
     if (TTF_Init() != 0)
     {
-        Logger::Fatal("[Game] Error initializing TTF.");
+        Logger::Error("[Game] Error initializing TTF.");
         return;
     }
 
@@ -70,13 +70,13 @@ void Game::Initialize()
         SDL_WINDOW_BORDERLESS);
     if (!m_window)
     {
-        Logger::Fatal("[Game] Error creating SDL window.");
+        Logger::Error("[Game] Error creating SDL window.");
         return;
     }
     m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
     if (!m_renderer)
     {
-        Logger::Fatal("[Game] Error creating SDL renderer.");
+        Logger::Error("[Game] Error creating SDL renderer.");
     }
 
     // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
@@ -149,14 +149,19 @@ void Game::Setup()
     Logger::Info("[Game] Game Setup.");
 }
 
-double Game::ElapsedTime()
+double Game::HandleFramerate()
 {
-    int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
-    if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME)
+
+    if (!MAX_FPS_UNLOCKED)
     {
-        SDL_Delay(timeToWait);
+        int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
+        if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME)
+        {
+            SDL_Delay(timeToWait);
+        }
     }
-    double elapsedTime = (SDL_GetTicks() - millisecsPreviousFrame) / 1000.0;
+
+    double elapsedTime = static_cast<double>(SDL_GetTicks() - millisecsPreviousFrame) / 1000.0;
     millisecsPreviousFrame = SDL_GetTicks();
     return elapsedTime;
 }
@@ -181,11 +186,13 @@ void Game::KillQueuedEntities()
 
 void Game::Update()
 {
-    double elapsedTime = ElapsedTime();
+    double elapsedTime = HandleFramerate();
+
     m_sceneManager.Update(elapsedTime);
 
     SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
     SDL_RenderClear(m_renderer);
+
     m_sceneManager.RenderGraphics(elapsedTime);
 
     if (DevTools::showDevTools)

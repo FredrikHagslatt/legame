@@ -44,7 +44,7 @@ SDL_Texture *AssetStore::GetTexture(const std::string &assetId) const
 {
     if (!textures.count(assetId))
     {
-        Logger::Fatal("[AssetStore] Missing texture with ID: '" + assetId + "'");
+        Logger::Error("[AssetStore] Missing texture with ID: '" + assetId + "'");
     }
     return textures.at(assetId);
 }
@@ -59,7 +59,7 @@ TTF_Font *AssetStore::GetFont(const std::string assetId) const
 {
     if (!fonts.count(assetId))
     {
-        Logger::Fatal("[AssetStore] Missing font with ID: '" + assetId + "'");
+        Logger::Error("[AssetStore] Missing font with ID: '" + assetId + "'");
     }
     return fonts.at(assetId);
 }

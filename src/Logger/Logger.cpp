@@ -55,21 +55,6 @@ void Logger::Error(const std::string &message)
     SaveLogEntry(logEntry);
 }
 
-void Logger::Fatal(const std::string &message)
-{
-    std::string timestamp = Timestamp();
-    LogEntry logEntry = {
-        LOG_FATAL,
-        timestamp,
-        message};
-    if (DevTools::logToStdCout)
-    {
-        std::cout << Red() << "FATAL [" << timestamp << "] : " << message << Reset();
-    }
-    SaveLogEntry(logEntry);
-    exit(EXIT_FAILURE);
-}
-
 void Logger::SaveLogEntry(LogEntry logEntry)
 {
     messages.push_back(logEntry);
