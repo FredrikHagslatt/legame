@@ -49,7 +49,7 @@ private:
             const auto &sprite = view.get<Sprite>(entity);
             const auto &transform = view.get<Transform>(entity);
 
-            if (IsEntityOutsideCameraview(transform, sprite, camera) && !sprite.fixedPosition)
+            if (IsEntityOutsideCameraview(transform, sprite, camera))
             {
                 continue;
             }
@@ -82,7 +82,7 @@ private:
         }
 
         std::sort(renderableEntities.begin(), renderableEntities.end(), [](const RenderableEntity &a, const RenderableEntity &b)
-                  { return a.transform.position.y < b.transform.position.y; });
+                  { return a.transform.position.y + a.sprite.pivotPoint < b.transform.position.y + b.sprite.pivotPoint; });
 
         for (auto entity : renderableEntities)
         {

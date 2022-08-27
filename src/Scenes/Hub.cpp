@@ -47,7 +47,7 @@ void Hub::LoadScene()
     m_registry->emplace<StayOnMap_Tag>(tank);
     m_registry->emplace<Transform>(tank, vec2f(120.0, 200.0), vec2f(1.0, 1.0), 0.0);
     m_registry->emplace<Velocity>(tank, 30.0, vec2f(1.0, 0.0));
-    m_registry->emplace<Sprite>(tank, "tank-image", 32, 32);
+    m_registry->emplace<Sprite>(tank, "tank-image", 32, 32, 32);
     m_registry->emplace<ProjectileEmitter>(tank, 100.0, vec2f(1.0, 0.0), 1000, 10000, 10);
     m_registry->emplace<Health>(tank, 100);
     m_registry->emplace<BoxCollider>(tank, 32, 32);
@@ -57,7 +57,7 @@ void Hub::LoadScene()
     m_registry->emplace<StayOnMap_Tag>(truck);
     m_registry->emplace<Transform>(truck, vec2f(300.0, 350.0), vec2f(1.0, 1.0), 0.0);
     m_registry->emplace<Velocity>(truck, 20.0, vec2f(-1.0, 0.0));
-    m_registry->emplace<Sprite>(truck, "truck-image", 32, 32);
+    m_registry->emplace<Sprite>(truck, "truck-image", 32, 32, 32);
     m_registry->emplace<ProjectileEmitter>(truck, 100.0, vec2f(1.0, -1.0), 2000, 10000, 10);
     m_registry->emplace<Health>(truck, 100);
     m_registry->emplace<BoxCollider>(truck, 32, 32);
@@ -65,13 +65,13 @@ void Hub::LoadScene()
     const auto treeA = m_registry->create();
     m_registry->emplace<Obstacle_Tag>(treeA);
     m_registry->emplace<Transform>(treeA, vec2f(200.0, 345.0), vec2f(1.0, 1.0), 0.0);
-    m_registry->emplace<Sprite>(treeA, "tree-image", 16, 32);
+    m_registry->emplace<Sprite>(treeA, "tree-image", 16, 32, 32);
     m_registry->emplace<BoxCollider>(treeA, 16, 32);
 
     const auto treeB = m_registry->create();
     m_registry->emplace<Obstacle_Tag>(treeB);
     m_registry->emplace<Transform>(treeB, vec2f(400.0, 345.0), vec2f(1.0, 1.0), 0.0);
-    m_registry->emplace<Sprite>(treeB, "tree-image", 16, 32);
+    m_registry->emplace<Sprite>(treeB, "tree-image", 16, 32, 32);
     m_registry->emplace<BoxCollider>(treeB, 16, 32);
 
     const auto label = m_registry->create();
