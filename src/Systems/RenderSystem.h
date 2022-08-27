@@ -39,25 +39,6 @@ private:
             sprite.flip);
     }
 
-    static void RenderTiles(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, SDL_Rect &camera)
-    {
-        auto view = registry->view<Transform, Sprite, Tile_Tag>();
-
-        for (auto entity : view)
-        {
-
-            const auto &sprite = view.get<Sprite>(entity);
-            const auto &transform = view.get<Transform>(entity);
-
-            if (IsEntityOutsideCameraview(transform, sprite, camera))
-            {
-                continue;
-            }
-
-            RenderEntity(transform, sprite, renderer, assetStore, camera);
-        }
-    }
-
     static void RenderGrounded(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, SDL_Rect &camera)
     {
         struct RenderableEntity
@@ -67,7 +48,7 @@ private:
         };
         std::vector<RenderableEntity> renderableEntities;
 
-        auto view = registry->view<Transform, Sprite>(entt::exclude<Tile_Tag, Airborne_Tag, Effect_Tag, UI_Tag>);
+        auto view = registry->view<Transform, Sprite>(entt::exclude<Airborne_Tag, Effect_Tag, UI_Tag>);
         for (auto entity : view)
         {
             RenderableEntity renderableEntity;
@@ -147,7 +128,6 @@ private:
 public:
     static void Update(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, SDL_Rect &camera)
     {
-        RenderTiles(registry, renderer, assetStore, camera);
         RenderGrounded(registry, renderer, assetStore, camera);
         RenderAirborne(registry, renderer, assetStore, camera);
         RenderEffects(registry, renderer, assetStore, camera);
