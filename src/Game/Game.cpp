@@ -138,11 +138,12 @@ void Game::Setup()
     m_sceneManager.AddScene("Garden", std::make_shared<Garden>(m_renderer, m_registry, m_assetStore));
     m_sceneManager.AddScene("MenuRoot", std::make_shared<MenuRoot>(m_renderer, m_registry, m_assetStore));
 
-    // m_sceneManager.AddScene("GRASS", new StardewTemplate(m_sceneManager));
-    // m_sceneManager.AddScene("MAPEDITOR", new MapEditor(m_sceneManager));
-    // sceneManager->AddScene(CREDITS, new CreditsScene(sceneManager));
+    // m_sceneManager.AddScene("GRASS", ...);
+    // m_sceneManager.AddScene("CREDITS", ...);
     m_sceneManager.QueueSceneChange("MenuRoot");
+
     m_sceneManager.AddScene("MapEditor", std::make_shared<MapEditor>(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.QueueSceneChange("MapEditor");
 
     Event::dispatcher.sink<SceneSwitchEvent>().connect<&SceneManager::OnSceneSwitchEvent>(m_sceneManager);
     Event::dispatcher.sink<KeyPressedEvent>().connect<&DevTools::ToggleShowDevTools>();

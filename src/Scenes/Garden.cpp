@@ -10,7 +10,6 @@ void Garden::RenderScene(const double elapsedTime)
 void Garden::LoadScene()
 {
     LoadMap("assets/tilemaps/themes/ground_tiles.png", "assets/tilemaps/maps/garden.map");
-    // LoadMap("assets/tilemaps/themes/ground_tiles.png", "assets/tilemaps/maps/debug_large.map");
 
     m_assetStore->AddTexture(m_renderer, "cabin-image", "assets/images/buildings/log_cabin.png");
     m_assetStore->AddTexture(m_renderer, "radar-image", "assets/images/radar.png");

@@ -24,10 +24,7 @@ struct Trigger_Tag
 };
 
 // Rendering order. Renderable entities without there tags are considered Grounded.
-// Rendering order are the: Tile, Grounded, Airborne, Effect, UI
-struct Tile_Tag
-{
-};
+// Rendering order are the: Grounded, Airborne, Effect, UI
 struct Airborne_Tag
 {
 };

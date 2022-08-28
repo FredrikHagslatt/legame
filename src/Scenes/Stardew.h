@@ -27,6 +27,7 @@
 #include "Systems/CollisionSystem.h"
 #include "Systems/TriggerSystem.h"
 
+#include "Systems/RenderTileMapSystem.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/RenderHealthSystem.h"
 #include "Systems/RenderTextSystem.h"
@@ -44,7 +45,8 @@ protected:
 	// Stardew
 	int m_mapWidth = 0;
 	int m_mapHeight = 0;
-	SDL_Rect camera;
+	SDL_Rect m_camera;
+	std::vector<std::vector<Sprite>> m_tileMap;
 	void LoadLevel();
 	void LoadMap(std::string spritesheet, std::string map);
 

@@ -9,7 +9,7 @@ void Stardew::Update(const double elapsedTime)
     // Update systems
     MovementSystem::Update(m_registry, elapsedTime, m_mapWidth, m_mapHeight);
     AnimationSystem::Update(m_registry);
-    CameraMovementSystem::Update(m_registry, camera, m_mapWidth, m_mapHeight);
+    CameraMovementSystem::Update(m_registry, m_camera, m_mapWidth, m_mapHeight);
     ProjectileEmitSystem::Update(m_registry);
     ProjectileLifeCycleSystem::Update(m_registry);
     CollisionSystem::Update(m_registry);
@@ -19,14 +19,14 @@ void Stardew::Update(const double elapsedTime)
 
 void Stardew::RenderGraphics(const double elapsedTime)
 {
-
-    RenderSystem::Update(m_registry, m_renderer, m_assetStore, camera);
-    RenderHealthSystem::Update(m_registry, m_renderer, m_assetStore, camera);
-    RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, camera);
+    RenderTileMapSystem::Update(m_tileMap, m_renderer, m_assetStore, m_camera);
+    RenderSystem::Update(m_registry, m_renderer, m_assetStore, m_camera);
+    RenderHealthSystem::Update(m_registry, m_renderer, m_assetStore, m_camera);
+    RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, m_camera);
 
     if (DevTools::renderHitboxes)
     {
-        RenderColliderSystem::Update(m_registry, m_renderer, camera);
+        RenderColliderSystem::Update(m_registry, m_renderer, m_camera);
     }
 
     RenderScene(elapsedTime);
@@ -71,6 +71,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
     // Read map, create tiles.
     for (int y = 0; y < mapNumRows; y++)
     {
+        m_tileMap.push_back(std::vector<Sprite>{});
         for (int x = 0; x < mapNumCols; x++)
         {
             char ch;
@@ -81,10 +82,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
             int srcRectX = std::atoi(&ch) * TILESIZE;
             mapFile.ignore();
 
-            const auto tile = m_registry->create();
-            m_registry->emplace<Tile_Tag>(tile);
-            m_registry->emplace<Transform>(tile, vec2f(x * SCALE * TILESIZE, y * SCALE * TILESIZE));
-            m_registry->emplace<Sprite>(tile, spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY);
+            m_tileMap.at(y).push_back(Sprite(spritesheet, TILESIZE, TILESIZE, 0, false, srcRectX, srcRectY));
         }
     }
     mapFile.close();
@@ -92,10 +90,10 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
 
 void Stardew::Load()
 {
-    camera.x = 0;
-    camera.y = 0;
-    camera.w = WINDOWWIDTH;
-    camera.h = WINDOWHEIGHT;
+    m_camera.x = 0;
+    m_camera.y = 0;
+    m_camera.w = WINDOWWIDTH;
+    m_camera.h = WINDOWHEIGHT;
 
     auto view = m_registry->view<Player_Tag>();
     if (view.empty())
@@ -141,6 +139,8 @@ void Stardew::Unload()
     Event::dispatcher.sink<CollisionEvent>().disconnect<&TriggerSystem::OnCollision>();
     Logger::Info("[Stardew] Disconnecting eventlisteners");
 
+    m_tileMap.clear();
+
     auto projectiles = m_registry->view<Projectile_Tag>();
     m_registry->destroy(projectiles.begin(), projectiles.end());
 
@@ -149,9 +149,6 @@ void Stardew::Unload()
 
     auto obstacles = m_registry->view<Obstacle_Tag>();
     m_registry->destroy(obstacles.begin(), obstacles.end());
-
-    auto tiles = m_registry->view<Tile_Tag>();
-    m_registry->destroy(tiles.begin(), tiles.end());
 
     auto triggers = m_registry->view<Trigger_Tag>();
     m_registry->destroy(triggers.begin(), triggers.end());
