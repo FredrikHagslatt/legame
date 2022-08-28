@@ -103,37 +103,23 @@ void MapEditor::PlaceTile()
 
 void MapEditor::SaveMap(const std::string filename)
 {
-    /*
     Logger::Info("Saving map: " + filename + "  |  Map should be found in project root or build dir");
 
     std::ofstream mapFile;
     mapFile.open(filename);
 
-    std::vector<std::vector<entt::entity>> tiles(
-        m_mapNumRows,
-        std::vector<entt::entity>(m_mapNumCols));
-
-    // Arranging tiles in grid to be saved
-    auto view = m_registry->view<Tile_Tag, Transform, Sprite>();
-    for (auto entity : view)
-    {
-        const auto transform = view.get<Transform>(entity);
-        tiles[transform.position.y / (TILESIZE * SCALE)][transform.position.x / (TILESIZE * SCALE)] = entity;
-    }
-
     // Save map
-    for (const auto row : tiles)
+    for (int y = 0; y < m_tileMap.size(); y++)
     {
-        for (const auto entity : row)
+        for (int x = 0; x < m_tileMap.at(0).size(); x++)
         {
-            const auto sprite = view.get<Sprite>(entity);
+            const Sprite sprite = m_tileMap.at(y).at(x);
             std::string subSpriteCoordinate = std::to_string(sprite.srcRect.y / TILESIZE) + std::to_string(sprite.srcRect.x / TILESIZE);
             mapFile << subSpriteCoordinate << ',';
         }
         mapFile << '\n';
     }
     mapFile.close();
-    */
 }
 
 std::vector<std::string> MapEditor::GetThemes()
