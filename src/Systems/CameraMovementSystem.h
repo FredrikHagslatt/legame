@@ -25,8 +25,6 @@ public:
             }
 
             camera.x = camera.x < 0 ? 0 : camera.x;
-            camera.x = camera.x > camera.w ? camera.w : camera.x;
-
             if (mapWidth < camera.w)
             {
                 camera.x = -(WINDOWWIDTH - mapWidth) / 2;
@@ -38,8 +36,6 @@ public:
             }
 
             camera.y = camera.y < 0 ? 0 : camera.y;
-            camera.y = camera.y > camera.h ? camera.h : camera.y;
-
             if (mapHeight < camera.h)
             {
                 camera.y = -(WINDOWHEIGHT - mapHeight) / 2;

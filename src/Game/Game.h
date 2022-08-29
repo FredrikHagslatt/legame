@@ -6,14 +6,12 @@
 #include "SceneManager/SceneManager.h"
 #include <SDL2/SDL.h>
 #include <list>
-#include <unordered_set>
 #include "DevTools/DevTools.h"
 
 class Game
 {
 private:
     bool isRunning;
-    double deltaTime = 0;
     int millisecsPreviousFrame = 0;
     SDL_Window *m_window;
     SDL_Renderer *m_renderer;
@@ -33,7 +31,6 @@ public:
     void Initialize();
     void Run();
     void Destroy();
-
     static std::list<entt::entity> entitiesToKill;
 };
 

@@ -13,7 +13,7 @@
 class MovementSystem
 {
 public:
-    static void Update(std::shared_ptr<entt::registry> registry, double deltaTime, int mapWidth, int mapHeight)
+    static void Update(std::shared_ptr<entt::registry> registry, double elapsedTime, int mapWidth, int mapHeight)
     {
         auto view = registry->view<Transform, Velocity>();
         for (auto entity : view)
@@ -23,11 +23,11 @@ public:
 
             if (velocity.direction.x != 0 && velocity.direction.y != 0)
             { // Reduce diagonal speed to match hor/vert speed
-                transform.position += velocity.direction * velocity.speed * deltaTime * 0.707;
+                transform.position += velocity.direction * velocity.speed * elapsedTime * 0.707;
             }
             else
             {
-                transform.position += velocity.direction * velocity.speed * deltaTime;
+                transform.position += velocity.direction * velocity.speed * elapsedTime;
             }
 
             if (registry->all_of<StayOnMap_Tag>(entity))
