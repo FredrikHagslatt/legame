@@ -17,28 +17,28 @@ public:
         auto view = registry->view<Player_Tag, Transform>();
         for (auto entity : view)
         {
-            auto const transform = view.get<Transform>(entity);
+            auto const playerTransform = view.get<Transform>(entity);
 
-            if (transform.position.x + (camera.w / 2) < mapWidth)
+            if (playerTransform.position.x + (camera.w / 2) < mapWidth)
             {
-                camera.x = transform.position.x - (WINDOWWIDTH / 2);
+                camera.x = playerTransform.position.x - (GAMEWINDOWWIDTH / 2);
             }
 
             camera.x = camera.x < 0 ? 0 : camera.x;
             if (mapWidth < camera.w)
             {
-                camera.x = -(WINDOWWIDTH - mapWidth) / 2;
+                camera.x = -(GAMEWINDOWWIDTH - mapWidth) / 2;
             }
 
-            if (transform.position.y + (camera.h / 2) < mapHeight)
+            if (playerTransform.position.y + (camera.h / 2) < mapHeight)
             {
-                camera.y = transform.position.y - (WINDOWHEIGHT / 2);
+                camera.y = playerTransform.position.y - (GAMEWINDOWHEIGHT / 2);
             }
 
             camera.y = camera.y < 0 ? 0 : camera.y;
             if (mapHeight < camera.h)
             {
-                camera.y = -(WINDOWHEIGHT - mapHeight) / 2;
+                camera.y = -(GAMEWINDOWHEIGHT - mapHeight) / 2;
             }
         }
     }

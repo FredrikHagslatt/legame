@@ -93,7 +93,7 @@ void Stardew::Load()
     m_camera.x = 0;
     m_camera.y = 0;
     m_camera.w = WINDOWWIDTH;
-    m_camera.h = WINDOWHEIGHT;
+    m_camera.h = WINDOWHEIGHT * 4 / 5;
 
     auto view = m_registry->view<Player_Tag>();
     if (view.empty())
@@ -117,6 +117,18 @@ void Stardew::Load()
     {
         Logger::Info("[Stardew] Player already exists. Not creating");
     }
+
+    m_assetStore->AddTexture(m_renderer, "user-interface", "assets/images/user-interface/stardew-ui.png");
+    const auto user_interface = m_registry->create();
+    m_registry->emplace<Transform>(user_interface, vec2f(0.0, 576.0));
+    m_registry->emplace<Sprite>(user_interface, "user-interface", 400, 48, 0, true);
+    m_registry->emplace<UI_Tag>(user_interface);
+
+    m_assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20);
+    const auto label = m_registry->create();
+    m_registry->emplace<UI_Tag>(label);
+    SDL_Color black = {0, 0, 0};
+    m_registry->emplace<TextLabel>(label, vec2f(WINDOWWIDTH / 2 - 100, WINDOWHEIGHT - 70), "User interface placeholder", "charriot-font", black, true);
 
     Event::dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
     Event::dispatcher.sink<KeyReleasedEvent>().connect<&KeyboardControlSystem::OnKeyReleased>();
