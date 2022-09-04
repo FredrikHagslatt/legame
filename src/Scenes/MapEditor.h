@@ -13,6 +13,8 @@ private:
 	std::string m_theme = "assets/tilemaps/themes/ground_tiles.png";
 	vec2i m_selectedSubSprite = vec2i(0);
 	vec2i m_selectedTile = vec2i(0);
+	bool m_tileIsSelected = false;
+
 	entt::entity m_tileBrush;
 
 	bool m_showTileSelector = false;
