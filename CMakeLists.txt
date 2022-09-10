@@ -20,8 +20,10 @@ include_directories("${CMAKE_SOURCE_DIR}/src")
 set(THIRD_PARTY "${CMAKE_SOURCE_DIR}/3rdparty")
 include_directories(${THIRD_PARTY})
 
+
 file(GLOB_RECURSE IMGUI_SOURCES ${THIRD_PARTY}/imgui/*.cpp)
-set(SOURCES ${SOURCES} ${IMGUI_SOURCES})
+set(TINYXML2_SOURCES ${THIRD_PARTY}/tinyxml2/tinyxml2.cpp)
+set(SOURCES ${SOURCES} ${IMGUI_SOURCES} ${TINYXML2_SOURCES})
 
 if(MINGW)
     set(SDL2_DIR "${THIRD_PARTY}/SDL_Bundle_Mingw")

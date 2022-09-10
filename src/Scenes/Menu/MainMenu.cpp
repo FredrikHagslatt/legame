@@ -14,6 +14,8 @@
 #include "Events/EventDispatcher.h"
 #include "Events/SceneSwitchEvent.h"
 
+#include "XMLHandler/XMLHandler.h"
+
 void MainMenu::OnKeyPressedEvent(const KeyPressedEvent event)
 {
 	const auto menuNavigator = m_registry->get<MenuNavigator>(m_menuNavigator);
@@ -76,6 +78,8 @@ void MainMenu::Load()
 	m_registry->emplace<Transform>(m_menuNavigator, vec2f((WINDOWWIDTH - textDimension.x) / 2 - 70, 240.0 + textDimension.y / 2 - 8.0), 1.5);
 	m_registry->emplace<MenuNavigator>(m_menuNavigator, 2);
 	m_registry->emplace<Sprite>(m_menuNavigator, "bullet-image", 4, 4, 0, true);
+
+	XMLHandler::SaveToXML(m_registry);
 }
 
 void MainMenu::Unload()
