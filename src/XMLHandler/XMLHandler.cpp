@@ -1,27 +1,6 @@
 #include "XMLHandler/XMLHandler.h"
 
-void XMLHandler::SaveTransform(tinyxml2::XMLElement *components)
-{
-    tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
-    component->SetAttribute("type", "Transform");
-
-    tinyxml2::XMLElement *x = component->InsertNewChildElement("x");
-    tinyxml2::XMLElement *y = component->InsertNewChildElement("y");
-    tinyxml2::XMLElement *rotation = component->InsertNewChildElement("rotation");
-
-    x->SetText("0.0");
-    y->SetText("5.2");
-    rotation->SetText("0.0");
-
-    tinyxml2::XMLElement *scale = component->InsertNewChildElement("scale");
-    tinyxml2::XMLElement *scaleX = scale->InsertNewChildElement("x");
-    tinyxml2::XMLElement *scaleY = scale->InsertNewChildElement("y");
-
-    scaleX->SetText("1.0");
-    scaleY->SetText("1.0");
-}
-
-void XMLHandler::SaveAnimation(tinyxml2::XMLElement *components)
+void XMLHandler::SaveAnimation(tinyxml2::XMLElement *components, Animation animation)
 {
 
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
@@ -38,7 +17,7 @@ void XMLHandler::SaveAnimation(tinyxml2::XMLElement *components)
     hasDirections->SetText(false);
 }
 
-void XMLHandler::SaveBoxCollider(tinyxml2::XMLElement *components)
+void XMLHandler::SaveBoxCollider(tinyxml2::XMLElement *components, BoxCollider boxCollider)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "BoxCollider");
@@ -47,42 +26,42 @@ void XMLHandler::SaveBoxCollider(tinyxml2::XMLElement *components)
     tinyxml2::XMLElement *height = component->InsertNewChildElement("height");
     tinyxml2::XMLElement *offset = component->InsertNewChildElement("offset");
 
-    width->SetText(16);
-    height->SetText(16);
+    width->SetText(boxCollider.width);
+    height->SetText(boxCollider.height);
 
     tinyxml2::XMLElement *offsetX = offset->InsertNewChildElement("x");
     tinyxml2::XMLElement *offsetY = offset->InsertNewChildElement("y");
 
-    offsetX->SetText("0.0");
-    offsetY->SetText("0.0");
+    offsetX->SetText(boxCollider.offset.x);
+    offsetY->SetText(boxCollider.offset.x);
 }
 
-void XMLHandler::SaveCircleCollider(tinyxml2::XMLElement *components)
+void XMLHandler::SaveCircleCollider(tinyxml2::XMLElement *components, CircleCollider circleCollider)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "CircleCollider");
 
     tinyxml2::XMLElement *radius = component->InsertNewChildElement("radius");
-    radius->SetText(16);
+    radius->SetText(circleCollider.radius);
 
     tinyxml2::XMLElement *offset = component->InsertNewChildElement("offset");
     tinyxml2::XMLElement *offsetX = offset->InsertNewChildElement("x");
     tinyxml2::XMLElement *offsetY = offset->InsertNewChildElement("y");
 
-    offsetX->SetText("0.0");
-    offsetY->SetText("0.0");
+    offsetX->SetText(circleCollider.offset.x);
+    offsetY->SetText(circleCollider.offset.y);
 }
 
-void XMLHandler::SaveHealth(tinyxml2::XMLElement *components)
+void XMLHandler::SaveHealth(tinyxml2::XMLElement *components, Health health)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "Health");
 
     tinyxml2::XMLElement *healthPercentage = component->InsertNewChildElement("healthPercentage");
-    healthPercentage->SetText(16);
+    healthPercentage->SetText(health.healthPercentage);
 }
 
-void XMLHandler::SaveMenuNavigator(tinyxml2::XMLElement *components)
+void XMLHandler::SaveMenuNavigator(tinyxml2::XMLElement *components, MenuNavigator menuNavigator)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "MenuNavigator");
@@ -91,12 +70,12 @@ void XMLHandler::SaveMenuNavigator(tinyxml2::XMLElement *components)
     tinyxml2::XMLElement *rowDistance = component->InsertNewChildElement("rowDistance");
     tinyxml2::XMLElement *atRow = component->InsertNewChildElement("atRow");
 
-    numRows->SetText(4);
-    rowDistance->SetText(60);
-    atRow->SetText(0);
+    numRows->SetText(menuNavigator.numRows);
+    rowDistance->SetText(menuNavigator.rowDistance);
+    atRow->SetText(menuNavigator.atRow);
 }
 
-void XMLHandler::SaveProjectile(tinyxml2::XMLElement *components)
+void XMLHandler::SaveProjectile(tinyxml2::XMLElement *components, Projectile projectile)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "Projectile");
@@ -105,12 +84,12 @@ void XMLHandler::SaveProjectile(tinyxml2::XMLElement *components)
     tinyxml2::XMLElement *hitPercentDamage = component->InsertNewChildElement("hitPercentDamage");
     tinyxml2::XMLElement *duration = component->InsertNewChildElement("duration");
 
-    isFriendly->SetText(false);
-    hitPercentDamage->SetText(10);
-    duration->SetText(10);
+    isFriendly->SetText(projectile.isFriendly);
+    hitPercentDamage->SetText(projectile.hitPercentDamage);
+    duration->SetText(projectile.duration);
 }
 
-void XMLHandler::SaveProjectileEmitter(tinyxml2::XMLElement *components)
+void XMLHandler::SaveProjectileEmitter(tinyxml2::XMLElement *components, ProjectileEmitter projectileEmitter)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "ProjectileEmitter");
@@ -123,21 +102,21 @@ void XMLHandler::SaveProjectileEmitter(tinyxml2::XMLElement *components)
     tinyxml2::XMLElement *isFriendly = component->InsertNewChildElement("isFriendly");
     tinyxml2::XMLElement *inheritDirection = component->InsertNewChildElement("inheritDirection");
 
-    speed->SetText("0.0");
-    repeatFrequency->SetText(1);
-    duration->SetText(10000);
-    hitPercentDamage->SetText(10);
-    isFriendly->SetText(false);
-    inheritDirection->SetText(false);
+    speed->SetText(projectileEmitter.speed);
+    repeatFrequency->SetText(projectileEmitter.repeatFrequency);
+    duration->SetText(projectileEmitter.duration);
+    hitPercentDamage->SetText(projectileEmitter.hitPercentDamage);
+    isFriendly->SetText(projectileEmitter.isFriendly);
+    inheritDirection->SetText(projectileEmitter.inheritDirection);
 
     tinyxml2::XMLElement *directionX = direction->InsertNewChildElement("x");
     tinyxml2::XMLElement *directionY = direction->InsertNewChildElement("y");
 
-    directionX->SetText("1.0");
-    directionY->SetText("-1.0");
+    directionX->SetText(projectileEmitter.direction.x);
+    directionY->SetText(projectileEmitter.direction.y);
 }
 
-void XMLHandler::SaveSceneSwitcher(tinyxml2::XMLElement *components)
+void XMLHandler::SaveSceneSwitcher(tinyxml2::XMLElement *components, SceneSwitcher sceneSwitcher)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "SceneSwitcher");
@@ -145,11 +124,11 @@ void XMLHandler::SaveSceneSwitcher(tinyxml2::XMLElement *components)
     tinyxml2::XMLElement *sceneManagerId = component->InsertNewChildElement("sceneManagerId");
     tinyxml2::XMLElement *sceneName = component->InsertNewChildElement("sceneName");
 
-    sceneManagerId->SetText("Main");
-    sceneName->SetText("Garden");
+    sceneManagerId->SetText(sceneSwitcher.sceneManagerId.c_str());
+    sceneName->SetText(sceneSwitcher.sceneName.c_str());
 }
 
-void XMLHandler::SaveSprite(tinyxml2::XMLElement *components)
+void XMLHandler::SaveSprite(tinyxml2::XMLElement *components, Sprite sprite)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "Sprite");
@@ -163,17 +142,17 @@ void XMLHandler::SaveSprite(tinyxml2::XMLElement *components)
     tinyxml2::XMLElement *srcRextY = component->InsertNewChildElement("srcRectY");
     tinyxml2::XMLElement *SDL_RenderFlip = component->InsertNewChildElement("SDL_RenderFlip");
 
-    assetId->SetText("sample-name");
-    width->SetText(0);
-    height->SetText(0);
-    pivotPoint->SetText(16);
-    fixedPosition->SetText(false);
-    srcRectX->SetText(16);
-    srcRextY->SetText(16);
-    SDL_RenderFlip->SetText("SDL_FLIP_NONE");
+    assetId->SetText(sprite.assetId.c_str());
+    width->SetText(sprite.width);
+    height->SetText(sprite.height);
+    pivotPoint->SetText(sprite.pivotPoint);
+    fixedPosition->SetText(sprite.fixedPosition);
+    srcRectX->SetText(sprite.srcRect.x);
+    srcRextY->SetText(sprite.srcRect.x);
+    SDL_RenderFlip->SetText(sprite.flip);
 }
 
-void XMLHandler::SaveTextLabel(tinyxml2::XMLElement *components)
+void XMLHandler::SaveTextLabel(tinyxml2::XMLElement *components, TextLabel textLabel)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "TextLabel");
@@ -184,26 +163,47 @@ void XMLHandler::SaveTextLabel(tinyxml2::XMLElement *components)
     tinyxml2::XMLElement *color = component->InsertNewChildElement("color");
     tinyxml2::XMLElement *isFixed = component->InsertNewChildElement("isFixed");
 
-    text->SetText("Thunderballs and lightning, very very frightening");
-    assetId->SetText("font-name");
-    isFixed->SetText(true);
+    text->SetText(textLabel.text.c_str());
+    assetId->SetText(textLabel.assetId.c_str());
+    isFixed->SetText(textLabel.isFixed);
 
     tinyxml2::XMLElement *positionX = position->InsertNewChildElement("x");
     tinyxml2::XMLElement *positionY = position->InsertNewChildElement("y");
 
-    positionX->SetText("600.0");
-    positionY->SetText("300.0");
+    positionX->SetText(textLabel.position.x);
+    positionY->SetText(textLabel.position.y);
 
     tinyxml2::XMLElement *colorR = color->InsertNewChildElement("r");
     tinyxml2::XMLElement *colorG = color->InsertNewChildElement("g");
     tinyxml2::XMLElement *colorB = color->InsertNewChildElement("b");
 
-    colorR->SetText(25);
-    colorG->SetText(25);
-    colorB->SetText(25);
+    colorR->SetText(textLabel.color.r);
+    colorG->SetText(textLabel.color.g);
+    colorB->SetText(textLabel.color.b);
 }
 
-void XMLHandler::SaveVelocity(tinyxml2::XMLElement *components)
+void XMLHandler::SaveTransform(tinyxml2::XMLElement *components, Transform transform)
+{
+    tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
+    component->SetAttribute("type", "Transform");
+
+    tinyxml2::XMLElement *x = component->InsertNewChildElement("x");
+    tinyxml2::XMLElement *y = component->InsertNewChildElement("y");
+    tinyxml2::XMLElement *rotation = component->InsertNewChildElement("rotation");
+
+    x->SetText(transform.position.x);
+    y->SetText(transform.position.y);
+    rotation->SetText(transform.rotation);
+
+    tinyxml2::XMLElement *scale = component->InsertNewChildElement("scale");
+    tinyxml2::XMLElement *scaleX = scale->InsertNewChildElement("x");
+    tinyxml2::XMLElement *scaleY = scale->InsertNewChildElement("y");
+
+    scaleX->SetText(transform.scale.x);
+    scaleY->SetText(transform.scale.y);
+}
+
+void XMLHandler::SaveVelocity(tinyxml2::XMLElement *components, Velocity velocity)
 {
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "Velocity");
@@ -212,36 +212,66 @@ void XMLHandler::SaveVelocity(tinyxml2::XMLElement *components)
     tinyxml2::XMLElement *direction = component->InsertNewChildElement("direction");
     tinyxml2::XMLElement *lastNonZeroDirection = component->InsertNewChildElement("lastNonZeroDirection");
 
-    speed->SetText("10.0");
+    speed->SetText(velocity.speed);
 
     tinyxml2::XMLElement *directionX = direction->InsertNewChildElement("x");
     tinyxml2::XMLElement *directionY = direction->InsertNewChildElement("y");
 
-    directionX->SetText("1.0");
-    directionY->SetText("1.0");
+    directionX->SetText(velocity.direction.x);
+    directionY->SetText(velocity.direction.y);
 
     tinyxml2::XMLElement *lastNonZeroDirectionX = lastNonZeroDirection->InsertNewChildElement("x");
     tinyxml2::XMLElement *lastNonZeroDirectionY = lastNonZeroDirection->InsertNewChildElement("y");
 
-    lastNonZeroDirectionX->SetText("1.0");
-    lastNonZeroDirectionY->SetText("1.0");
+    lastNonZeroDirectionX->SetText(velocity.lastNonZeroDirection.x);
+    lastNonZeroDirectionY->SetText(velocity.lastNonZeroDirection.y);
 }
 
-void XMLHandler::SaveTags(tinyxml2::XMLElement *components)
+void XMLHandler::SaveTags(tinyxml2::XMLElement *components, std::shared_ptr<entt::registry> registry, entt::entity entity)
 {
     tinyxml2::XMLElement *tags = components->InsertNewChildElement("component");
     tags->SetAttribute("type", "Tags");
 
-    tags->InsertNewChildElement("tag")->SetText("Player_Tag");
-    tags->InsertNewChildElement("tag")->SetText("Enemy_Tag");
-    tags->InsertNewChildElement("tag")->SetText("Obstacle_Tag");
-    tags->InsertNewChildElement("tag")->SetText("KeyboardControlled_Tag");
-    tags->InsertNewChildElement("tag")->SetText("Projectile_Tag");
-    tags->InsertNewChildElement("tag")->SetText("StayOnMap_Tag");
-    tags->InsertNewChildElement("tag")->SetText("Trigger_Tag");
-    tags->InsertNewChildElement("tag")->SetText("Airborne_Tag");
-    tags->InsertNewChildElement("tag")->SetText("Effect_Tag");
-    tags->InsertNewChildElement("tag")->SetText("UI_Tag");
+    if (registry->all_of<Player_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("Player_Tag");
+    }
+    if (registry->all_of<Enemy_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("Enemy_Tag");
+    }
+    if (registry->all_of<Obstacle_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("Obstacle_Tag");
+    }
+    if (registry->all_of<KeyboardControlled_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("KeyboardControlled_Tag");
+    }
+    if (registry->all_of<Projectile_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("Projectile_Tag");
+    }
+    if (registry->all_of<StayOnMap_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("StayOnMap_Tag");
+    }
+    if (registry->all_of<Trigger_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("Trigger_Tag");
+    }
+    if (registry->all_of<Airborne_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("Airborne_Tag");
+    }
+    if (registry->all_of<Effect_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("Effect_Tag");
+    }
+    if (registry->all_of<UI_Tag>(entity))
+    {
+        tags->InsertNewChildElement("tag")->SetText("UI_Tag");
+    }
 }
 
 void XMLHandler::AddTags(tinyxml2::XMLElement *component)
@@ -342,55 +372,80 @@ void XMLHandler::SaveEntityToXML(std::shared_ptr<entt::registry> registry, tinyx
 
     if (registry->all_of<Animation>(entity))
     {
-        SaveAnimation(components);
+        auto animation = registry->get<Animation>(entity);
+        SaveAnimation(components, animation);
     }
     if (registry->all_of<BoxCollider>(entity))
     {
-        SaveBoxCollider(components);
+        auto boxCollider = registry->get<BoxCollider>(entity);
+        SaveBoxCollider(components, boxCollider);
     }
     if (registry->all_of<CircleCollider>(entity))
     {
-        SaveCircleCollider(components);
+        auto circleCollider = registry->get<CircleCollider>(entity);
+        SaveCircleCollider(components, circleCollider);
     }
     if (registry->all_of<Health>(entity))
     {
-        SaveHealth(components);
+        auto health = registry->get<Health>(entity);
+        SaveHealth(components, health);
     }
     if (registry->all_of<MenuNavigator>(entity))
     {
-        SaveMenuNavigator(components);
+        auto menuNavigator = registry->get<MenuNavigator>(entity);
+        SaveMenuNavigator(components, menuNavigator);
     }
     if (registry->all_of<Projectile>(entity))
     {
-        SaveProjectile(components);
+        auto projectile = registry->get<Projectile>(entity);
+        SaveProjectile(components, projectile);
     }
-
     if (registry->all_of<ProjectileEmitter>(entity))
     {
-        SaveProjectileEmitter(components);
+        auto projectileEmitter = registry->get<ProjectileEmitter>(entity);
+        SaveProjectileEmitter(components, projectileEmitter);
     }
 
     if (registry->all_of<SceneSwitcher>(entity))
     {
-        SaveSceneSwitcher(components);
+        auto sceneSwitcher = registry->get<SceneSwitcher>(entity);
+        SaveSceneSwitcher(components, sceneSwitcher);
     }
 
     if (registry->all_of<Sprite>(entity))
     {
-        SaveSprite(components);
+        auto sprite = registry->get<Sprite>(entity);
+        SaveSprite(components, sprite);
     }
     if (registry->all_of<TextLabel>(entity))
     {
-        SaveTextLabel(components);
+        auto textLabel = registry->get<TextLabel>(entity);
+        SaveTextLabel(components, textLabel);
     }
-    if (registry->all_of<Velocity>(entity))
-    {
-        SaveVelocity(components);
-    }
-
     if (registry->all_of<Transform>(entity))
     {
-        SaveTransform(components);
+        auto transform = registry->get<Transform>(entity);
+        SaveTransform(components, transform);
+    }
+
+    if (registry->all_of<Velocity>(entity))
+    {
+        auto velocity = registry->get<Velocity>(entity);
+        SaveVelocity(components, velocity);
+    }
+
+    if (registry->any_of<KeyboardControlled_Tag,
+                         Player_Tag,
+                         Enemy_Tag,
+                         Obstacle_Tag,
+                         Projectile_Tag,
+                         StayOnMap_Tag,
+                         Trigger_Tag,
+                         Airborne_Tag,
+                         Effect_Tag,
+                         UI_Tag>(entity))
+    {
+        SaveTags(components, registry, entity);
     }
 
     // Handle Tags
