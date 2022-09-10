@@ -285,45 +285,36 @@ void XMLHandler::AddTags(tinyxml2::XMLElement *component)
     }
 }
 
-void XMLHandler::AddComponent(tinyxml2::XMLElement *component)
+void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::entity entity, tinyxml2::XMLElement *component)
 {
     std::string componentType = component->Attribute("type");
 
     if (componentType == "Animation")
     {
-        std::cout << "Animation" << std::endl;
     }
     else if (componentType == "BoxCollider")
     {
-        std::cout << "BoxCollider" << std::endl;
     }
     else if (componentType == "CircleCollider")
     {
-        std::cout << "CircleCollider" << std::endl;
     }
     else if (componentType == "Health")
     {
-        std::cout << "Health" << std::endl;
     }
     else if (componentType == "MenuNavigator")
     {
-        std::cout << "MenuNavigator" << std::endl;
     }
     else if (componentType == "Projectile")
     {
-        std::cout << "Projectile" << std::endl;
     }
     else if (componentType == "ProjectileEmitter")
     {
-        std::cout << "ProjectileEmitter" << std::endl;
     }
     else if (componentType == "SceneSwitcher")
     {
-        std::cout << "SceneSwitcher" << std::endl;
     }
     else if (componentType == "Sprite")
     {
-        std::cout << "Sprite" << std::endl;
     }
     else if (componentType == "Tags")
     {
@@ -331,15 +322,33 @@ void XMLHandler::AddComponent(tinyxml2::XMLElement *component)
     }
     else if (componentType == "TextLabel")
     {
-        std::cout << "TextLabel" << std::endl;
     }
     else if (componentType == "Transform")
     {
+
+        tinyxml2::XMLElement *xElement = component->FirstChildElement("x");
+        tinyxml2::XMLElement *yElement = component->FirstChildElement("y");
+        tinyxml2::XMLElement *rotationElement = component->FirstChildElement("rotation");
+        tinyxml2::XMLElement *scaleElement = component->FirstChildElement("scale");
+        tinyxml2::XMLElement *scaleXElement = scaleElement->FirstChildElement("x");
+        tinyxml2::XMLElement *scaleYElement = scaleElement->FirstChildElement("y");
+
+        std::string x = xElement->FirstChild()->ToText()->Value();
+        std::string y = yElement->FirstChild()->ToText()->Value();
+        std::string rotation_str = rotationElement->FirstChild()->ToText()->Value();
+        std::string scaleX = scaleXElement->FirstChild()->ToText()->Value();
+        std::string scaleY = scaleYElement->FirstChild()->ToText()->Value();
+
+        vec2f position = vec2f(std::stof(x), std::stof(y));
+        vec2f scale = vec2f(std::stof(scaleX), std::stof(scaleY));
+        double rotation = std::stof(rotation_str);
+
+        registry->emplace<Transform>(entity, position, scale, rotation);
+
         std::cout << "Transform" << std::endl;
     }
     else if (componentType == "Velocity")
     {
-        std::cout << "Velocity" << std::endl;
     }
     else
     {
@@ -347,7 +356,7 @@ void XMLHandler::AddComponent(tinyxml2::XMLElement *component)
     }
 }
 
-void XMLHandler::ReadFromXML()
+void XMLHandler::LoadFromXML(std::shared_ptr<entt::registry> registry)
 {
     tinyxml2::XMLDocument doc;
     doc.LoadFile("assets/SavedData.xml");
@@ -357,11 +366,12 @@ void XMLHandler::ReadFromXML()
     tinyxml2::XMLElement *entity = entities->FirstChildElement("entity");
     tinyxml2::XMLElement *components = entity->FirstChildElement("components");
 
+    entt::entity newEntity = registry->create();
     for (tinyxml2::XMLElement *component = components->FirstChildElement("component");
          component != NULL;
          component = component->NextSiblingElement())
     {
-        AddComponent(component);
+        LoadComponent(registry, newEntity, component);
     }
 }
 
