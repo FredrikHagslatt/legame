@@ -82,6 +82,7 @@ void MainMenu::Load()
 	*/
 
 	// XMLHandler::SaveToXML(m_registry);
+
 	XMLHandler::LoadFromXML(m_registry);
 }
 

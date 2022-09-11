@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include "entt/entt.hpp"
+#include <SDL2/SDL.h>
 #include "tinyxml2/tinyxml2.h"
 
 #include "Components/Tags.h"
@@ -37,7 +38,7 @@ private:
     static void SaveTransform(tinyxml2::XMLElement *components, Transform transform);
     static void SaveVelocity(tinyxml2::XMLElement *components, Velocity velocity);
     static void SaveTags(tinyxml2::XMLElement *components, std::shared_ptr<entt::registry> registry, entt::entity entity);
-    static void AddTags(tinyxml2::XMLElement *component);
+    static void LoadTags(tinyxml2::XMLElement *component);
     static void LoadComponent(std::shared_ptr<entt::registry> registry, entt::entity entity, tinyxml2::XMLElement *component);
     static void SaveEntityToXML(std::shared_ptr<entt::registry> registry, tinyxml2::XMLElement *component, entt::entity entity);
 

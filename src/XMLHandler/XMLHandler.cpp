@@ -138,9 +138,11 @@ void XMLHandler::SaveSprite(tinyxml2::XMLElement *components, Sprite sprite)
     tinyxml2::XMLElement *height = component->InsertNewChildElement("height");
     tinyxml2::XMLElement *pivotPoint = component->InsertNewChildElement("pivotPoint");
     tinyxml2::XMLElement *fixedPosition = component->InsertNewChildElement("fixedPosition");
-    tinyxml2::XMLElement *srcRectX = component->InsertNewChildElement("srcRextX");
-    tinyxml2::XMLElement *srcRextY = component->InsertNewChildElement("srcRectY");
-    tinyxml2::XMLElement *SDL_RenderFlip = component->InsertNewChildElement("SDL_RenderFlip");
+    tinyxml2::XMLElement *srcRect = component->InsertNewChildElement("srcRect");
+    tinyxml2::XMLElement *flip = component->InsertNewChildElement("flip");
+
+    tinyxml2::XMLElement *srcRectX = srcRect->InsertNewChildElement("x");
+    tinyxml2::XMLElement *srcRectY = srcRect->InsertNewChildElement("y");
 
     assetId->SetText(sprite.assetId.c_str());
     width->SetText(sprite.width);
@@ -148,8 +150,8 @@ void XMLHandler::SaveSprite(tinyxml2::XMLElement *components, Sprite sprite)
     pivotPoint->SetText(sprite.pivotPoint);
     fixedPosition->SetText(sprite.fixedPosition);
     srcRectX->SetText(sprite.srcRect.x);
-    srcRextY->SetText(sprite.srcRect.x);
-    SDL_RenderFlip->SetText(sprite.flip);
+    srcRectY->SetText(sprite.srcRect.y);
+    flip->SetText(sprite.flip);
 }
 
 void XMLHandler::SaveTextLabel(tinyxml2::XMLElement *components, TextLabel textLabel)
@@ -274,7 +276,7 @@ void XMLHandler::SaveTags(tinyxml2::XMLElement *components, std::shared_ptr<entt
     }
 }
 
-void XMLHandler::AddTags(tinyxml2::XMLElement *component)
+void XMLHandler::LoadTags(tinyxml2::XMLElement *component)
 {
     for (tinyxml2::XMLElement *tag = component->FirstChildElement("tag");
          tag != NULL;
@@ -315,17 +317,46 @@ void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::e
     }
     else if (componentType == "Sprite")
     {
+        tinyxml2::XMLElement *assetIdElement = component->FirstChildElement("assetId");
+        tinyxml2::XMLElement *widthElement = component->FirstChildElement("width");
+        tinyxml2::XMLElement *heightElement = component->FirstChildElement("height");
+        tinyxml2::XMLElement *pivotPointElement = component->FirstChildElement("pivotPoint");
+        tinyxml2::XMLElement *fixedPositionElement = component->FirstChildElement("fixedPosition");
+        tinyxml2::XMLElement *srcRectElement = component->FirstChildElement("srcRect");
+        tinyxml2::XMLElement *flipElement = component->FirstChildElement("flip");
+
+        tinyxml2::XMLElement *srcRectXElement = srcRectElement->FirstChildElement("x");
+        tinyxml2::XMLElement *srcRectYElement = srcRectElement->FirstChildElement("y");
+
+        std::string assetId = assetIdElement->FirstChild()->ToText()->Value();
+        std::string width_str = widthElement->FirstChild()->ToText()->Value();
+        std::string height_str = heightElement->FirstChild()->ToText()->Value();
+        std::string pivotPoint_str = pivotPointElement->FirstChild()->ToText()->Value();
+        std::string fixedPosition_str = fixedPositionElement->FirstChild()->ToText()->Value();
+        std::string srcRectX_str = srcRectXElement->FirstChild()->ToText()->Value();
+        std::string srcRectY_str = srcRectYElement->FirstChild()->ToText()->Value();
+        std::string flip_str = flipElement->FirstChild()->ToText()->Value();
+
+        // std::string assetId // Done
+        int width = std::stoi(width_str);
+        int height = std::stoi(height_str);
+        int pivotPoint = std::stoi(pivotPoint_str);
+        bool fixedPosition = (fixedPosition_str == "true");
+        int srcRectX = std::stoi(srcRectX_str);
+        int srcRectY = std::stoi(srcRectY_str);
+        SDL_RendererFlip flip = (SDL_RendererFlip)(std::stoi(flip_str));
+
+        registry->emplace<Sprite>(entity, assetId, width, height, pivotPoint, fixedPosition, srcRectX, srcRectY, SDL_FLIP_NONE);
     }
     else if (componentType == "Tags")
     {
-        AddTags(component);
+        LoadTags(component);
     }
     else if (componentType == "TextLabel")
     {
     }
     else if (componentType == "Transform")
     {
-
         tinyxml2::XMLElement *xElement = component->FirstChildElement("x");
         tinyxml2::XMLElement *yElement = component->FirstChildElement("y");
         tinyxml2::XMLElement *rotationElement = component->FirstChildElement("rotation");
