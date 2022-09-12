@@ -13,27 +13,29 @@
 
 #include "Events/EventDispatcher.h"
 #include "Events/SceneSwitchEvent.h"
-
 #include "XMLHandler/XMLHandler.h"
 
 void MainMenu::OnKeyPressedEvent(const KeyPressedEvent event)
 {
-	const auto menuNavigator = m_registry->get<MenuNavigator>(m_menuNavigator);
-
-	switch (event.keycode)
+	auto view = m_registry->view<MenuNavigator>();
+	for (const auto &entity : view)
 	{
-	case SDLK_RETURN:
-		switch (menuNavigator.atRow)
+		const auto menuNavigator = view.get<MenuNavigator>(entity);
+		switch (event.keycode)
 		{
-		case 0:
-			Logger::Info("[MainMenu] Pressed 'Play Game'");
-			Event::dispatcher.trigger(SceneSwitchEvent{"Game", "Garden"});
-			break;
-		case 1:
-			Logger::Info("[MainMenu] Pressed 'Settings'");
+		case SDLK_RETURN:
+			switch (menuNavigator.atRow)
+			{
+			case 0:
+				Logger::Info("[MainMenu] Pressed 'Play Game'");
+				Event::dispatcher.trigger(SceneSwitchEvent{"Game", "Garden"});
+				break;
+			case 1:
+				Logger::Info("[MainMenu] Pressed 'Settings'");
+				break;
+			}
 			break;
 		}
-		break;
 	}
 }
 
@@ -79,10 +81,9 @@ void MainMenu::Load()
 		m_registry->emplace<Transform>(m_menuNavigator, vec2f((WINDOWWIDTH - textDimension.x) / 2 - 70, 240.0 + textDimension.y / 2 - 8.0), 1.5);
 		m_registry->emplace<MenuNavigator>(m_menuNavigator, 2);
 		m_registry->emplace<Sprite>(m_menuNavigator, "bullet-image", 4, 4, 0, true);
+
+		XMLHandler::SaveToXML(m_registry);
 	*/
-
-	// XMLHandler::SaveToXML(m_registry);
-
 	XMLHandler::LoadFromXML(m_registry);
 }
 

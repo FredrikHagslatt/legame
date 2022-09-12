@@ -1,4 +1,5 @@
 #include "XMLHandler/XMLHandler.h"
+#include "Logger/Logger.h"
 
 void XMLHandler::SaveAnimation(tinyxml2::XMLElement *components, Animation animation)
 {
@@ -189,13 +190,12 @@ void XMLHandler::SaveTransform(tinyxml2::XMLElement *components, Transform trans
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "Transform");
 
-    tinyxml2::XMLElement *x = component->InsertNewChildElement("x");
-    tinyxml2::XMLElement *y = component->InsertNewChildElement("y");
-    tinyxml2::XMLElement *rotation = component->InsertNewChildElement("rotation");
+    tinyxml2::XMLElement *position = component->InsertNewChildElement("position");
+    tinyxml2::XMLElement *positionX = position->InsertNewChildElement("x");
+    tinyxml2::XMLElement *positionY = position->InsertNewChildElement("y");
 
-    x->SetText(transform.position.x);
-    y->SetText(transform.position.y);
-    rotation->SetText(transform.rotation);
+    positionX->SetText(transform.position.x);
+    positionY->SetText(transform.position.y);
 
     tinyxml2::XMLElement *scale = component->InsertNewChildElement("scale");
     tinyxml2::XMLElement *scaleX = scale->InsertNewChildElement("x");
@@ -203,6 +203,10 @@ void XMLHandler::SaveTransform(tinyxml2::XMLElement *components, Transform trans
 
     scaleX->SetText(transform.scale.x);
     scaleY->SetText(transform.scale.y);
+
+    tinyxml2::XMLElement *rotation = component->InsertNewChildElement("rotation");
+
+    rotation->SetText(transform.rotation);
 }
 
 void XMLHandler::SaveVelocity(tinyxml2::XMLElement *components, Velocity velocity)
@@ -305,6 +309,19 @@ void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::e
     }
     else if (componentType == "MenuNavigator")
     {
+        tinyxml2::XMLElement *numRowsElement = component->FirstChildElement("numRows");
+        tinyxml2::XMLElement *rowDistanceElement = component->FirstChildElement("rowDistance");
+        tinyxml2::XMLElement *atRowElement = component->FirstChildElement("atRow");
+
+        std::string numRows_str = numRowsElement->FirstChild()->ToText()->Value();
+        std::string rowDistance_str = rowDistanceElement->FirstChild()->ToText()->Value();
+        std::string atRow_str = atRowElement->FirstChild()->ToText()->Value();
+
+        int numRows = std::stoi(numRows_str);
+        int rowDistance = std::stoi(rowDistance_str);
+        int atRow = std::stoi(atRow_str);
+
+        registry->emplace<MenuNavigator>(entity, numRows, rowDistance, atRow);
     }
     else if (componentType == "Projectile")
     {
@@ -354,29 +371,63 @@ void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::e
     }
     else if (componentType == "TextLabel")
     {
+        tinyxml2::XMLElement *positionElement = component->FirstChildElement("position");
+        tinyxml2::XMLElement *positionXElement = positionElement->FirstChildElement("x");
+        tinyxml2::XMLElement *positionYElement = positionElement->FirstChildElement("y");
+        tinyxml2::XMLElement *textElement = component->FirstChildElement("text");
+        tinyxml2::XMLElement *assetIdElement = component->FirstChildElement("assetId");
+        tinyxml2::XMLElement *colorElement = component->FirstChildElement("color");
+        tinyxml2::XMLElement *colorRElement = colorElement->FirstChildElement("r");
+        tinyxml2::XMLElement *colorGElement = colorElement->FirstChildElement("g");
+        tinyxml2::XMLElement *colorBElement = colorElement->FirstChildElement("b");
+        tinyxml2::XMLElement *isFixedElement = colorElement->FirstChildElement("isFixed");
+
+        std::string positionX_str = positionXElement->FirstChild()->ToText()->Value();
+        std::string positionY_str = positionYElement->FirstChild()->ToText()->Value();
+        std::string text = textElement->FirstChild()->ToText()->Value();
+        std::string assetId = textElement->FirstChild()->ToText()->Value();
+        std::string colorR_str = colorRElement->FirstChild()->ToText()->Value();
+        std::string colorG_str = colorGElement->FirstChild()->ToText()->Value();
+        std::string colorB_str = colorBElement->FirstChild()->ToText()->Value();
+        std::string isFixed_str = isFixedElement->FirstChild()->ToText()->Value();
+
+        vec2f position = vec2f(std::stof(positionX_str), std::stof(positionX_str));
+        // std::string text // Done
+        // std::string assetId // Done
+
+        SDL_Color color = {(Uint8)std::stoi(colorR_str),
+                           (Uint8)std::stoi(colorG_str),
+                           (Uint8)std::stoi(colorB_str)};
+        bool isFixed = (isFixed_str == "true");
+
+        Logger::Info(position.string());
+        Logger::Info(text);
+        Logger::Info(assetId);
+
+        registry->emplace<TextLabel>(entity, position, text, assetId);
+        // registry->emplace<TextLabel>(entity, position, text, assetId, color, isFixed);
     }
     else if (componentType == "Transform")
     {
-        tinyxml2::XMLElement *xElement = component->FirstChildElement("x");
-        tinyxml2::XMLElement *yElement = component->FirstChildElement("y");
-        tinyxml2::XMLElement *rotationElement = component->FirstChildElement("rotation");
+        tinyxml2::XMLElement *positionElement = component->FirstChildElement("position");
+        tinyxml2::XMLElement *positionXElement = positionElement->FirstChildElement("x");
+        tinyxml2::XMLElement *positionYElement = positionElement->FirstChildElement("y");
         tinyxml2::XMLElement *scaleElement = component->FirstChildElement("scale");
         tinyxml2::XMLElement *scaleXElement = scaleElement->FirstChildElement("x");
         tinyxml2::XMLElement *scaleYElement = scaleElement->FirstChildElement("y");
+        tinyxml2::XMLElement *rotationElement = component->FirstChildElement("rotation");
 
-        std::string x = xElement->FirstChild()->ToText()->Value();
-        std::string y = yElement->FirstChild()->ToText()->Value();
+        std::string positionX_str = positionXElement->FirstChild()->ToText()->Value();
+        std::string positionY_str = positionYElement->FirstChild()->ToText()->Value();
+        std::string scaleX_str = scaleXElement->FirstChild()->ToText()->Value();
+        std::string scaleY_str = scaleYElement->FirstChild()->ToText()->Value();
         std::string rotation_str = rotationElement->FirstChild()->ToText()->Value();
-        std::string scaleX = scaleXElement->FirstChild()->ToText()->Value();
-        std::string scaleY = scaleYElement->FirstChild()->ToText()->Value();
 
-        vec2f position = vec2f(std::stof(x), std::stof(y));
-        vec2f scale = vec2f(std::stof(scaleX), std::stof(scaleY));
+        vec2f position = vec2f(std::stof(positionX_str), std::stof(positionX_str));
+        vec2f scale = vec2f(std::stof(scaleX_str), std::stof(scaleY_str));
         double rotation = std::stof(rotation_str);
 
         registry->emplace<Transform>(entity, position, scale, rotation);
-
-        std::cout << "Transform" << std::endl;
     }
     else if (componentType == "Velocity")
     {

@@ -8,7 +8,6 @@ class MainMenu : public Scene
 {
 private:
 	SDL_Rect m_camera;
-	entt::entity m_menuNavigator;
 
 public:
 	void OnKeyPressedEvent(const KeyPressedEvent event);

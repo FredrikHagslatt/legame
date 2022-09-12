@@ -1,0 +1,102 @@
+<level>
+    <entities>
+        <entity>
+            <components>
+                <component type="MenuNavigator">
+                    <numRows>2</numRows>
+                    <rowDistance>60</rowDistance>
+                    <atRow>0</atRow>
+                </component>
+                <component type="Sprite">
+                    <assetId>bullet-image</assetId>
+                    <width>4</width>
+                    <height>4</height>
+                    <pivotPoint>0</pivotPoint>
+                    <fixedPosition>true</fixedPosition>
+                    <srcRect>
+                        <x>0</x>
+                        <y>0</y>
+                    </srcRect>
+                    <flip>0</flip>
+                </component>
+                <component type="Transform">
+                    <position>
+                        <x>444</x>
+                        <y>252</y>
+                    </position>
+                    <scale>
+                        <x>4.5</x>
+                        <y>4.5</y>
+                    </scale>
+                    <rotation>0</rotation>
+                </component>
+                <component type="Tags">
+                    <tag>UI_Tag</tag>
+                </component>
+            </components>
+        </entity>
+        <entity>
+            <components>
+                <component type="TextLabel">
+                    <position>
+                        <x>514</x>
+                        <y>300</y>
+                    </position>
+                    <text>Settings</text>
+                    <assetId>charriot-font-40</assetId>
+                    <color>
+                        <r>30</r>
+                        <g>200</g>
+                        <b>30</b>
+                    </color>
+                    <isFixed>true</isFixed>
+                </component>
+                <component type="Tags">
+                    <tag>UI_Tag</tag>
+                </component>
+            </components>
+        </entity>
+        <entity>
+            <components>
+                <component type="TextLabel">
+                    <position>
+                        <x>496</x>
+                        <y>240</y>
+                    </position>
+                    <text>Play Game</text>
+                    <assetId>charriot-font-40</assetId>
+                    <color>
+                        <r>30</r>
+                        <g>200</g>
+                        <b>30</b>
+                    </color>
+                    <isFixed>true</isFixed>
+                </component>
+                <component type="Tags">
+                    <tag>UI_Tag</tag>
+                </component>
+            </components>
+        </entity>
+        <entity>
+            <components>
+                <component type="TextLabel">
+                    <position>
+                        <x>434</x>
+                        <y>10</y>
+                    </position>
+                    <text> - Main Menu - </text>
+                    <assetId>charriot-font-40</assetId>
+                    <color>
+                        <r>30</r>
+                        <g>200</g>
+                        <b>30</b>
+                    </color>
+                    <isFixed>true</isFixed>
+                </component>
+                <component type="Tags">
+                    <tag>UI_Tag</tag>
+                </component>
+            </components>
+        </entity>
+    </entities>
+</level>
