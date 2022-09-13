@@ -1,5 +1,6 @@
-#include "XMLHandler/XMLHandler.h"
+#include "Constants.h"
 #include "Logger/Logger.h"
+#include "XMLHandler/XMLHandler.h"
 
 void XMLHandler::SaveAnimation(tinyxml2::XMLElement *components, Animation animation)
 {
@@ -201,8 +202,8 @@ void XMLHandler::SaveTransform(tinyxml2::XMLElement *components, Transform trans
     tinyxml2::XMLElement *scaleX = scale->InsertNewChildElement("x");
     tinyxml2::XMLElement *scaleY = scale->InsertNewChildElement("y");
 
-    scaleX->SetText(transform.scale.x);
-    scaleY->SetText(transform.scale.y);
+    scaleX->SetText(transform.scale.x / SCALE);
+    scaleY->SetText(transform.scale.y / SCALE);
 
     tinyxml2::XMLElement *rotation = component->InsertNewChildElement("rotation");
 
@@ -280,21 +281,60 @@ void XMLHandler::SaveTags(tinyxml2::XMLElement *components, std::shared_ptr<entt
     }
 }
 
-void XMLHandler::LoadTags(tinyxml2::XMLElement *component)
+void XMLHandler::LoadTags(std::shared_ptr<entt::registry> registry, entt::entity entity, tinyxml2::XMLElement *component)
 {
     for (tinyxml2::XMLElement *tag = component->FirstChildElement("tag");
          tag != NULL;
          tag = tag->NextSiblingElement())
     {
-        const char *tagName = tag->FirstChild()->ToText()->Value();
-        std::cout << tagName << std::endl;
+        std::string tagName = tag->FirstChild()->ToText()->Value();
+
+        if (tagName == "Player_Tag")
+        {
+            registry->emplace<Player_Tag>(entity);
+        }
+        else if (tagName == "Enemy_Tag")
+        {
+            registry->emplace<Enemy_Tag>(entity);
+        }
+        else if (tagName == "Obstacle_Tag")
+        {
+            registry->emplace<Obstacle_Tag>(entity);
+        }
+        else if (tagName == "KeyboardControlled_Tag")
+        {
+            registry->emplace<KeyboardControlled_Tag>(entity);
+        }
+        else if (tagName == "Projectile_Tag")
+        {
+            registry->emplace<Projectile_Tag>(entity);
+        }
+        else if (tagName == "StayOnMap_Tag")
+        {
+            registry->emplace<StayOnMap_Tag>(entity);
+        }
+        else if (tagName == "Trigger_Tag")
+        {
+            registry->emplace<Trigger_Tag>(entity);
+        }
+        else if (tagName == "Airborne_Tag")
+        {
+            registry->emplace<Airborne_Tag>(entity);
+        }
+        else if (tagName == "Effect_Tag")
+        {
+            registry->emplace<Effect_Tag>(entity);
+        }
+        else if (tagName == "UI_Tag")
+        {
+            registry->emplace<UI_Tag>(entity);
+        }
     }
 }
 
 void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::entity entity, tinyxml2::XMLElement *component)
 {
     std::string componentType = component->Attribute("type");
-
     if (componentType == "Animation")
     {
     }
@@ -367,7 +407,7 @@ void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::e
     }
     else if (componentType == "Tags")
     {
-        LoadTags(component);
+        LoadTags(registry, entity, component);
     }
     else if (componentType == "TextLabel")
     {
@@ -380,32 +420,26 @@ void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::e
         tinyxml2::XMLElement *colorRElement = colorElement->FirstChildElement("r");
         tinyxml2::XMLElement *colorGElement = colorElement->FirstChildElement("g");
         tinyxml2::XMLElement *colorBElement = colorElement->FirstChildElement("b");
-        tinyxml2::XMLElement *isFixedElement = colorElement->FirstChildElement("isFixed");
+        tinyxml2::XMLElement *isFixedElement = component->FirstChildElement("isFixed");
 
         std::string positionX_str = positionXElement->FirstChild()->ToText()->Value();
         std::string positionY_str = positionYElement->FirstChild()->ToText()->Value();
         std::string text = textElement->FirstChild()->ToText()->Value();
-        std::string assetId = textElement->FirstChild()->ToText()->Value();
+        std::string assetId = assetIdElement->FirstChild()->ToText()->Value();
         std::string colorR_str = colorRElement->FirstChild()->ToText()->Value();
         std::string colorG_str = colorGElement->FirstChild()->ToText()->Value();
         std::string colorB_str = colorBElement->FirstChild()->ToText()->Value();
         std::string isFixed_str = isFixedElement->FirstChild()->ToText()->Value();
 
-        vec2f position = vec2f(std::stof(positionX_str), std::stof(positionX_str));
+        vec2f position = vec2f(std::stof(positionX_str), std::stof(positionY_str));
         // std::string text // Done
         // std::string assetId // Done
-
         SDL_Color color = {(Uint8)std::stoi(colorR_str),
                            (Uint8)std::stoi(colorG_str),
                            (Uint8)std::stoi(colorB_str)};
         bool isFixed = (isFixed_str == "true");
 
-        Logger::Info(position.string());
-        Logger::Info(text);
-        Logger::Info(assetId);
-
-        registry->emplace<TextLabel>(entity, position, text, assetId);
-        // registry->emplace<TextLabel>(entity, position, text, assetId, color, isFixed);
+        registry->emplace<TextLabel>(entity, position, text, assetId, color, isFixed);
     }
     else if (componentType == "Transform")
     {
@@ -423,7 +457,7 @@ void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::e
         std::string scaleY_str = scaleYElement->FirstChild()->ToText()->Value();
         std::string rotation_str = rotationElement->FirstChild()->ToText()->Value();
 
-        vec2f position = vec2f(std::stof(positionX_str), std::stof(positionX_str));
+        vec2f position = vec2f(std::stof(positionX_str), std::stof(positionY_str));
         vec2f scale = vec2f(std::stof(scaleX_str), std::stof(scaleY_str));
         double rotation = std::stof(rotation_str);
 
@@ -434,26 +468,30 @@ void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::e
     }
     else
     {
-        std::cout << "Component from xml does not match any game component" << std::endl;
+        Logger::Error("Component from xml does not match any game component");
     }
 }
 
-void XMLHandler::LoadFromXML(std::shared_ptr<entt::registry> registry)
+void XMLHandler::LoadFromXML(std::shared_ptr<entt::registry> registry, std::string filename)
 {
+    const char *file = filename.c_str();
     tinyxml2::XMLDocument doc;
-    doc.LoadFile("assets/SavedData.xml");
+    doc.LoadFile(file);
 
     tinyxml2::XMLElement *root = doc.FirstChildElement("level");
     tinyxml2::XMLElement *entities = root->FirstChildElement("entities");
-    tinyxml2::XMLElement *entity = entities->FirstChildElement("entity");
-    tinyxml2::XMLElement *components = entity->FirstChildElement("components");
-
-    entt::entity newEntity = registry->create();
-    for (tinyxml2::XMLElement *component = components->FirstChildElement("component");
-         component != NULL;
-         component = component->NextSiblingElement())
+    for (tinyxml2::XMLElement *entity = entities->FirstChildElement("entity");
+         entity != NULL;
+         entity = entity->NextSiblingElement())
     {
-        LoadComponent(registry, newEntity, component);
+        tinyxml2::XMLElement *components = entity->FirstChildElement("components");
+        entt::entity newEntity = registry->create();
+        for (tinyxml2::XMLElement *component = components->FirstChildElement("component");
+             component != NULL;
+             component = component->NextSiblingElement())
+        {
+            LoadComponent(registry, newEntity, component);
+        }
     }
 }
 

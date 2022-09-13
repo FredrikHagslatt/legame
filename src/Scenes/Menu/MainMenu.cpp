@@ -76,15 +76,15 @@ void MainMenu::Load()
 		textDimension = RenderTextSystem::GetTextDimensions(m_renderer, "Settings", m_assetStore->GetFont("charriot-font-40"));
 		m_registry->emplace<TextLabel>(settings, vec2f((WINDOWWIDTH - textDimension.x) / 2, 300.0), "Settings", "charriot-font-40", green, true);
 
-		m_menuNavigator = m_registry->create();
-		m_registry->emplace<UI_Tag>(m_menuNavigator);
-		m_registry->emplace<Transform>(m_menuNavigator, vec2f((WINDOWWIDTH - textDimension.x) / 2 - 70, 240.0 + textDimension.y / 2 - 8.0), 1.5);
-		m_registry->emplace<MenuNavigator>(m_menuNavigator, 2);
-		m_registry->emplace<Sprite>(m_menuNavigator, "bullet-image", 4, 4, 0, true);
-
-		XMLHandler::SaveToXML(m_registry);
+		const auto menuNavigator = m_registry->create();
+		m_registry->emplace<UI_Tag>(menuNavigator);
+		m_registry->emplace<Transform>(menuNavigator, vec2f((WINDOWWIDTH - textDimension.x) / 2 - 70, 240.0 + textDimension.y / 2 - 8.0), 1.5);
+		m_registry->emplace<MenuNavigator>(menuNavigator, 2);
+		m_registry->emplace<Sprite>(menuNavigator, "bullet-image", 4, 4, 0, true);
 	*/
-	XMLHandler::LoadFromXML(m_registry);
+
+	//	XMLHandler::SaveToXML(m_registry);
+	XMLHandler::LoadFromXML(m_registry, "assets/levels/menu/MainMenu.xml");
 }
 
 void MainMenu::Unload()
