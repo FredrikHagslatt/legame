@@ -39,6 +39,8 @@
 #include "Events/EventDispatcher.h"
 #include "Events/KeyPressedEvent.h"
 
+#include "XMLHandler/XMLHandler.h"
+
 class Stardew : public Scene
 {
 protected:

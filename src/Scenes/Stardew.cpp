@@ -99,7 +99,6 @@ void Stardew::Load()
     if (view.empty())
     {
         m_assetStore->AddTexture(m_renderer, "spike-image", "assets/images/characters/friend/Spike.png");
-
         Logger::Info("[Stardew] Creating player");
         const auto player = m_registry->create();
         m_registry->emplace<Player_Tag>(player);

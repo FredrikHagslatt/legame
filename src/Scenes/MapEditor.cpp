@@ -80,25 +80,34 @@ void MapEditor::DecreaseMapHeight()
 
 void MapEditor::SelectTile(const MouseMotionEvent &event)
 {
-    int mouseX = event.motion.x + m_camera.x;
-    int mouseY = event.motion.y + m_camera.y;
-
-    mouseX = std::max(0, mouseX);
-    mouseX = std::min(mouseX, m_mapWidth - 1);
-    mouseY = std::max(0, mouseY);
-    mouseY = std::min(mouseY, m_mapHeight - 1);
-
-    m_selectedTile = vec2i(static_cast<int>((mouseX) / (TILESIZE * SCALE)), static_cast<int>((mouseY) / (TILESIZE * SCALE)));
-
     auto &m_tileBrushTransform = m_registry->get<Transform>(m_tileBrush);
-    m_tileBrushTransform.position = vec2f(m_selectedTile.x * TILESIZE * SCALE, m_selectedTile.y * TILESIZE * SCALE);
+    vec2i mousePos = vec2i(event.motion.x + m_camera.x, event.motion.y + m_camera.y);
+
+    if (
+        mousePos.x >= 0 &&
+        mousePos.x < m_mapWidth &&
+        mousePos.y >= 0 &&
+        mousePos.y < m_mapHeight)
+    {
+        m_tileIsSelected = true;
+        m_selectedTile = vec2i(static_cast<int>((mousePos.x) / (TILESIZE * SCALE)), static_cast<int>((mousePos.y) / (TILESIZE * SCALE)));
+        m_tileBrushTransform.position = vec2f(m_selectedTile.x * TILESIZE * SCALE, m_selectedTile.y * TILESIZE * SCALE);
+    }
+    else
+    {
+        m_tileIsSelected = false;
+        m_tileBrushTransform.position = vec2f(-1000 * TILESIZE * SCALE, -1000 * TILESIZE * SCALE); // Far outside the map
+    }
 }
 
 void MapEditor::PlaceTile()
 {
-    Sprite &sprite = m_tileMap.at(m_selectedTile.y).at(m_selectedTile.x);
-    const auto brushSprite = m_registry->get<Sprite>(m_tileBrush);
-    sprite.srcRect = brushSprite.srcRect;
+    if (m_tileIsSelected)
+    {
+        Sprite &sprite = m_tileMap.at(m_selectedTile.y).at(m_selectedTile.x);
+        const auto brushSprite = m_registry->get<Sprite>(m_tileBrush);
+        sprite.srcRect = brushSprite.srcRect;
+    }
 }
 
 void MapEditor::SaveMap(const std::string filename)
