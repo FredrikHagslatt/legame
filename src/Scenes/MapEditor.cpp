@@ -166,8 +166,17 @@ void MapEditor::OnMouseMotionEvent(const MouseMotionEvent &event)
 }
 void MapEditor::OnMouseButtonPressedEvent(const MouseButtonPressedEvent &event)
 {
+    if (m_mapMenuOpen)
+    {
+        return;
+    }
+
+    if (m_entityMenuOpen)
+    {
+        return;
+    }
+
     m_leftMouseHeld = true;
-    // Contitional entity creation here
 }
 
 void MapEditor::OnMouseButtonReleasedEvent(const MouseButtonReleasedEvent &event)
@@ -204,9 +213,10 @@ void MapEditor::RenderScene(const double elapsedTime)
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
 
+    m_mapMenuOpen = false;
     if (ImGui::Begin("Map Editor", NULL, window_flags))
     {
-
+        m_mapMenuOpen = true;
         if (ImGui::CollapsingHeader("Map size"))
         {
             ImGui::InputInt("Width in tiles", &m_queuedMapNumCols);
@@ -273,6 +283,105 @@ void MapEditor::RenderScene(const double elapsedTime)
             SaveMap(std::string(filename));
         }
     }
+    ImGui::End();
+
+    ImGui::SetNextWindowPos(ImVec2(0, 300), ImGuiCond_FirstUseEver);
+
+    m_entityMenuOpen = false;
+    if (ImGui::Begin("Entities Editor", NULL, window_flags))
+    {
+        m_entityMenuOpen = true;
+        if (ImGui::CollapsingHeader("Components"))
+        {
+            std::vector<std::string> availableComponents =
+                {"Animation",
+                 "BoxCollider",
+                 "CircleCollider",
+                 "Health",
+                 "Projectile",
+                 "ProjectileEmitter",
+                 "SceneSwitcher",
+                 "Sprite",
+                 "Tags",
+                 "TextLabel",
+                 "Transform",
+                 "Velocity"};
+            static int selectedAvailableComponentIndex = 0;
+
+            ImGui::BeginGroup();
+            ImGui::Text("Available Components");
+            if (ImGui::BeginListBox("##Available Components"))
+            {
+                for (int n = 0; n < availableComponents.size(); n++)
+                {
+                    const bool isSelected = (selectedAvailableComponentIndex == n);
+                    if (ImGui::Selectable(availableComponents.at(n).c_str(), isSelected))
+                        selectedAvailableComponentIndex = n;
+
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndListBox();
+            }
+
+            static std::vector<std::string> addedComponents =
+                {"Animation",
+                 "BoxCollider",
+                 "Velocity"};
+            static int selectedAddedComponentIndex = 0;
+
+            if (ImGui::Button("Add Component"))
+            {
+                std::string componentName = availableComponents[selectedAvailableComponentIndex];
+                addedComponents.push_back(componentName);
+                selectedAddedComponentIndex = addedComponents.size() - 1;
+                Logger::Info("Adding Component: " + componentName);
+            }
+
+            ImGui::EndGroup();
+            ImGui::SameLine();
+            ImGui::BeginGroup();
+
+            ImGui::Text("Added Components");
+            if (ImGui::BeginListBox("##Added Components"))
+            {
+                for (int n = 0; n < addedComponents.size(); n++)
+                {
+                    const bool isSelected = (selectedAddedComponentIndex == n);
+                    if (ImGui::Selectable(addedComponents.at(n).c_str(), isSelected))
+                        selectedAddedComponentIndex = n;
+
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndListBox();
+            }
+
+            if (ImGui::Button("Delete Component"))
+            {
+                if (addedComponents.empty())
+                {
+                    Logger::Info("No components to delete, you simpleton");
+                }
+                else
+                {
+                    std::string componentName = addedComponents[selectedAddedComponentIndex];
+                    Logger::Info("Deleting Component: " + componentName);
+                    addedComponents.erase(addedComponents.begin() + selectedAddedComponentIndex);
+                    if (selectedAddedComponentIndex > addedComponents.size() - 1)
+                    {
+                        selectedAddedComponentIndex = addedComponents.size() - 1;
+                    }
+                }
+            }
+            ImGui::EndGroup();
+            ImGui::SameLine();
+            ImGui::BeginGroup();
+            ImGui::Text("Component Attributes");
+            ImGui::EndGroup();
+        }
+    }
+
     ImGui::End();
 
     ImGui::Render();
