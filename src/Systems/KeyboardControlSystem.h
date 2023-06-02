@@ -23,15 +23,19 @@ public:
             switch (event.keycode)
             {
             case SDLK_LEFT:
+            case SDLK_a:
                 velocity.direction.x = -1;
                 break;
             case SDLK_RIGHT:
+            case SDLK_d:
                 velocity.direction.x = 1;
                 break;
             case SDLK_UP:
+            case SDLK_w:
                 velocity.direction.y = -1;
                 break;
             case SDLK_DOWN:
+            case SDLK_s:
                 velocity.direction.y = 1;
                 break;
             }
@@ -54,24 +58,28 @@ public:
             switch (event.keycode)
             {
             case SDLK_UP:
+            case SDLK_w:
                 if (velocity.direction.y < 0)
                 {
                     velocity.direction.y = 0.0;
                 }
                 break;
             case SDLK_RIGHT:
+            case SDLK_d:
                 if (velocity.direction.x > 0)
                 {
                     velocity.direction.x = 0.0;
                 }
                 break;
             case SDLK_DOWN:
+            case SDLK_s:
                 if (velocity.direction.y > 0)
                 {
                     velocity.direction.y = 0.0;
                 }
                 break;
             case SDLK_LEFT:
+            case SDLK_a:
                 if (velocity.direction.x < 0)
                 {
                     velocity.direction.x = 0.0;
