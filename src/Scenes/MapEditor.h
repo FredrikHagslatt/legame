@@ -19,6 +19,7 @@ private:
 	bool m_entityMenuOpen = false;
 
 	entt::entity m_tileBrush;
+	entt::entity m_editedEntity;
 
 	bool m_showTileSelector = false;
 	bool m_leftMouseHeld = false;

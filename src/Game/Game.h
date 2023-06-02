@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 #include <list>
 #include "DevTools/DevTools.h"
+#include "DevTools/EntityExplorer.h"
 
 class Game
 {
@@ -18,6 +19,7 @@ private:
     SceneManager m_sceneManager;
     std::shared_ptr<entt::registry> m_registry;
     std::shared_ptr<AssetStore> m_assetStore;
+    EntityExplorer m_entityExplorer = EntityExplorer(m_registry, m_assetStore);
 
     double HandleFramerate();
     void Setup();

@@ -5,6 +5,7 @@
 #include "Events/EventDispatcher.h"
 #include "Events/SceneSwitchEvent.h"
 
+bool DevTools::showEntityExplorer = true;
 bool DevTools::showDevTools = false;
 bool DevTools::showDemoWindow = false;
 bool DevTools::showLogWindow = false;
@@ -18,10 +19,6 @@ bool DevTools::logToFile = false;
 
 void DevTools::Render(double elapsedTime)
 {
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    ImGui_ImplSDLRenderer_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
 
     static unsigned int fps = 0;
     static double updateFpsTimer = 0.5;
@@ -43,11 +40,6 @@ void DevTools::Render(double elapsedTime)
     {
         ShowLogWindow();
     }
-
-    ImGui::Render();
-    ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-
-    // Create a vector with both Sprite and Transform component of all entities
 }
 
 void DevTools::ToggleShowDevTools(const KeyPressedEvent &event)
@@ -60,7 +52,7 @@ void DevTools::ToggleShowDevTools(const KeyPressedEvent &event)
 
 void DevTools::ShowDevTools(unsigned int fps)
 {
-    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(0, 200), ImGuiCond_FirstUseEver);
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
     if (ImGui::Begin("Dev Tools", NULL, window_flags))
@@ -70,6 +62,21 @@ void DevTools::ShowDevTools(unsigned int fps)
         if (ImGui::Button("Open Map Editor"))
         {
             Event::dispatcher.trigger(SceneSwitchEvent{"Game", "MapEditor"});
+        }
+
+        if (!DevTools::showEntityExplorer)
+        {
+            if (ImGui::Button("Open Entity Explorer"))
+            {
+                DevTools::showEntityExplorer = true;
+            }
+        }
+        else
+        {
+            if (ImGui::Button("Close Entity Explorer"))
+            {
+                DevTools::showEntityExplorer = false;
+            }
         }
 
         ImGui::Checkbox("Show ImGui Demo Window", &showDemoWindow);

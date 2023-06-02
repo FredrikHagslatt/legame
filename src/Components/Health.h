@@ -3,11 +3,10 @@
 
 struct Health
 {
-    int healthPercentage;
-    Health(int healthPercentage = 0)
-    : healthPercentage(healthPercentage)
+    int hitPoints;
+    Health(int hitPoints = 0)
+        : hitPoints(hitPoints)
     {
-
     }
 };
 

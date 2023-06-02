@@ -6,6 +6,9 @@ struct SceneSwitcher
 {
     std::string sceneManagerId;
     std::string sceneName;
+    SceneSwitcher(std::string sceneManagerId = "", std::string sceneName = "") : sceneManagerId(sceneManagerId), sceneName(sceneName)
+    {
+    }
 };
 
 #endif

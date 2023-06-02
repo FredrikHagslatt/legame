@@ -26,17 +26,17 @@ public:
             const auto sprite = view.get<Sprite>(entity);
             const auto health = view.get<Health>(entity);
 
-            if (health.healthPercentage >= 0 && health.healthPercentage < 40)
+            if (health.hitPoints >= 0 && health.hitPoints < 40)
             {
                 healthBarColor = red;
             }
 
-            else if (health.healthPercentage >= 40 && health.healthPercentage < 80)
+            else if (health.hitPoints >= 40 && health.hitPoints < 80)
             {
                 healthBarColor = yellow;
             }
 
-            else if (health.healthPercentage >= 80)
+            else if (health.hitPoints >= 80)
             {
                 healthBarColor = green;
             }
@@ -52,14 +52,14 @@ public:
                 {
                     static_cast<int>(healthBarPos.x),
                     static_cast<int>(healthBarPos.y),
-                    static_cast<int>(healthBarWidth * (health.healthPercentage / 100.0)),
+                    static_cast<int>(healthBarWidth * (health.hitPoints / 100.0)),
                     static_cast<int>(healthBarHeight)};
 
             SDL_SetRenderDrawColor(renderer, healthBarColor.r, healthBarColor.g, healthBarColor.b, 255);
             SDL_RenderFillRect(renderer, &healthBarRect);
 
             // Render the health percentage text label indicator
-            std::string healthText = std::to_string(health.healthPercentage);
+            std::string healthText = std::to_string(health.hitPoints);
             SDL_Surface *surface = TTF_RenderText_Blended(assetStore->GetFont("pico8-font-5"), healthText.c_str(), healthBarColor);
             SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_FreeSurface(surface);
