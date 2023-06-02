@@ -35,6 +35,7 @@ Game::Game()
 {
     isRunning = false;
     Logger::Info("[Game] Game Created.");
+    //    m_entityExplorer = EntityExplorer();
 }
 
 Game::~Game()
@@ -196,7 +197,19 @@ void Game::Update()
 
     if (DevTools::showDevTools)
     {
+        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+        ImGui_ImplSDLRenderer_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+
         DevTools::Render(elapsedTime);
+
+        if (DevTools::showEntityExplorer)
+        {
+            m_entityExplorer.Render();
+        }
+        ImGui::Render();
+        ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
     }
 
     SDL_RenderPresent(m_renderer);

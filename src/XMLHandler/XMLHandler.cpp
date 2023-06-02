@@ -66,8 +66,8 @@ void XMLHandler::SaveHealth(tinyxml2::XMLElement *components, const Health healt
     tinyxml2::XMLElement *component = components->InsertNewChildElement("component");
     component->SetAttribute("type", "Health");
 
-    tinyxml2::XMLElement *healthPercentage = component->InsertNewChildElement("healthPercentage");
-    healthPercentage->SetText(health.healthPercentage);
+    tinyxml2::XMLElement *healthElement = component->InsertNewChildElement("hitPoints");
+    healthElement->SetText(health.hitPoints);
 }
 
 void XMLHandler::SaveMenuNavigator(tinyxml2::XMLElement *components, const MenuNavigator menuNavigator)
@@ -399,10 +399,10 @@ void XMLHandler::LoadCircleCollider(std::shared_ptr<entt::registry> registry, en
 
 void XMLHandler::LoadHealth(std::shared_ptr<entt::registry> registry, entt::entity entity, tinyxml2::XMLElement *component)
 {
-    tinyxml2::XMLElement *healthElement = component->FirstChildElement("healthPercentage");
+    tinyxml2::XMLElement *healthElement = component->FirstChildElement("hitPoints");
     std::string health_str = healthElement->FirstChild()->ToText()->Value();
-    int health = std::stoi(health_str);
-    registry->emplace<Health>(entity, health);
+    int hitPoints = std::stoi(health_str);
+    registry->emplace<Health>(entity, hitPoints);
 }
 
 void XMLHandler::LoadMenuNavigator(std::shared_ptr<entt::registry> registry, entt::entity entity, tinyxml2::XMLElement *component)

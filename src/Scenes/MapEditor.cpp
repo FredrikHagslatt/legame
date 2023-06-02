@@ -166,8 +166,17 @@ void MapEditor::OnMouseMotionEvent(const MouseMotionEvent &event)
 }
 void MapEditor::OnMouseButtonPressedEvent(const MouseButtonPressedEvent &event)
 {
+    if (m_mapMenuOpen)
+    {
+        return;
+    }
+
+    if (m_entityMenuOpen)
+    {
+        return;
+    }
+
     m_leftMouseHeld = true;
-    // Contitional entity creation here
 }
 
 void MapEditor::OnMouseButtonReleasedEvent(const MouseButtonReleasedEvent &event)
@@ -204,9 +213,10 @@ void MapEditor::RenderScene(const double elapsedTime)
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
 
+    m_mapMenuOpen = false;
     if (ImGui::Begin("Map Editor", NULL, window_flags))
     {
-
+        m_mapMenuOpen = true;
         if (ImGui::CollapsingHeader("Map size"))
         {
             ImGui::InputInt("Width in tiles", &m_queuedMapNumCols);

@@ -17,6 +17,7 @@ public:
     static bool logToImGuiWindow;
     static bool logToFile;
 
+    static bool showEntityExplorer;
     static bool showDevTools;
     static bool showDemoWindow;
     static bool showLogWindow;

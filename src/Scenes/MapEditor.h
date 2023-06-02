@@ -15,7 +15,11 @@ private:
 	vec2i m_selectedTile = vec2i(0);
 	bool m_tileIsSelected = false;
 
+	bool m_mapMenuOpen = false;
+	bool m_entityMenuOpen = false;
+
 	entt::entity m_tileBrush;
+	entt::entity m_editedEntity;
 
 	bool m_showTileSelector = false;
 	bool m_leftMouseHeld = false;

@@ -19,7 +19,7 @@ public:
         if (!projectileComponent.isFriendly)
         {
             auto &health = registry->get<Health>(player);
-            health.healthPercentage -= projectileComponent.hitPercentDamage;
+            health.hitPoints -= projectileComponent.hitPercentDamage;
 
             bool playerQueuedForDeath = false;
             bool projectileQueuedForDeath = false;
@@ -40,7 +40,7 @@ public:
                 Game::entitiesToKill.push_back(projectile);
             }
 
-            if (health.healthPercentage <= 0 && !playerQueuedForDeath)
+            if (health.hitPoints <= 0 && !playerQueuedForDeath)
             {
                 Game::entitiesToKill.push_back(player);
             }
@@ -53,7 +53,7 @@ public:
         if (projectileComponent.isFriendly)
         {
             auto &health = registry->get<Health>(enemy);
-            health.healthPercentage -= projectileComponent.hitPercentDamage;
+            health.hitPoints -= projectileComponent.hitPercentDamage;
 
             bool enemyQueuedForDeath = false;
             bool projectileQueuedForDeath = false;
@@ -74,7 +74,7 @@ public:
                 Game::entitiesToKill.push_back(projectile);
             }
 
-            if (health.healthPercentage <= 0 && !enemyQueuedForDeath)
+            if (health.hitPoints <= 0 && !enemyQueuedForDeath)
             {
                 Game::entitiesToKill.push_back(enemy);
             }
