@@ -1,4 +1,51 @@
 <level>
+    <tilemap>
+        <spritesheet>assets/tilemaps/themes/ground_tiles.png</spritesheet>
+        <layout>assets/tilemaps/maps/hub.map</layout>
+    </tilemap>
+    <textures>
+        <texture>
+            <id>tank-image</id>
+            <path>assets/images/tank-panther-right.png</path>
+        </texture>
+        <texture>
+            <id>truck-image</id>
+            <path>assets/images/truck-ford-right.png</path>
+        </texture>
+        <texture>
+            <id>tree-image</id>
+            <path>assets/images/tree.png</path>
+        </texture>
+        <texture>
+            <id>chopper-image</id>
+            <path>assets/images/chopper-spritesheet.png</path>
+        </texture>
+        <texture>
+            <id>radar-image</id>
+            <path>assets/images/radar.png</path>
+        </texture>
+        <texture>
+            <id>bullet-image</id>
+            <path>assets/images/bullet.png</path>
+        </texture>
+    </textures>
+    <fonts>
+        <font>
+            <id>charriot-font</id>
+            <path>assets/fonts/charriot.ttf</path>
+            <size>20</size>
+        </font>
+        <font>
+            <id>pico8-font-5</id>
+            <path>assets/fonts/pico8.ttf</path>
+            <size>5</size>
+        </font>
+        <font>
+            <id>pico8-font-10</id>
+            <path>assets/fonts/pico8.ttf</path>
+            <size>10</size>
+        </font>
+    </fonts>
     <entities>
         <entity>
             <components>

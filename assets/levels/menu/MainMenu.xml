@@ -1,4 +1,17 @@
 <level>
+    <textures>
+        <texture>
+            <id>bullet-image</id>
+            <path>assets/images/bullet.png</path>
+        </texture>
+    </textures>
+    <fonts>
+        <font>
+            <id>charriot-font-40</id>
+            <path>assets/fonts/charriot.ttf</path>
+            <size>40</size>
+        </font>
+    </fonts>
     <entities>
         <entity>
             <components>

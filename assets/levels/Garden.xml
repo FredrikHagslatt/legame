@@ -1,4 +1,35 @@
 <level>
+    <tilemap>
+        <spritesheet>assets/tilemaps/themes/ground_tiles.png</spritesheet>
+        <layout>assets/tilemaps/maps/garden.map</layout>
+    </tilemap>
+    <textures>
+        <texture>
+            <id>cabin-image</id>
+            <path>assets/images/buildings/log_cabin.png</path>
+        </texture>
+        <texture>
+            <id>radar-image</id>
+            <path>assets/images/radar.png</path>
+        </texture>
+    </textures>
+    <fonts>
+        <font>
+            <id>charriot-font</id>
+            <path>assets/fonts/charriot.ttf</path>
+            <size>20</size>
+        </font>
+        <font>
+            <id>pico8-font-5</id>
+            <path>assets/fonts/pico8.ttf</path>
+            <size>5</size>
+        </font>
+        <font>
+            <id>pico8-font-10</id>
+            <path>assets/fonts/pico8.ttf</path>
+            <size>10</size>
+        </font>
+    </fonts>
     <entities>
         <entity>
             <components>

@@ -52,39 +52,14 @@ void MainMenu::RenderGraphics(const double elapsedTime)
 void MainMenu::Load()
 {
 	Logger::Info("[MainMenu] Loading Scene");
-	Event::dispatcher.sink<KeyPressedEvent>().connect<&MainMenu::OnKeyPressedEvent>(this);
 
-	m_assetStore->AddFont("charriot-font-40", "assets/fonts/charriot.ttf", 40);
-	m_assetStore->AddTexture(m_renderer, "bullet-image", "assets/images/bullet.png");
+	Event::dispatcher.sink<KeyPressedEvent>().connect<&MainMenu::OnKeyPressedEvent>(this);
 
 	m_camera = {0, 0, 0, 0}; // Not used in this Scene. Just here to feed the Systems
 	SDL_Color green = {30, 200, 30};
 
-	/*
-		const auto title = m_registry->create();
-		m_registry->emplace<UI_Tag>(title);
-		vec2f textDimension = RenderTextSystem::GetTextDimensions(m_renderer, " - Main Menu - ", m_assetStore->GetFont("charriot-font-40"));
-		m_registry->emplace<TextLabel>(title, vec2f((WINDOWWIDTH - textDimension.x) / 2, 10), " - Main Menu - ", "charriot-font-40", green, true);
-
-		const auto play = m_registry->create();
-		m_registry->emplace<UI_Tag>(play);
-		textDimension = RenderTextSystem::GetTextDimensions(m_renderer, "Play Game", m_assetStore->GetFont("charriot-font-40"));
-		m_registry->emplace<TextLabel>(play, vec2f((WINDOWWIDTH - textDimension.x) / 2, 240.0), "Play Game", "charriot-font-40", green, true);
-
-		const auto settings = m_registry->create();
-		m_registry->emplace<UI_Tag>(settings);
-		textDimension = RenderTextSystem::GetTextDimensions(m_renderer, "Settings", m_assetStore->GetFont("charriot-font-40"));
-		m_registry->emplace<TextLabel>(settings, vec2f((WINDOWWIDTH - textDimension.x) / 2, 300.0), "Settings", "charriot-font-40", green, true);
-
-		const auto menuNavigator = m_registry->create();
-		m_registry->emplace<UI_Tag>(menuNavigator);
-		m_registry->emplace<Transform>(menuNavigator, vec2f((WINDOWWIDTH - textDimension.x) / 2 - 70, 240.0 + textDimension.y / 2 - 8.0), 1.5);
-		m_registry->emplace<MenuNavigator>(menuNavigator, 2);
-		m_registry->emplace<Sprite>(menuNavigator, "bullet-image", 4, 4, 0, true);
-	*/
-
 	//	XMLHandler::SaveToXML(m_registry);
-	XMLHandler::LoadFromXML(m_registry, "assets/levels/menu/MainMenu.xml");
+	XMLHandler::LoadFromXML(m_registry, m_renderer, m_assetStore, "assets/levels/menu/MainMenu.xml");
 }
 
 void MainMenu::Unload()
