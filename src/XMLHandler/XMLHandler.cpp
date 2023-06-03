@@ -132,9 +132,11 @@ void XMLHandler::SaveSceneSwitcher(tinyxml2::XMLElement *components, const Scene
 
     tinyxml2::XMLElement *sceneManagerId = component->InsertNewChildElement("sceneManagerId");
     tinyxml2::XMLElement *sceneName = component->InsertNewChildElement("sceneName");
+    tinyxml2::XMLElement *level = component->InsertNewChildElement("level");
 
     sceneManagerId->SetText(sceneSwitcher.sceneManagerId.c_str());
     sceneName->SetText(sceneSwitcher.sceneName.c_str());
+    level->SetText(sceneSwitcher.level.c_str());
 }
 
 void XMLHandler::SaveSprite(tinyxml2::XMLElement *components, const Sprite sprite)
@@ -468,11 +470,13 @@ void XMLHandler::LoadSceneSwitcher(std::shared_ptr<entt::registry> registry, ent
 {
     tinyxml2::XMLElement *sceneManagerIdElement = component->FirstChildElement("sceneManagerId");
     tinyxml2::XMLElement *sceneNameElement = component->FirstChildElement("sceneName");
+    tinyxml2::XMLElement *levelElement = component->FirstChildElement("level");
 
     std::string sceneManagerId = sceneManagerIdElement->FirstChild()->ToText()->Value();
     std::string sceneName = sceneNameElement->FirstChild()->ToText()->Value();
+    std::string level = levelElement->FirstChild()->ToText()->Value();
 
-    registry->emplace<SceneSwitcher>(entity, sceneManagerId, sceneName);
+    registry->emplace<SceneSwitcher>(entity, sceneManagerId, sceneName, level);
 }
 void XMLHandler::LoadSprite(std::shared_ptr<entt::registry> registry, entt::entity entity, tinyxml2::XMLElement *component)
 {
@@ -672,15 +676,12 @@ std::pair<std::string, std::string> XMLHandler::GetMapInfoFromXML(std::string fi
 
 void XMLHandler::LoadAssets(tinyxml2::XMLElement *root, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore)
 {
-
     // Textures
     tinyxml2::XMLElement *textures = root->FirstChildElement("textures");
-    Logger::Error("Got here");
     for (tinyxml2::XMLElement *texture = textures->FirstChildElement("texture");
          texture != NULL;
          texture = texture->NextSiblingElement())
     {
-        Logger::Error("Iteration");
         tinyxml2::XMLElement *id = texture->FirstChildElement("id");
         tinyxml2::XMLElement *path = texture->FirstChildElement("path");
         std::string id_str = id->FirstChild()->ToText()->Value();
@@ -726,7 +727,7 @@ void XMLHandler::LoadFromXML(std::shared_ptr<entt::registry> registry, SDL_Rende
 {
     if (!FileExists(filename))
     {
-        Logger::Error("Could not load " + filename + ". No such file.");
+        Logger::Error("[XMLHandler] Could not load " + filename + ". No such file.");
         return;
     }
 

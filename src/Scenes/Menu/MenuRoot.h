@@ -14,7 +14,7 @@ public:
 	// Scene
 	void Update(const double elapsedTime) override;
 	void RenderGraphics(const double elapsedTime) override;
-	void Load() override;
+	void Load(std::string level) override;
 	void Unload() override;
 	MenuRoot(SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore);
 };

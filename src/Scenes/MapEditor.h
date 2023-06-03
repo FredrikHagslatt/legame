@@ -2,12 +2,12 @@
 #define MAPEDITOR_H
 
 #include "Types.h"
-#include "Scenes/Stardew.h"
+#include "Scenes/TopDown.h"
 #include "Events/MouseMotionEvent.h"
 #include "Events/MouseButtonPressedEvent.h"
 #include "Events/MouseButtonReleasedEvent.h"
 
-class MapEditor : public Stardew
+class MapEditor : public TopDown
 {
 private:
 	std::string m_theme = "assets/tilemaps/themes/ground_tiles.png";
@@ -48,9 +48,9 @@ private:
 public:
 	void UpdateScene(const double elapsedTime) override;
 	void RenderScene(const double elapsedTime) override;
-	void LoadScene() override;
+	void LoadScene(std::string level) override;
 	void UnloadScene() override;
-	using Stardew::Stardew;
+	using TopDown::TopDown;
 };
 
 #endif

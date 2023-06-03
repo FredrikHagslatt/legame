@@ -6,7 +6,9 @@ struct SceneSwitcher
 {
     std::string sceneManagerId;
     std::string sceneName;
-    SceneSwitcher(std::string sceneManagerId = "", std::string sceneName = "") : sceneManagerId(sceneManagerId), sceneName(sceneName)
+    std::string level;
+    SceneSwitcher(std::string sceneManagerId = "", std::string sceneName = "", std::string level = "")
+        : sceneManagerId(sceneManagerId), sceneName(sceneName), level(level)
     {
     }
 };

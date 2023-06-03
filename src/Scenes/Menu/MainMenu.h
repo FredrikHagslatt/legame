@@ -15,7 +15,7 @@ public:
 	// Scene
 	void Update(const double elapsedTime) override;
 	void RenderGraphics(const double elapsedTime) override;
-	void Load() override;
+	void Load(std::string level) override;
 	void Unload() override;
 	using Scene::Scene;
 };

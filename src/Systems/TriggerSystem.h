@@ -15,9 +15,9 @@
 class TriggerSystem
 {
 public:
-    static void SwitchScene(std::string sceneManagerId, std::string sceneName)
+    static void SwitchScene(std::string sceneManagerId, std::string sceneName, std::string level)
     {
-        Event::dispatcher.trigger(SceneSwitchEvent{sceneManagerId, sceneName});
+        Event::dispatcher.trigger(SceneSwitchEvent{sceneManagerId, sceneName, level});
     }
 
     static void OnCollision(const CollisionEvent &event)
@@ -29,12 +29,12 @@ public:
         if (registry->all_of<Player_Tag>(a) && registry->all_of<SceneSwitcher>(b))
         {
             auto sceneSwitcher = registry->get<SceneSwitcher>(b);
-            SwitchScene(sceneSwitcher.sceneManagerId, sceneSwitcher.sceneName);
+            SwitchScene(sceneSwitcher.sceneManagerId, sceneSwitcher.sceneName, sceneSwitcher.level);
         }
         if (registry->all_of<Player_Tag>(b) && registry->all_of<SceneSwitcher>(a))
         {
             auto sceneSwitcher = registry->get<SceneSwitcher>(a);
-            SwitchScene(sceneSwitcher.sceneManagerId, sceneSwitcher.sceneName);
+            SwitchScene(sceneSwitcher.sceneManagerId, sceneSwitcher.sceneName, sceneSwitcher.level);
         }
     }
 };

@@ -100,7 +100,8 @@
                 </component>
                 <component type="SceneSwitcher">
                     <sceneManagerId>Game</sceneManagerId>
-                    <sceneName>Hub</sceneName>
+                    <sceneName>GenericTopDown</sceneName>
+                    <level>assets/levels/TheHub.xml</level>
                 </component>
                 <component type="Transform">
                     <position>

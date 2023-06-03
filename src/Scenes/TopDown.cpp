@@ -1,10 +1,10 @@
-#include "Scenes/Stardew.h"
+#include "Scenes/TopDown.h"
 #include <fstream>
 #include "Events/EventDispatcher.h"
 #include "Logger/Logger.h"
 #include "DevTools/DevTools.h"
 
-void Stardew::Update(const double elapsedTime)
+void TopDown::Update(const double elapsedTime)
 {
     // Update systems
     MovementSystem::Update(m_registry, elapsedTime, m_mapWidth, m_mapHeight);
@@ -17,7 +17,7 @@ void Stardew::Update(const double elapsedTime)
     UpdateScene(elapsedTime);
 }
 
-void Stardew::RenderGraphics(const double elapsedTime)
+void TopDown::RenderGraphics(const double elapsedTime)
 {
     RenderTileMapSystem::Update(m_tileMap, m_renderer, m_assetStore, m_camera);
     RenderSystem::Update(m_registry, m_renderer, m_assetStore, m_camera);
@@ -32,7 +32,7 @@ void Stardew::RenderGraphics(const double elapsedTime)
     RenderScene(elapsedTime);
 }
 
-void Stardew::LoadMap(std::string spritesheet, std::string map)
+void TopDown::LoadMap(std::string spritesheet, std::string map)
 {
     m_assetStore->AddTexture(m_renderer, spritesheet, spritesheet);
 
@@ -54,7 +54,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
         {
             if (mapNumCols != (line.size() + 1) / 3)
             {
-                Logger::Error("[Stardew] Map is fucked! Row length not matching");
+                Logger::Error("[TopDown] Map is fucked! Row length not matching");
             }
         }
         mapNumRows++;
@@ -63,7 +63,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
     mapFile.clear();
     mapFile.seekg(0); // Go to start of file again.
 
-    Logger::Info("[Stardew] Mapsize: " + std::to_string(mapNumCols) + " x " + std::to_string(mapNumRows));
+    Logger::Info("[TopDown] Mapsize: " + std::to_string(mapNumCols) + " x " + std::to_string(mapNumRows));
 
     m_mapWidth = mapNumCols * TILESIZE * SCALE;
     m_mapHeight = mapNumRows * TILESIZE * SCALE;
@@ -88,7 +88,7 @@ void Stardew::LoadMap(std::string spritesheet, std::string map)
     mapFile.close();
 }
 
-void Stardew::Load()
+void TopDown::Load(std::string level)
 {
     m_camera.x = 0;
     m_camera.y = 0;
@@ -99,7 +99,7 @@ void Stardew::Load()
     if (view.empty())
     {
         m_assetStore->AddTexture(m_renderer, "spike-image", "assets/images/characters/friend/Spike.png");
-        Logger::Info("[Stardew] Creating player");
+        Logger::Info("[TopDown] Creating player");
         const auto player = m_registry->create();
         m_registry->emplace<Player_Tag>(player);
         m_registry->emplace<StayOnMap_Tag>(player);
@@ -114,10 +114,10 @@ void Stardew::Load()
     }
     else
     {
-        Logger::Info("[Stardew] Player already exists. Not creating");
+        Logger::Info("[TopDown] Player already exists. Not creating");
     }
 
-    m_assetStore->AddTexture(m_renderer, "user-interface", "assets/images/user-interface/stardew-ui.png");
+    m_assetStore->AddTexture(m_renderer, "user-interface", "assets/images/user-interface/topdown-ui.png");
     const auto user_interface = m_registry->create();
     m_registry->emplace<Transform>(user_interface, vec2f(0.0, 576.0));
     m_registry->emplace<Sprite>(user_interface, "user-interface", 400, 48, 0, true);
@@ -135,12 +135,12 @@ void Stardew::Load()
     Event::dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().connect<&TriggerSystem::OnCollision>();
-    Logger::Info("[Stardew] Connecting eventlisteners");
+    Logger::Info("[TopDown] Connecting eventlisteners");
 
-    LoadScene();
+    LoadScene(level);
 }
 
-void Stardew::Unload()
+void TopDown::Unload()
 {
     Event::dispatcher.sink<KeyPressedEvent>().disconnect<&KeyboardControlSystem::OnKeyPressed>();
     Event::dispatcher.sink<KeyReleasedEvent>().disconnect<&KeyboardControlSystem::OnKeyReleased>();
@@ -148,7 +148,7 @@ void Stardew::Unload()
     Event::dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().disconnect<&TriggerSystem::OnCollision>();
-    Logger::Info("[Stardew] Disconnecting eventlisteners");
+    Logger::Info("[TopDown] Disconnecting eventlisteners");
 
     m_tileMap.clear();
 
@@ -170,12 +170,12 @@ void Stardew::Unload()
     auto UIs = m_registry->view<UI_Tag>();
     m_registry->destroy(UIs.begin(), UIs.end());
 
-    Logger::Info("[Stardew] Destroying entities");
+    Logger::Info("[TopDown] Destroying entities");
 
     UnloadScene();
 }
 
-Stardew::Stardew(SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore)
+TopDown::TopDown(SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore)
     : Scene(renderer, registry, assetStore)
 {
 }

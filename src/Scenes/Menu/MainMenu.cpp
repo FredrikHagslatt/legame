@@ -28,7 +28,7 @@ void MainMenu::OnKeyPressedEvent(const KeyPressedEvent event)
 			{
 			case 0:
 				Logger::Info("[MainMenu] Pressed 'Play Game'");
-				Event::dispatcher.trigger(SceneSwitchEvent{"Game", "Garden"});
+				Event::dispatcher.trigger(SceneSwitchEvent{"Game", "GenericTopDown", "assets/levels/Garden.xml"});
 				break;
 			case 1:
 				Logger::Info("[MainMenu] Pressed 'Settings'");
@@ -49,7 +49,7 @@ void MainMenu::RenderGraphics(const double elapsedTime)
 	RenderTextSystem::Update(m_registry, m_renderer, m_assetStore, m_camera);
 }
 
-void MainMenu::Load()
+void MainMenu::Load(std::string level)
 {
 	Logger::Info("[MainMenu] Loading Scene");
 

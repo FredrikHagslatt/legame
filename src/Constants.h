@@ -8,7 +8,7 @@ inline constexpr unsigned short FPS{144};
 inline constexpr unsigned short MILLISECS_PER_FRAME{1000 / FPS};
 inline constexpr bool MAX_FPS_UNLOCKED = false;
 
-/*  Constants for Stardew Style Scenes  */
+/*  Constants for TopDown Style Scenes  */
 inline constexpr unsigned short USERINTERFACEHEIGHT{144};
 inline constexpr unsigned short GAMEWINDOWWIDTH{1200};
 inline constexpr unsigned short GAMEWINDOWHEIGHT{WINDOWHEIGHT - USERINTERFACEHEIGHT};
