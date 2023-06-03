@@ -61,7 +61,7 @@ void DevTools::ShowDevTools(unsigned int fps)
 
         if (ImGui::Button("Open Map Editor"))
         {
-            Event::dispatcher.trigger(SceneSwitchEvent{"Game", "MapEditor"});
+            Event::dispatcher.trigger(SceneSwitchEvent{"Game", "MapEditor", "-"});
         }
 
         if (!DevTools::showEntityExplorer)

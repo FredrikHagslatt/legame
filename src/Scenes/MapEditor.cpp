@@ -289,7 +289,7 @@ void MapEditor::RenderScene(const double elapsedTime)
     ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 }
 
-void MapEditor::LoadScene()
+void MapEditor::LoadScene(std::string level)
 {
     DevTools::showDevTools = false;
 

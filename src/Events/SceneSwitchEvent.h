@@ -7,6 +7,7 @@ struct SceneSwitchEvent
 {
     std::string managerId;
     std::string sceneName;
+    std::string level;
 };
 
 #endif

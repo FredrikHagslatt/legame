@@ -132,9 +132,11 @@ void XMLHandler::SaveSceneSwitcher(tinyxml2::XMLElement *components, const Scene
 
     tinyxml2::XMLElement *sceneManagerId = component->InsertNewChildElement("sceneManagerId");
     tinyxml2::XMLElement *sceneName = component->InsertNewChildElement("sceneName");
+    tinyxml2::XMLElement *level = component->InsertNewChildElement("level");
 
     sceneManagerId->SetText(sceneSwitcher.sceneManagerId.c_str());
     sceneName->SetText(sceneSwitcher.sceneName.c_str());
+    level->SetText(sceneSwitcher.level.c_str());
 }
 
 void XMLHandler::SaveSprite(tinyxml2::XMLElement *components, const Sprite sprite)
@@ -468,11 +470,13 @@ void XMLHandler::LoadSceneSwitcher(std::shared_ptr<entt::registry> registry, ent
 {
     tinyxml2::XMLElement *sceneManagerIdElement = component->FirstChildElement("sceneManagerId");
     tinyxml2::XMLElement *sceneNameElement = component->FirstChildElement("sceneName");
+    tinyxml2::XMLElement *levelElement = component->FirstChildElement("level");
 
     std::string sceneManagerId = sceneManagerIdElement->FirstChild()->ToText()->Value();
     std::string sceneName = sceneNameElement->FirstChild()->ToText()->Value();
+    std::string level = levelElement->FirstChild()->ToText()->Value();
 
-    registry->emplace<SceneSwitcher>(entity, sceneManagerId, sceneName);
+    registry->emplace<SceneSwitcher>(entity, sceneManagerId, sceneName, level);
 }
 void XMLHandler::LoadSprite(std::shared_ptr<entt::registry> registry, entt::entity entity, tinyxml2::XMLElement *component)
 {
@@ -646,12 +650,12 @@ void XMLHandler::LoadComponent(std::shared_ptr<entt::registry> registry, entt::e
     }
 }
 
-void XMLHandler::LoadFromXML(std::shared_ptr<entt::registry> registry, std::string filename)
+std::pair<std::string, std::string> XMLHandler::GetMapInfoFromXML(std::string filename)
 {
     if (!FileExists(filename))
     {
         Logger::Error("Could not load " + filename + ". No such file.");
-        return;
+        return std::pair(" - ", " - ");
     }
 
     const char *file = filename.c_str();
@@ -659,6 +663,50 @@ void XMLHandler::LoadFromXML(std::shared_ptr<entt::registry> registry, std::stri
     doc.LoadFile(file);
 
     tinyxml2::XMLElement *root = doc.FirstChildElement("level");
+
+    tinyxml2::XMLElement *tilemap = root->FirstChildElement("tilemap");
+    tinyxml2::XMLElement *tilemapSpritesheet = tilemap->FirstChildElement("spritesheet");
+    tinyxml2::XMLElement *tilemapLayout = tilemap->FirstChildElement("layout");
+
+    std::string tilemapSpritesheet_str = tilemapSpritesheet->FirstChild()->ToText()->Value();
+    std::string tilemapLayout_str = tilemapLayout->FirstChild()->ToText()->Value();
+
+    return std::pair(tilemapSpritesheet_str, tilemapLayout_str);
+}
+
+void XMLHandler::LoadAssets(tinyxml2::XMLElement *root, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore)
+{
+    // Textures
+    tinyxml2::XMLElement *textures = root->FirstChildElement("textures");
+    for (tinyxml2::XMLElement *texture = textures->FirstChildElement("texture");
+         texture != NULL;
+         texture = texture->NextSiblingElement())
+    {
+        tinyxml2::XMLElement *id = texture->FirstChildElement("id");
+        tinyxml2::XMLElement *path = texture->FirstChildElement("path");
+        std::string id_str = id->FirstChild()->ToText()->Value();
+        std::string path_str = path->FirstChild()->ToText()->Value();
+        assetStore->AddTexture(renderer, id_str, path_str);
+    }
+
+    // Fonts
+    tinyxml2::XMLElement *fonts = root->FirstChildElement("fonts");
+    for (tinyxml2::XMLElement *font = fonts->FirstChildElement("font");
+         font != NULL;
+         font = font->NextSiblingElement())
+    {
+        tinyxml2::XMLElement *id = font->FirstChildElement("id");
+        tinyxml2::XMLElement *path = font->FirstChildElement("path");
+        tinyxml2::XMLElement *size = font->FirstChildElement("size");
+        std::string id_str = id->FirstChild()->ToText()->Value();
+        std::string path_str = path->FirstChild()->ToText()->Value();
+        std::string size_str = size->FirstChild()->ToText()->Value();
+        assetStore->AddFont(id_str, path_str, stoi(size_str));
+    }
+}
+
+void XMLHandler::LoadEntities(tinyxml2::XMLElement *root, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore)
+{
     tinyxml2::XMLElement *entities = root->FirstChildElement("entities");
     for (tinyxml2::XMLElement *entity = entities->FirstChildElement("entity");
          entity != NULL;
@@ -673,6 +721,24 @@ void XMLHandler::LoadFromXML(std::shared_ptr<entt::registry> registry, std::stri
             LoadComponent(registry, newEntity, component);
         }
     }
+}
+
+void XMLHandler::LoadFromXML(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, std::string filename)
+{
+    if (!FileExists(filename))
+    {
+        Logger::Error("[XMLHandler] Could not load " + filename + ". No such file.");
+        return;
+    }
+
+    const char *file = filename.c_str();
+    tinyxml2::XMLDocument doc;
+    doc.LoadFile(file);
+    tinyxml2::XMLElement *root = doc.FirstChildElement("level");
+
+    LoadAssets(root, renderer, assetStore);
+
+    LoadEntities(root, registry, assetStore);
 }
 
 void XMLHandler::SaveEntityToXML(const std::shared_ptr<entt::registry> registry, tinyxml2::XMLElement *entities, const entt::entity entity)

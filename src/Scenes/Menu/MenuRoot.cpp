@@ -1,6 +1,6 @@
 #include "MenuRoot.h"
 #include "MainMenu.h"
-//#include "Scenes/Options.h"
+// #include "Scenes/Options.h"
 #include "Systems/MenuNavigationSystem.h"
 #include "Events/EventDispatcher.h"
 
@@ -14,12 +14,12 @@ void MenuRoot::RenderGraphics(const double elapsedTime)
 	m_sceneManager.RenderGraphics(elapsedTime);
 }
 
-void MenuRoot::Load()
+void MenuRoot::Load(std::string level)
 {
 	m_sceneManager.AddScene("MainMenu", std::make_shared<MainMenu>(m_renderer, m_registry, m_assetStore));
 	// m_sceneManager.AddScene("OPTIONS", new OptionsScene(m_sceneManager, m_local_sceneManager));
 
-	m_sceneManager.QueueSceneChange("MainMenu");
+	m_sceneManager.QueueSceneChange("MainMenu", "-");
 	Event::dispatcher.sink<KeyPressedEvent>().connect<&MenuNavigationSystem::OnKeyPressedEvent>();
 
 	// g_sfx.LoadMusic("ambient", "assets/sound/music/chill/ambient_loop.wav");

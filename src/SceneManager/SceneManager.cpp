@@ -5,8 +5,8 @@ void SceneManager::OnSceneSwitchEvent(const SceneSwitchEvent event)
 {
 	if (event.managerId == id)
 	{
-		Logger::Info("[Scenemanager] Manager with id: " + id + ", Received SceneSwitchEvent: " + event.sceneName);
-		QueueSceneChange(event.sceneName);
+		Logger::Info("[Scenemanager] Manager with id: " + id + ", Received SceneSwitchEvent: " + event.sceneName + ", " + event.level);
+		QueueSceneChange(event.sceneName, event.level);
 	}
 	else
 	{
@@ -14,12 +14,13 @@ void SceneManager::OnSceneSwitchEvent(const SceneSwitchEvent event)
 	}
 }
 
-void SceneManager::QueueSceneChange(const std::string sceneName)
+void SceneManager::QueueSceneChange(const std::string sceneName, const std::string level)
 {
 	m_queuedScene = sceneName;
+	m_queuedLevel = level;
 }
 
-void SceneManager::ChangeScene(const std::string sceneName)
+void SceneManager::ChangeScene(const std::string sceneName, const std::string level)
 {
 	if (m_scenes.count(sceneName) != 1)
 	{
@@ -33,7 +34,7 @@ void SceneManager::ChangeScene(const std::string sceneName)
 	}
 	Logger::Info("[SceneManager] Changing scene to '" + sceneName + "'");
 	m_currentScene = m_scenes.at(sceneName);
-	m_currentScene->Load();
+	m_currentScene->Load(level);
 }
 
 void SceneManager::AddScene(const std::string sceneName, const std::shared_ptr<Scene> scene)
@@ -45,8 +46,9 @@ void SceneManager::Update(const double elapsedTime)
 {
 	if (!m_queuedScene.empty())
 	{
-		ChangeScene(m_queuedScene);
+		ChangeScene(m_queuedScene, m_queuedLevel);
 		m_queuedScene = "";
+		m_queuedLevel = "";
 	}
 	m_currentScene->Update(elapsedTime);
 }

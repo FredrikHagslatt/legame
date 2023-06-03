@@ -14,11 +14,12 @@ private:
 	std::shared_ptr<Scene> m_currentScene;
 	std::unordered_map<std::string, std::shared_ptr<Scene>> m_scenes;
 	std::string m_queuedScene = "";
-	void ChangeScene(const std::string sceneName);
+	std::string m_queuedLevel = "";
+	void ChangeScene(const std::string sceneName, std::string level);
 
 public:
 	void OnSceneSwitchEvent(const SceneSwitchEvent event);
-	void QueueSceneChange(const std::string sceneName);
+	void QueueSceneChange(const std::string sceneName, std::string level);
 	void Update(const double elapsedTime);
 	void RenderGraphics(const double elapsedTime);
 	void AddScene(const std::string sceneName, const std::shared_ptr<Scene> scene);

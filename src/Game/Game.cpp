@@ -8,8 +8,9 @@
 #include "DevTools/DevTools.h"
 #include "Types.h"
 
-#include "Scenes/Hub.h"
-#include "Scenes/Garden.h"
+// #include "Scenes/Hub.h"
+// #include "Scenes/Garden.h"
+#include "Scenes/GenericTopDown.h"
 #include "Scenes/Menu/MenuRoot.h"
 #include "Scenes/MapEditor.h"
 
@@ -136,12 +137,11 @@ void Game::ProcessInput()
 void Game::Setup()
 {
     m_sceneManager.AddScene("MenuRoot", std::make_shared<MenuRoot>(m_renderer, m_registry, m_assetStore));
-    m_sceneManager.AddScene("Hub", std::make_shared<Hub>(m_renderer, m_registry, m_assetStore));
-    m_sceneManager.AddScene("Garden", std::make_shared<Garden>(m_renderer, m_registry, m_assetStore));
+    m_sceneManager.AddScene("GenericTopDown", std::make_shared<GenericTopDown>(m_renderer, m_registry, m_assetStore));
 
     // m_sceneManager.AddScene("CREDITS", ...);
 
-    m_sceneManager.QueueSceneChange("MenuRoot");
+    m_sceneManager.QueueSceneChange("MenuRoot", "-");
 
     m_sceneManager.AddScene("MapEditor", std::make_shared<MapEditor>(m_renderer, m_registry, m_assetStore));
 

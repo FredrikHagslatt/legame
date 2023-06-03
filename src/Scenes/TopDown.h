@@ -1,5 +1,5 @@
-#ifndef STARDEW_H
-#define STARDEW_H
+#ifndef TOPDOWN_H
+#define TOPDOWN_H
 
 #include <list>
 #include <string>
@@ -41,30 +41,29 @@
 
 #include "XMLHandler/XMLHandler.h"
 
-class Stardew : public Scene
+class TopDown : public Scene
 {
 protected:
-	// Stardew
 	int m_mapWidth = 0;
 	int m_mapHeight = 0;
 	SDL_Rect m_camera;
 	std::vector<std::vector<Sprite>> m_tileMap;
-	void LoadLevel();
 	void LoadMap(std::string spritesheet, std::string map);
 
 public:
 	// Funcs for children
 	virtual void UpdateScene(const double elapsedTime) = 0;
 	virtual void RenderScene(const double elapsedTime) = 0;
-	virtual void LoadScene() = 0;
+	virtual void LoadScene(std::string level) = 0;
 	virtual void UnloadScene() = 0;
 
 	// Scene
 	void Update(const double elapsedTime) override;
 	void RenderGraphics(const double elapsedTime) override;
-	void Load() override;
+	void Load(std::string level) override;
 	void Unload() override;
-	Stardew(SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore);
+	void ChangeLevel(std::string level);
+	TopDown(SDL_Renderer *renderer, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore);
 };
 
 #endif

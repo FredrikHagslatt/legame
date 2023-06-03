@@ -7,6 +7,7 @@
 #include "entt/entt.hpp"
 #include <SDL2/SDL.h>
 #include "tinyxml2/tinyxml2.h"
+#include "AssetStore/AssetStore.h"
 
 #include "Components/Tags.h"
 #include "Components/Transform.h"
@@ -59,8 +60,12 @@ private:
     static void LoadComponent(std::shared_ptr<entt::registry> registry, entt::entity entity, tinyxml2::XMLElement *component);
     static void SaveEntityToXML(const std::shared_ptr<entt::registry> registry, tinyxml2::XMLElement *component, const entt::entity entity);
 
+    static void LoadAssets(tinyxml2::XMLElement *root, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore);
+    static void LoadEntities(tinyxml2::XMLElement *root, std::shared_ptr<entt::registry> registry, std::shared_ptr<AssetStore> assetStore);
+
 public:
-    static void LoadFromXML(std::shared_ptr<entt::registry> registry, std::string filename);
+    static std::pair<std::string, std::string> GetMapInfoFromXML(std::string filename);
+    static void LoadFromXML(std::shared_ptr<entt::registry> registry, SDL_Renderer *renderer, std::shared_ptr<AssetStore> assetStore, std::string filename);
     static void SaveToXML(const std::shared_ptr<entt::registry> registry);
 };
 #endif
