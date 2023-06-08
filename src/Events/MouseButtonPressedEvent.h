@@ -5,7 +5,7 @@
 
 struct MouseButtonPressedEvent
 {
-    SDL_MouseButtonEvent button;
+    SDL_MouseButtonEvent buttonEvent;
 };
 
 #endif
