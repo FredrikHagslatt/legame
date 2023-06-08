@@ -136,6 +136,8 @@ void Game::ProcessInput()
 
 void Game::Setup()
 {
+    SDL_ShowCursor(SDL_DISABLE);
+
     m_sceneManager.AddScene("MenuRoot", std::make_shared<MenuRoot>(m_renderer, m_registry, m_assetStore));
     m_sceneManager.AddScene("GenericTopDown", std::make_shared<GenericTopDown>(m_renderer, m_registry, m_assetStore));
 

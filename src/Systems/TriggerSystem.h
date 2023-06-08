@@ -1,5 +1,5 @@
-#ifndef TRIGGER_H
-#define TRIGGER_H
+#ifndef TRIGGERSYSTEM_H
+#define TRIGGERSYSTEM_H
 
 #include <string>
 

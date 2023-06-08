@@ -25,6 +25,7 @@
 #include "Systems/CameraMovementSystem.h"
 #include "Systems/DamageSystem.h"
 #include "Systems/CollisionSystem.h"
+#include "Systems/CrossHairSystem.h"
 #include "Systems/TriggerSystem.h"
 
 #include "Systems/RenderTileMapSystem.h"
@@ -38,6 +39,7 @@
 
 #include "Events/EventDispatcher.h"
 #include "Events/KeyPressedEvent.h"
+#include "Events/MouseButtonPressedEvent.h"
 
 #include "XMLHandler/XMLHandler.h"
 
@@ -47,6 +49,7 @@ protected:
 	int m_mapWidth = 0;
 	int m_mapHeight = 0;
 	SDL_Rect m_camera;
+	ProjectileEmitSystem::RegistryCamera m_projectileEmitSystemData = {m_registry, m_camera};
 	std::vector<std::vector<Sprite>> m_tileMap;
 	void LoadMap(std::string spritesheet, std::string map);
 

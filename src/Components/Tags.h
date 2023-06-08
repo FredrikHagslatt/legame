@@ -4,6 +4,9 @@
 struct KeyboardControlled_Tag
 {
 };
+struct Crosshair_Tag
+{
+};
 struct Player_Tag
 {
 };
