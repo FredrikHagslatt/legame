@@ -14,6 +14,7 @@ void TopDown::Update(const double elapsedTime)
     ProjectileLifeCycleSystem::Update(m_registry);
     CollisionSystem::Update(m_registry);
     CrosshairSystem::Update(m_registry, m_camera);
+    SpellSystem::Update(m_registry, elapsedTime);
 
     UpdateScene(elapsedTime);
 }
@@ -125,6 +126,7 @@ void TopDown::Load(std::string level)
         Logger::Info("[TopDown] Creating crosshair");
         const auto crosshair = m_registry->create();
         m_registry->emplace<Crosshair_Tag>(crosshair);
+        m_registry->emplace<UI_Tag>(crosshair);
         m_registry->emplace<Transform>(crosshair, vec2f(250.0, 500.0));
         m_registry->emplace<Sprite>(crosshair, "crosshair", 7, 7);
     }
@@ -132,6 +134,11 @@ void TopDown::Load(std::string level)
     {
         Logger::Info("[TopDown] Crosshair already exists. Not creating");
     }
+
+    m_assetStore->AddTexture(m_renderer, "bullet-image", "assets/images/bullet.png");
+    m_assetStore->AddTexture(m_renderer, "fireball-image", "assets/images/spells/fireball.png");
+    m_assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20);
+    m_assetStore->AddFont("pico8-font-5", "assets/fonts/pico8.ttf", 5);
 
     m_assetStore->AddTexture(m_renderer, "user-interface", "assets/images/user-interface/topdown-ui.png");
     const auto user_interface = m_registry->create();
@@ -148,6 +155,7 @@ void TopDown::Load(std::string level)
     Event::dispatcher.sink<KeyPressedEvent>().connect<&KeyboardControlSystem::OnKeyPressed>();
     Event::dispatcher.sink<KeyReleasedEvent>().connect<&KeyboardControlSystem::OnKeyReleased>();
     Event::dispatcher.sink<KeyPressedEvent>().connect<&ProjectileEmitSystem::OnKeyPressed>();
+    Event::dispatcher.sink<KeyPressedEvent>().connect<&SpellSystem::OnKeyPressed>(m_registry);
     Event::dispatcher.sink<MouseButtonPressedEvent>().connect<&ProjectileEmitSystem::OnMouseButtonPressed>(m_projectileEmitSystemData);
     Event::dispatcher.sink<CollisionEvent>().connect<&DamageSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>();
@@ -162,6 +170,7 @@ void TopDown::Unload()
     Event::dispatcher.sink<KeyPressedEvent>().disconnect<&KeyboardControlSystem::OnKeyPressed>();
     Event::dispatcher.sink<KeyReleasedEvent>().disconnect<&KeyboardControlSystem::OnKeyReleased>();
     Event::dispatcher.sink<KeyPressedEvent>().disconnect<&ProjectileEmitSystem::OnKeyPressed>();
+    Event::dispatcher.sink<KeyPressedEvent>().disconnect<&SpellSystem::OnKeyPressed>(m_registry);
     Event::dispatcher.sink<MouseButtonPressedEvent>().disconnect<&ProjectileEmitSystem::OnMouseButtonPressed>(m_projectileEmitSystemData);
     Event::dispatcher.sink<CollisionEvent>().disconnect<&DamageSystem::OnCollision>();
     Event::dispatcher.sink<CollisionEvent>().disconnect<&MovementSystem::OnCollision>();

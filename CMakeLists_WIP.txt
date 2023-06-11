@@ -1,0 +1,109 @@
+cmake_minimum_required(VERSION 3.15)
+project(leGame)
+
+set(CMAKE_GENERATOR "Ninja")
+
+message(STATUS)
+if(UNIX)
+    message(STATUS "|   BUILDING UNIX   | --")
+elseif(WIN32)
+    message(STATUS "|   BUILDING WIN32   | --")
+endif()
+message(STATUS "Generator: ${CMAKE_GENERATOR}")
+message(STATUS)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+
+# Set source directory
+set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
+
+# List source files explicitly
+set(SOURCES
+    ${SOURCE_DIR}/file1.cpp
+    ${SOURCE_DIR}/file2.cpp
+    # ...
+)
+
+# Include directories
+include_directories(${SOURCE_DIR} ${THIRD_PARTY})
+
+# Third-party libraries
+set(THIRD_PARTY "${CMAKE_SOURCE_DIR}/3rdparty")
+add_library(imgui ${THIRD_PARTY}/imgui/imgui.cpp) # Example for ImGui library
+add_library(tinyxml2 ${THIRD_PARTY}/tinyxml2/tinyxml2.cpp) # Example for tinyxml2 library
+
+# Executable
+add_executable(${PROJECT_NAME} ${SOURCES})
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    imgui # Example library target
+    tinyxml2 # Example library target
+)
+
+# Find and link SDL2 libraries
+if(WIN32)
+    set(SDL2_DIR "${THIRD_PARTY}/SDL_Bundle_Mingw")
+    find_library(SDL2_LIBRARY NAMES SDL2 PATHS ${SDL2_DIR}/lib NO_DEFAULT_PATH)
+    find_library(SDL2_IMAGE_LIBRARY NAMES SDL2_image PATHS ${SDL2_DIR}/lib NO_DEFAULT_PATH)
+    find_library(SDL2_MIXER_LIBRARY NAMES SDL2_mixer PATHS ${SDL2_DIR}/lib NO_DEFAULT_PATH)
+    find_library(SDL2_TTF_LIBRARY NAMES SDL2_ttf PATHS ${SDL2_DIR}/lib NO_DEFAULT_PATH)
+
+    # Copy DLLs
+    set(DLLS
+        libFLAC-8.dll
+        libfreetype-6.dll
+        libjpeg-9.dll
+        libmodplug-1.dll
+        libmpg123-0.dll
+        libogg-0.dll
+        libopus-0.dll
+        libopusfile-0.dll
+        libpng16-16.dll
+        libtiff-5.dll
+        libvorbis-0.dll
+        libvorbisfile-3.dll
+        libwebp-7.dll
+        SDL2.dll
+        SDL2_image.dll
+        SDL2_mixer.dll
+        SDL2_ttf.dll
+        zlib1.dll
+    )
+
+    foreach(DLL ${DLLS})
+        configure_file(${SDL2_DIR}/bin/${DLL} ${CMAKE_BINARY_DIR}/${DLL} COPYONLY)
+    endforeach()
+
+    # Link SDL2 libraries
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        ${SDL2_LIBRARY}
+        ${SDL2_IMAGE_LIBRARY}
+        ${SDL2_MIXER_LIBRARY}
+        ${SDL2_TTF_LIBRARY}
+        -static-libgcc
+        -static-libstdc++
+    )
+
+    add_definitions(-DSDL_MAIN_HANDLED) # Define SDL_MAIN_HANDLED for Windows
+elseif(UNIX)
+    find_package(SDL2 REQUIRED)
+    find_package(SDL2_image REQUIRED)
+    find_package(SDL2_mixer REQUIRED)
+    find_package(SDL2_ttf REQUIRED)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        ${SDL2_LIBRARIES}
+        ${SDL2_IMAGE_LIBRARIES}
+        ${SDL2_MIXER_LIBRARIES}
+        ${SDL2_TTF_LIBRARIES}
+    )
+endif()
+
+# Asset copying
+set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
+if(EXISTS ${ASSETS_DIR} AND IS_DIRECTORY ${ASSETS_DIR})
+    file(COPY ${ASSETS_DIR} DESTINATION ${CMAKE_BINARY_DIR})
+endif()

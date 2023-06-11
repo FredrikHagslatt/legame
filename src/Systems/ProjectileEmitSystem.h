@@ -17,7 +17,7 @@
 
 class ProjectileEmitSystem
 {
-private:
+public:
     static vec2f GetProjectileSpawnPosition(std::shared_ptr<entt::registry> registry, entt::entity emitterEntity)
     {
         const auto transform = registry->get<Transform>(emitterEntity);
@@ -32,7 +32,6 @@ private:
         return projectileSpawnPosition;
     }
 
-public:
     static void EmitProjectile(std::shared_ptr<entt::registry> registry, const entt::entity emitterEntity, const vec2f direction)
     {
         const auto projectileEmitter = registry->get<ProjectileEmitter>(emitterEntity);
@@ -99,8 +98,6 @@ public:
         {
             auto playerView = registry->view<Player_Tag, Transform, ProjectileEmitter>();
 
-            vec2f target = {static_cast<float>(event.buttonEvent.x), static_cast<float>(event.buttonEvent.y)};
-
             for (auto player : playerView)
             {
                 auto crosshairView = registry->view<Crosshair_Tag, Transform, Sprite>();
@@ -109,10 +106,7 @@ public:
                 {
                     const auto targetTransform = crosshairView.get<Transform>(crosshair);
                     const auto targetSprite = crosshairView.get<Sprite>(crosshair);
-
-                    vec2f targetPosition = {targetTransform.position.x + targetSprite.width / 2, targetTransform.position.y + targetSprite.height / 2};
-
-                    EmitProjectileTowardsPosition(registry, camera, player, targetPosition);
+                    EmitProjectileTowardsPosition(registry, camera, player, targetTransform.position);
                 }
             }
         }

@@ -27,6 +27,7 @@
 #include "Systems/CollisionSystem.h"
 #include "Systems/CrossHairSystem.h"
 #include "Systems/TriggerSystem.h"
+#include "Systems/SpellSystem.h"
 
 #include "Systems/RenderTileMapSystem.h"
 #include "Systems/RenderSystem.h"

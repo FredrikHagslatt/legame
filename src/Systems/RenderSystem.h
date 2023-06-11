@@ -121,7 +121,19 @@ private:
                 continue;
             }
 
-            RenderEntity(transform, sprite, renderer, assetStore, camera);
+            if (registry->all_of<Crosshair_Tag>(entity))
+            {
+
+                Transform offsetTransform = transform;
+                offsetTransform.position.x = transform.position.x - (transform.scale.x * (sprite.width / 2 - 1));
+                offsetTransform.position.y = transform.position.y - (transform.scale.y * (sprite.height / 2 - 1));
+
+                RenderEntity(offsetTransform, sprite, renderer, assetStore, camera);
+            }
+            else
+            {
+                RenderEntity(transform, sprite, renderer, assetStore, camera);
+            }
         }
     }
 

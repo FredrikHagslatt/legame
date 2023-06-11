@@ -1,8 +1,6 @@
 #ifndef CROSSHAIRSYSTEM_H
 #define CROSSHAIRSYSTEM_H
 
-#include <string>
-
 #include "Types.h"
 #include "entt/entt.hpp"
 #include "Logger/Logger.h"
@@ -21,7 +19,7 @@ public:
         vec2i mousePos;
         SDL_GetMouseState(&mousePos.x, &mousePos.y);
 
-        auto view = registry->view<Crosshair_Tag, Transform, Sprite>();
+        auto view = registry->view<Crosshair_Tag, Transform>();
         for (auto entity : view)
         {
             auto &transform = view.get<Transform>(entity);
