@@ -7,6 +7,7 @@
 void TopDown::Update(const double elapsedTime)
 {
     // Update systems
+    LifeTimeSystem::Update(m_registry);
     MovementSystem::Update(m_registry, elapsedTime, m_mapWidth, m_mapHeight);
     AnimationSystem::Update(m_registry);
     CameraMovementSystem::Update(m_registry, m_camera, m_mapWidth, m_mapHeight);
@@ -108,7 +109,7 @@ void TopDown::Load(std::string level)
         m_registry->emplace<KeyboardControlled_Tag>(player);
         m_registry->emplace<Transform>(player, vec2f(200.0, 500.0));
         m_registry->emplace<Velocity>(player, 300.0, vec2f(0), vec2f(0.0, 1.0));
-        m_registry->emplace<Sprite>(player, "spike-image", 16, 32);
+        m_registry->emplace<Sprite>(player, "spike-image", 16, 32, 26);
         m_registry->emplace<Animation>(player, 5, 5, true, true);
         m_registry->emplace<ProjectileEmitter>(player, 600.0, vec2f(1.0, 1.0), 0, 10000, 10, true, true);
         m_registry->emplace<Health>(player, 100);
@@ -135,8 +136,9 @@ void TopDown::Load(std::string level)
         Logger::Info("[TopDown] Crosshair already exists. Not creating");
     }
 
+    m_assetStore->AddTexture(m_renderer, "blinkSmoke-image", "assets/images/spells/blinkSmoke.png");
     m_assetStore->AddTexture(m_renderer, "bullet-image", "assets/images/bullet.png");
-    m_assetStore->AddTexture(m_renderer, "fireball-image", "assets/images/spells/fireball.png");
+    m_assetStore->AddTexture(m_renderer, "fireball-spritesheet", "assets/images/spells/fireball-spritesheet.png");
     m_assetStore->AddFont("charriot-font", "assets/fonts/charriot.ttf", 20);
     m_assetStore->AddFont("pico8-font-5", "assets/fonts/pico8.ttf", 5);
 

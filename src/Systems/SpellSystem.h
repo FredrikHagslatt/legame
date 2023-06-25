@@ -2,6 +2,7 @@
 #define SPELLSYSTEM_H
 
 #include "Components/ArsenalSpell.h"
+#include "Components/LifeTime.h"
 #include "Components/Transform.h"
 #include "Components/Tags.h"
 
@@ -22,7 +23,7 @@ public:
         {
             auto &spellSpecs = view.get<ArsenalSpell>(entity);
 
-            if (spellSpecs.cooldownRemaining > 0.0f)
+            if (spellSpecs.cooldownRemaining >= 0.0f)
             {
                 spellSpecs.cooldownRemaining -= elapsedTime;
             }
@@ -57,14 +58,17 @@ public:
     static void CastFireball(std::shared_ptr<entt::registry> registry, entt::entity caster)
     {
         Logger::Info("Casting Fireball");
-        const int speed = 2400;
-        const int damage = 40;
-        const int duration = 500;
+        const unsigned int speed = 1800;
+        const unsigned int damage = 40;
+        const unsigned int duration = 500;
+        const unsigned int fireball_width = 16;
 
         vec2f target(0);
         if (registry->all_of<Player_Tag>(caster))
         {
             target = GetCrosshairPos(registry);
+            target.x -= SCALE * fireball_width / 2;
+            target.y -= SCALE * fireball_width / 2;
         }
 
         vec2f spawnPosition = ProjectileEmitSystem::GetProjectileSpawnPosition(registry, caster);
@@ -76,8 +80,10 @@ public:
         registry->emplace<Projectile_Tag>(fireBall);
         registry->emplace<Transform>(fireBall, spawnPosition, vec2f(1.0, 1.0), 0.0);
         registry->emplace<Velocity>(fireBall, speed, direction);
-        registry->emplace<Sprite>(fireBall, "fireball-image", 8, 8);
-        registry->emplace<CircleCollider>(fireBall, 8);
+        registry->emplace<Sprite>(fireBall, "fireball-spritesheet", 16, 10);
+        registry->emplace<Animation>(fireBall, 4, 16, true, false);
+
+        registry->emplace<CircleCollider>(fireBall, fireball_width);
         registry->emplace<Projectile>(fireBall, true, damage, duration);
 
         // Get the components needed for spell casting
@@ -103,8 +109,38 @@ public:
         // Spawn spell entity instead
     }
 
-    static void CastBlink(std::shared_ptr<entt::registry> registry)
+    static void CastBlink(std::shared_ptr<entt::registry> registry, entt::entity caster)
     {
+        Logger::Info("Casting Blink");
+        const unsigned int range = 400;
+
+        auto &transform = registry->get<Transform>(caster);
+        auto &sprite = registry->get<Sprite>(caster);
+
+        auto blinkSmoke = registry->create();
+        registry->emplace<Transform>(blinkSmoke, transform.position, vec2f(1.0, 1.0), 0.0);
+        registry->emplace<Sprite>(blinkSmoke, "blinkSmoke-image", 16, 32);
+        registry->emplace<Animation>(blinkSmoke, 4, 8, false, false);
+        registry->emplace<LifeTime>(blinkSmoke, 500);
+
+        vec2f target(0);
+        if (registry->all_of<Player_Tag>(caster))
+        {
+            target = GetCrosshairPos(registry);
+        }
+
+        vec2f blinkVector = target - transform.position;
+        float blinkDistance = blinkVector.magnitude();
+        if (blinkDistance > range)
+        {
+            blinkVector = blinkVector * range / blinkDistance;
+            target += blinkVector;
+        }
+
+        target.x -= (sprite.width / 2) * transform.scale.x;
+        target.y -= (sprite.pivotPoint) * transform.scale.y;
+        transform.position = target;
+
         // Get the components needed for spell casting
         // auto &spellSpecs = view.get<ArsenalSpell>(entity);
     }
@@ -138,6 +174,14 @@ public:
                     // Start the spell cooldownRemaining
                     spell.cooldownRemaining = spell.cooldownTotal;
                 }
+            }
+        }
+        if (event.keycode == SDLK_3)
+        {
+            auto playerView = registry->view<Player_Tag>();
+            for (auto player : playerView)
+            {
+                CastBlink(registry, player);
             }
         }
     }

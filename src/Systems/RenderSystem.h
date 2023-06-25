@@ -125,8 +125,8 @@ private:
             {
 
                 Transform offsetTransform = transform;
-                offsetTransform.position.x = transform.position.x - (transform.scale.x * (sprite.width / 2 - 1));
-                offsetTransform.position.y = transform.position.y - (transform.scale.y * (sprite.height / 2 - 1));
+                offsetTransform.position.x = transform.position.x - (transform.scale.x * sprite.width / 2);
+                offsetTransform.position.y = transform.position.y - (transform.scale.y * sprite.height / 2);
 
                 RenderEntity(offsetTransform, sprite, renderer, assetStore, camera);
             }
